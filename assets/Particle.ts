@@ -1,63 +1,57 @@
-import {find, _decorator, Component,log, Event, Node, Button, EventHandler ,color , Label} from 'cc';
+import { find, _decorator, Component, log, Event, Node, Button, EventHandler, color, Label } from 'cc';
 const { ccclass, property } = _decorator;
 import Web3 from 'web3/dist/web3.min.js';
 
 @ccclass('Particle')
 export class Particle extends Component {
-  
     @property
-    public particle: any  =void 0;
+    public particle: any = void 0;
     @property
-    public web3: any  =void 0;
+    public web3: any = void 0;
     @property
     private account: string = '';
 
-    @property 
-    private isLogin:boolean = false;
-
-
-
+    @property
+    private isLogin: boolean = false;
 
     start() {
         console.log('Hello Particle');
         // @ts-ignore
-        const { ParticleNetwork, WalletEntryPosition }  = window.globalThis.particleAuth ;
+        const { ParticleNetwork, WalletEntryPosition } = window.globalThis.particleAuth;
         // @ts-ignore
-        const { ParticleProvider } =window.globalThis.particleProvider;
-        const particle =  new ParticleNetwork({
-            projectId: 'your project id',
-            clientKey: 'your client key',
-            appId: 'your appid',
+        const { ParticleProvider } = window.globalThis.particleProvider;
+        const particle = new ParticleNetwork({
+            projectId: '34c6b829-5b89-44e8-90a9-6d982787b9c9',
+            clientKey: 'c6Z44Ml4TQeNhctvwYgdSv6DBzfjf6t6CB0JDscR',
+            appId: '64f36641-b68c-4b19-aa10-5c5304d0eab3',
             chainName: 'Ethereum',
-            chainId: 1,
+            chainId: 5,
             securityAccount: {
-                promptSettingWhenSign: 0,
-                promptMasterPasswordSettingWhenLogin: 0,
+                promptSettingWhenSign: 1,
+                promptMasterPasswordSettingWhenLogin: 1,
             },
             wallet: {
                 displayWalletEntry: true,
                 defaultWalletEntryPosition: WalletEntryPosition.BR,
-                customStyle: undefined,
             },
-        })
+        });
         const particleProvider = new ParticleProvider(particle.auth);
         this.particle = particle;
         // @ts-ignore
         const web3 = new Web3(particleProvider as any | ParticleProvider);
-        console.log(web3);
         this.web3 = web3;
         this.isLogin = particle && particle.auth.isLogin();
-        if(this.isLogin){ 
-            (async ()=>{
+        if (this.isLogin) {
+            (async () => {
                 const accounts = await web3.eth.getAccounts();
                 this.loginCall(accounts[0]);
-            })()
-         
-        }else{
-            this.logoutCall()
+            })();
+        } else {
+            this.logoutCall();
         }
     }
-    loginCall(account:string){
+    loginCall(account: string) {
+        
         // @ts-ignore
         const containerNode = find('Canvas/container');
         const loginNode = containerNode?.getChildByName('login');
@@ -67,108 +61,97 @@ export class Particle extends Component {
         const sendTransactionNode = containerNode?.getChildByName('sendTransaction');
         const accountNode = containerNode?.getChildByName('account');
 
-        if(loginNode) loginNode.active =false;
-        if(logoutNode) logoutNode.active =true;
-        if(personalSignNode) personalSignNode.active =true;
-        if(signTypedDataV4Node) signTypedDataV4Node.active =true;
-        if(sendTransactionNode) sendTransactionNode.active =true;
-        if(accountNode){
-            console.log(accountNode)
-            accountNode.active =true;
+        console.log('loginCall', personalSignNode);
+        if (loginNode) loginNode.active = false;
+        if (logoutNode) logoutNode.active = true;
+        if (personalSignNode) personalSignNode.active = true;
+        if (signTypedDataV4Node) signTypedDataV4Node.active = true;
+        if (sendTransactionNode) sendTransactionNode.active = true;
+        if (accountNode) {
+            console.log(accountNode);
+            accountNode.active = true;
             const label = accountNode.getComponent(Label);
-            label  && (label.string = account)
+            label && (label.string = account);
             // accountNode.string = account;
-            console.log('account change:',account)
-           }
+            console.log('account change:', account);
+        }
     }
-    logoutCall(){
-           // @ts-ignore
-           const containerNode = find('Canvas/container');
-           const loginNode = containerNode?.getChildByName('login');
-           const logoutNode = containerNode?.getChildByName('logout');
-           const personalSignNode = containerNode?.getChildByName('personalSign');
-           const signTypedDataV4Node = containerNode?.getChildByName('signTypedDataV4');
-           const sendTransactionNode = containerNode?.getChildByName('sendTransaction');
-           const accountNode = containerNode?.getChildByName('account');
-
-           if(loginNode) loginNode.active =true;
-           if(logoutNode) logoutNode.active =false;
-           if(personalSignNode) personalSignNode.active =false;
-           if(signTypedDataV4Node) signTypedDataV4Node.active =false;
-           if(sendTransactionNode) sendTransactionNode.active =false;
-           if(accountNode) accountNode.active =false;
-    }
-
-    update(deltaTime: number) {
+    logoutCall() {
         
+        // @ts-ignore
+        const containerNode = find('Canvas/container');
+        const loginNode = containerNode?.getChildByName('login');
+        const logoutNode = containerNode?.getChildByName('logout');
+        const personalSignNode = containerNode?.getChildByName('personalSign');
+        const signTypedDataV4Node = containerNode?.getChildByName('signTypedDataV4');
+        const sendTransactionNode = containerNode?.getChildByName('sendTransaction');
+        const accountNode = containerNode?.getChildByName('account');
+
+        console.log('logoutCall', personalSignNode);
+        if (loginNode) loginNode.active = true;
+        if (logoutNode) logoutNode.active = false;
+        if (personalSignNode) personalSignNode.active = false;
+        if (signTypedDataV4Node) signTypedDataV4Node.active = false;
+        if (sendTransactionNode) sendTransactionNode.active = false;
+        if (accountNode) accountNode.active = false;
     }
 
-    loginCallback (event: Event, customEventData: string) {
-        console.log(event.target)
-        const nodeDom =  event.target;
+    update(deltaTime: number) {}
+
+    loginCallback(event: Event, customEventData: string) {
+        console.log(event.target);
+        const nodeDom = event.target;
 
         this.particle.auth
-        .login({
-            preferredAuthType: 'google',
-            account: '',
-            supportAuthTypes: 'all',
-            socialLoginPrompt: 'consent',
-            loginFormMode:  true,
-            hideLoading:false,
-        })
-        .then((userInfo:any) => {
-            console.log(userInfo)
-            this.isLogin = true;
-            this.web3.eth.getAccounts((error: any, accounts: any[]) => {
-                if (error) throw error;
-                const account = accounts[0];
-                console.log('Address: ',account);
-                window.alert('Address: \n'+account)
-                this.account = account;
-                this.loginCall(account);
+            .login()
+            .then((userInfo: any) => {
+                console.log(userInfo);
+                this.isLogin = true;
+                this.web3.eth.getAccounts((error: any, accounts: any[]) => {
+                    if (error) throw error;
+                    const account = accounts[0];
+                    console.log('Address: ', account);
+                    this.account = account;
+                    this.loginCall(account);
+                });
 
+                // this.destroy();
+            })
+            .catch((error: any) => {
+                console.log('connect wallet', error);
+                if (error.code !== 4011) {
+                    console.error(error.message);
+                }
             });
-
-            this.destroy()
-        })
-        .catch((error: any) => {
-            console.log('connect wallet', error);
-            if (error.code !== 4011) {
-                console.error(error.message);
-            }
-        });
     }
 
-    logoutCallback(event?: Event, customEventData?: string){
- 
-
-        console.log('click logout')
+    logoutCallback(event?: Event, customEventData?: string) {
+        console.log('click logout');
         this.particle.auth
             .logout(true)
             .then(() => {
                 this.isLogin = false;
-                console.log('logout success')
+                console.log('logout success');
                 this.logoutCall();
             })
-            .catch((err:any) => {
+            .catch((err: any) => {
                 console.log('logout error', err);
-            })
-
+            });
     }
 
-    async personalSign(event?: Event, customEventData?: string){
+    async personalSign(event?: Event, customEventData?: string) {
+        console.log('personalSign click');
         const personalSignMessage =
-        'Hello Particle Network!💰💰💰 \n\nThe fastest path from ideas to deployment in a single workflow for high performance dApps. \n\nhttps://particle.network';
+            'Hello Particle Network!💰💰💰 \n\nThe fastest path from ideas to deployment in a single workflow for high performance dApps. \n\nhttps://particle.network';
         const accounts = await this.web3.eth.getAccounts();
         this.web3.eth.personal
-        .sign(  personalSignMessage, accounts[0])
-        .then((result:any) => {
-            console.log('personal_sign success:',  JSON.stringify(result));
-            window.alert('personal_sign: \n' + result)
-        })
-        .catch((error:AnalyserNode) => {
-            console.error('personal_sign error:' , JSON.stringify(error) );
-        });
+            .sign(personalSignMessage, accounts[0])
+            .then((result: any) => {
+                console.log('personal_sign success:', JSON.stringify(result));
+            })
+            .catch((error: AnalyserNode) => {
+                console.error('personal_sign error:', JSON.stringify(error));
+            });
     }
 
     async signTypedDataV4() {
@@ -330,30 +313,28 @@ export class Particle extends Component {
         const accounts = await this.web3.eth.getAccounts();
         const from = accounts[0];
         try {
-            const params = [from,JSON.stringify(payloadV4)];
+            const params = [from, JSON.stringify(payloadV4)];
             const method = 'eth_signTypedData_v4';
             this.web3.currentProvider
                 .request({
                     method,
                     params,
                 })
-                .then((result:any) => {
+                .then((result: any) => {
                     console.log('signTypedData_v4 result', result);
-                    window.alert('signTypedData_v4:\n' + result)
                 })
-                .catch((err:any) => {
+                .catch((err: any) => {
                     console.log('signTypedData_v4 error', err);
                 });
-        } catch (error:any) {
-            console.error(error)
+        } catch (error: any) {
+            console.error(error);
         }
-    };
-
+    }
 
     async sendTransaction() {
         const address = '0x6Bc8fd522354e4244531ce3D2B99f5dF2aAE335e';
         const amount = '0.001';
-        const amountWei = this.web3.utils.toWei(amount,'ether');
+        const amountWei = this.web3.utils.toWei(amount, 'ether');
         const accounts = await this.web3.eth.getAccounts();
 
         try {
@@ -371,14 +352,11 @@ export class Particle extends Component {
                         console.error(error.message);
                     }
                 } else {
-                    window.alert('sendTransaction: \n'+ hash)
-                    console.log(error)
+                    console.log(error);
                 }
             });
         } catch (error: any) {
-            console.log(error)
+            console.log(error);
         }
-    };
-
+    }
 }
-
