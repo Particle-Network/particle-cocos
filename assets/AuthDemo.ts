@@ -318,7 +318,7 @@ export class AuthDemo extends Component {
 
     setInterfaceStyle() {
         let style = UserInterfaceStyle.Light;
-        native.jsbBridgeWrapper.dispatchEventToNative("setDisplayWallet", style);
+        native.jsbBridgeWrapper.dispatchEventToNative("setInterfaceStyle", style);
     }
 
     openWebWallet() {
