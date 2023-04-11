@@ -2,8 +2,8 @@
 import JsonRpcRequest from './NetService/NetService';
 import { SerializeTransactionParams, SolanaReqBodyMethod } from './NetService/NetParams';
 import BigNumber from 'bignumber.js';
-import { Buffer } from 'buffer';
 import { EvmService } from './NetService/EvmService';
+import { HexConverter } from './NetService/hex-converter';
 
 export async function getSolanaTransaction(from: string, to: string, amount: number) {
     // mock a solana native transaction
@@ -83,8 +83,8 @@ export async function getEthereumTransacion(from: string, to: string, amount: st
     };
 
     console.log(transaction);
-    const json = JSON.stringify(transaction);
-    const serialized = Buffer.from(json).toString('hex');
+    const serialized = HexConverter.jsonToHexString(transaction);
+
     return '0x' + serialized;
 }
 
@@ -117,8 +117,7 @@ export async function getEthereumTransacionLegacy(from: string, to: string, amou
     };
 
     console.log(transaction);
-    const json = JSON.stringify(transaction);
-    const serialized = Buffer.from(json).toString('hex');
+    const serialized = HexConverter.jsonToHexString(transaction);
     return '0x' + serialized;
 }
 
@@ -155,8 +154,7 @@ export async function getEvmTokenTransaction(from: string, to: string, amount: s
     };
 
     console.log(transaction);
-    const json = JSON.stringify(transaction);
-    const serialized = Buffer.from(json).toString('hex');
+    const serialized = HexConverter.jsonToHexString(transaction);
     return '0x' + serialized;
 }
 
@@ -189,7 +187,6 @@ export async function getEvmTokenTransactionLegacy(from: string, to: string, amo
     };
 
     console.log(transaction);
-    const json = JSON.stringify(transaction);
-    const serialized = Buffer.from(json).toString('hex');
+    const serialized = HexConverter.jsonToHexString(transaction);
     return '0x' + serialized;
 }

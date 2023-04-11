@@ -1,8 +1,10 @@
 import { AbiEncodeFunction, EVMReqBodyMethod } from './NetParams';
 import JsonRpcRequest from './NetService';
 import BigNumber from 'bignumber.js';
-import { Buffer } from 'buffer';
+import { HexConverter } from './hex-converter';
 import { ChainInfo } from '../Models/ChainInfo';
+
+
 
 export class EvmService {
     /// current chain info
@@ -267,8 +269,7 @@ export class EvmService {
         };
 
         console.log(transaction);
-        const json = JSON.stringify(transaction);
-        const serialized = Buffer.from(json).toString('hex');
+        const serialized = HexConverter.jsonToHexString(transaction);
         return '0x' + serialized;
     }
 
@@ -310,8 +311,8 @@ export class EvmService {
         };
 
         console.log(transaction);
-        const json = JSON.stringify(transaction);
-        const serialized = Buffer.from(json).toString('hex');
+        const serialized = HexConverter.jsonToHexString(transaction);
         return '0x' + serialized;
     }
+      
 }
