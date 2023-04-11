@@ -1,14 +1,17 @@
 import { _decorator, Component, native, Node, sys } from 'cc';
 import { ChainInfo } from './Models/ChainInfo';
-import { iOSModalPresentStyle, LoginType, SupportAuthType } from './Models/LoginInfo';
+import { Env, iOSModalPresentStyle, LoginType, SupportAuthType } from './Models/LoginInfo';
 import { Language } from './Models/Language';
 import * as Helper from './Helper';
 import { UserInterfaceStyle } from './Models/UserInterfaceStyle';
 import { EvmService } from './NetService/EvmService';
+import { DappMetaData } from './Models/DappMetaData';
+import { WalletType } from './Models/WalletType';
+import { ParticleConnectConfig } from './Models/ConnectConfig';
 const { ccclass, property } = _decorator;
 
-@ccclass('AuthDemo')
-export class AuthDemo extends Component {
+@ccclass('ConnectDemo')
+export class ConnectDemo extends Component {
 
     @property
     private publicAddress: string = '';
@@ -80,10 +83,6 @@ export class AuthDemo extends Component {
             this.getUserInfoCallback(json);
         });
 
-        native.jsbBridgeWrapper.addNativeEventListener("setUserInfoCallback", (status: string) => {
-            this.setUserInfoCallback(status);
-        });
-
     }
 
     // Event call back
@@ -142,50 +141,73 @@ export class AuthDemo extends Component {
     public getUserInfoCallback(json: string): void {
         console.log("getUserInfoCallback: " + json);
     }
-    public setUserInfoCallback(status: string): void {
-        console.log("setUserInfoCallback: " + status);
-    }
 
 
     // Call native
     Init() {
+        const metadata = {
+            name: 'Particle Connect',
+            icon: 'https://connect.particle.network/icons/512.png',
+            url: 'https://connect.particle.network',
+        };
+
+        // the rpcUrl works for WalletType EvmPrivateKey and SolanaPrivakey
+        // we have default rpc url in native SDK
+        const rpcUrl = { evm_url: null, solana_url: null };
+
         const chainInfo = EvmService.currentChainInfo;
         const obj = {
             chain_name: chainInfo.chain_name,
             chain_id: chainInfo.chain_id,
             chain_id_name: chainInfo.chain_id_name,
-            env: "dev",
+            env: Env.Dev,
+            metadata: metadata,
+            rpc_url: rpcUrl
         };
 
         const json = JSON.stringify(obj);
-        native.jsbBridgeWrapper.dispatchEventToNative("initialize", json);
+        native.jsbBridgeWrapper.dispatchEventToNative("particleConnectInitialize", json);
     }
 
-    login() {
-        const obj = {
-            login_type: LoginType.Email,
-            account: "",
-            support_auth_type_values: [SupportAuthType.All],
-            login_form_mode: false,
-        };
+    adapterConnect() {
+        const walletType = WalletType.MetaMask;
+        const obj = { wallet_type: walletType, config: null};
         const json = JSON.stringify(obj);
-        native.jsbBridgeWrapper.dispatchEventToNative("login", json);
+        native.jsbBridgeWrapper.dispatchEventToNative("adapterConnect", json);
     }
 
-    logout() {
-        native.jsbBridgeWrapper.dispatchEventToNative("logout", "");
+    adapterConnectParticleWithConfig() {
+        const connectConfig = new ParticleConnectConfig(LoginType.Email, "", [SupportAuthType.All]);
+        const walletType = WalletType.MetaMask;
+        const obj = { wallet_type: walletType, config: connectConfig};
+        const json = JSON.stringify(obj);
+        native.jsbBridgeWrapper.dispatchEventToNative("adapterConnect", json);
     }
 
-    fastLogout() {
-        native.jsbBridgeWrapper.dispatchEventToNative("fastLogout", "");
+    adapterDisconnect() {
+        const walletType = WalletType.MetaMask;
+        const obj = { wallet_type: walletType, public_address: this.publicAddress };
+        const json = JSON.stringify(obj);
+        native.jsbBridgeWrapper.dispatchEventToNative("adapterDisconnect", json);
     }
 
-    signMessage() {
+    adapterIsConnected() {
+        const walletType = WalletType.MetaMask;
+        const obj = { wallet_type: walletType, public_address: this.publicAddress };
+        const json = JSON.stringify(obj);
+        native.jsbBridgeWrapper.dispatchEventToNative("adapterIsConnected", json);
+    }
+
+    adapterSignMessage() {
+        const walletType = WalletType.MetaMask;
         const message = "Hello Cocos !";
-        native.jsbBridgeWrapper.dispatchEventToNative("signMessage", message);
+        const obj = { wallet_type: walletType, public_address: this.publicAddress, message: message };
+        const json = JSON.stringify(obj);
+        
+        native.jsbBridgeWrapper.dispatchEventToNative("adapterSignMessage", json);
     }
 
-    async signAndSendTransaction() {
+    async adapterSignAndSendTransaction() {
         try {
             const sender = this.publicAddress;
             const chainInfo = EvmService.currentChainInfo;
@@ -222,128 +244,118 @@ export class AuthDemo extends Component {
                 }
             }
             console.log(transaction);
-            native.jsbBridgeWrapper.dispatchEventToNative("signAndSendTransaction", transaction);
+            native.jsbBridgeWrapper.dispatchEventToNative("adapterSignAndSendTransaction", transaction);
         } catch (error) {
 
         }
     }
 
-    signTypedData() {
+    adapterSignTypedData() {
+        const walletType = WalletType.Phantom;
         const typedData = "{\"types\":{\"OrderComponents\":[{\"name\":\"offerer\",\"type\":\"address\"},{\"name\":\"zone\",\"type\":\"address\"},{\"name\":\"offer\",\"type\":\"OfferItem[]\"},{\"name\":\"consideration\",\"type\":\"ConsiderationItem[]\"},{\"name\":\"orderType\",\"type\":\"uint8\"},{\"name\":\"startTime\",\"type\":\"uint256\"},{\"name\":\"endTime\",\"type\":\"uint256\"},{\"name\":\"zoneHash\",\"type\":\"bytes32\"},{\"name\":\"salt\",\"type\":\"uint256\"},{\"name\":\"conduitKey\",\"type\":\"bytes32\"},{\"name\":\"counter\",\"type\":\"uint256\"}],\"OfferItem\":[{\"name\":\"itemType\",\"type\":\"uint8\"},{\"name\":\"token\",\"type\":\"address\"},{\"name\":\"identifierOrCriteria\",\"type\":\"uint256\"},{\"name\":\"startAmount\",\"type\":\"uint256\"},{\"name\":\"endAmount\",\"type\":\"uint256\"}],\"ConsiderationItem\":[{\"name\":\"itemType\",\"type\":\"uint8\"},{\"name\":\"token\",\"type\":\"address\"},{\"name\":\"identifierOrCriteria\",\"type\":\"uint256\"},{\"name\":\"startAmount\",\"type\":\"uint256\"},{\"name\":\"endAmount\",\"type\":\"uint256\"},{\"name\":\"recipient\",\"type\":\"address\"}],\"EIP712Domain\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"version\",\"type\":\"string\"},{\"name\":\"chainId\",\"type\":\"uint256\"},{\"name\":\"verifyingContract\",\"type\":\"address\"}]},\"domain\":{\"name\":\"Seaport\",\"version\":\"1.1\",\"chainId\":5,\"verifyingContract\":\"0x00000000006c3852cbef3e08e8df289169ede581\"},\"primaryType\":\"OrderComponents\",\"message\":{\"offerer\":\"0x6fc702d32e6cb268f7dc68766e6b0fe94520499d\",\"zone\":\"0x0000000000000000000000000000000000000000\",\"offer\":[{\"itemType\":\"2\",\"token\":\"0xd15b1210187f313ab692013a2544cb8b394e2291\",\"identifierOrCriteria\":\"33\",\"startAmount\":\"1\",\"endAmount\":\"1\"}],\"consideration\":[{\"itemType\":\"0\",\"token\":\"0x0000000000000000000000000000000000000000\",\"identifierOrCriteria\":\"0\",\"startAmount\":\"9750000000000000\",\"endAmount\":\"9750000000000000\",\"recipient\":\"0x6fc702d32e6cb268f7dc68766e6b0fe94520499d\"},{\"itemType\":\"0\",\"token\":\"0x0000000000000000000000000000000000000000\",\"identifierOrCriteria\":\"0\",\"startAmount\":\"250000000000000\",\"endAmount\":\"250000000000000\",\"recipient\":\"0x66682e752d592cbb2f5a1b49dd1c700c9d6bfb32\"}],\"orderType\":\"0\",\"startTime\":\"1669188008\",\"endTime\":\"115792089237316195423570985008687907853269984665640564039457584007913129639935\",\"zoneHash\":\"0x3000000000000000000000000000000000000000000000000000000000000000\",\"salt\":\"48774942683212973027050485287938321229825134327779899253702941089107382707469\",\"conduitKey\":\"0x0000000000000000000000000000000000000000000000000000000000000000\",\"counter\":\"0\"}}";
-        const version = "v4";
-        const obj = { message: typedData, version: version };
+
+        const obj = { wallet_type: walletType, public_address: this.publicAddress, message: typedData };
         const json = JSON.stringify(obj);
-        native.jsbBridgeWrapper.dispatchEventToNative("signTypedData", json);
+
+        native.jsbBridgeWrapper.dispatchEventToNative("adapterSignTypedData", json);
     }
 
-    signTransaction() {
-        // only support solana, not support evm
+    adapterSignTransaction() {
+         // only support solana, not support evm
+        const walletType = WalletType.Phantom;
         const transaction = "";
-        native.jsbBridgeWrapper.dispatchEventToNative("signTransaction", transaction);
+        const obj = { wallet_type: walletType, public_address: this.publicAddress, transaction: transaction };
+        const json = JSON.stringify(obj);
+
+        native.jsbBridgeWrapper.dispatchEventToNative("adapterSignTransaction", json);
     }
 
-    signAllTransactions() {
+    adapterSignAllTransactions() {
         // only support solana, not support evm
+        const walletType = WalletType.Phantom;
         const transactions = ["", ""];
-        const json = JSON.stringify(transactions);
-        native.jsbBridgeWrapper.dispatchEventToNative("signAllTransactions", json);
-    }
-
-    setChaininfo() {
-        const chainInfo = ChainInfo.EthereumGoerli;
-        EvmService.currentChainInfo = chainInfo;
-        const obj = {
-            chain_name: chainInfo.chain_name,
-            chain_id: chainInfo.chain_id,
-            chain_id_name: chainInfo.chain_id_name,
-        };
+        const obj = { wallet_type: walletType, public_address: this.publicAddress, transactions: transactions };
         const json = JSON.stringify(obj);
-        native.jsbBridgeWrapper.dispatchEventToNative("setChainInfo", json);
+        native.jsbBridgeWrapper.dispatchEventToNative("adapterSignAllTransactions", json);
     }
 
-    setChainInfoAsync() {
-        const chainInfo = ChainInfo.PolygonMumbai;
-        EvmService.currentChainInfo = chainInfo;
-        const obj = {
-            chain_name: chainInfo.chain_name,
-            chain_id: chainInfo.chain_id,
-            chain_id_name: chainInfo.chain_id_name,
-        };
+
+    adapterImportWalletFromPrivateKey() {
+        // only support WalletType EvmPrivateKey, SolanaPriveteKey
+        const walletType = WalletType.EvmPrivateKey;
+        const privateKey = "";
+        const obj = { wallet_type: walletType, private_key: privateKey };
         const json = JSON.stringify(obj);
-        native.jsbBridgeWrapper.dispatchEventToNative("setChainInfoAsync", json);
+        native.jsbBridgeWrapper.dispatchEventToNative("adapterImportWalletFromPrivateKey", json);
     }
 
-    setUserInfo() {
-        const userInfoJsonString = "";
-        native.jsbBridgeWrapper.dispatchEventToNative("setUserInfo", userInfoJsonString);
+    adapterImportWalletFromMnemonic() {
+        // only support WalletType EvmPrivateKey, SolanaPriveteKey
+        const walletType = WalletType.EvmPrivateKey;
+        // mnemonic is a word list, split by space, example "word1 work2 ... " at least 12 words.
+        const mnemonic = "";
+        const obj = { wallet_type: walletType, mnemonic: mnemonic };
+        const json = JSON.stringify(obj);
+        native.jsbBridgeWrapper.dispatchEventToNative("adapterImportWalletFromMnemonic", json);
     }
 
-    getChainInfo() {
-        native.jsbBridgeWrapper.dispatchEventToNative("getChainInfo", "");
+    adapterExportWalletPrivateKey() {
+        const walletType = WalletType.EvmPrivateKey;
+        const obj = { wallet_type: walletType, public_address: this.publicAddress };
+        const json = JSON.stringify(obj);
+        native.jsbBridgeWrapper.dispatchEventToNative("adapterExportWalletPrivateKey", json);
     }
 
-    isLogin() {
-        native.jsbBridgeWrapper.dispatchEventToNative("isLogin", "");
+    // Sign in with ethereum
+    adapterLogin() {
+        const walletType = WalletType.MetaMask;
+        const domain = 'login.xyz';
+        const uri = 'https://login.xyz/demo#login';
+        const obj = { wallet_type: walletType, public_address: this.publicAddress, domain: domain, uri: uri };
+        const json = JSON.stringify(obj);
+
+        native.jsbBridgeWrapper.dispatchEventToNative("adapterLogin", json);
     }
 
-    isLoginAsync() {
-        native.jsbBridgeWrapper.dispatchEventToNative("isLoginAsync", "");
+    adapterVerify() {
+        const walletType = WalletType.MetaMask;
+        const message = "";
+        const signature = "";
+        const obj = { wallet_type: walletType, public_address: this.publicAddress, message: message, signature: signature };
+        const json = JSON.stringify(obj);
+        native.jsbBridgeWrapper.dispatchEventToNative("adapterVerify", json);
     }
 
-    getAddress() {
-        native.jsbBridgeWrapper.dispatchEventToNative("getAddress", "");
+    adapterSwitchEthereumChain() {
+        const walletType = WalletType.MetaMask;
+        const obj = {
+            wallet_type: walletType,
+            public_address: this.publicAddress,
+            chain_id: EvmService.currentChainInfo.chain_id;
+          };
+          const json = JSON.stringify(obj);
+
+        native.jsbBridgeWrapper.dispatchEventToNative("openAccountAndSecurity", json);
     }
 
-    getUserInfo() {
-        native.jsbBridgeWrapper.dispatchEventToNative("getUserInfo", "");
-    }
-
-    openAccountAndSecurity() {
-        native.jsbBridgeWrapper.dispatchEventToNative("openAccountAndSecurity", "");
-    }
-
-    setModalPresentStyle() {
+    adapterAddEthereumChain() {
         if (sys.OS.IOS === sys.os) {
             let style = iOSModalPresentStyle.FormSheet;
             native.jsbBridgeWrapper.dispatchEventToNative("setModalPresentStyle", style);
         }
     }
 
-    setMediumScreen() {
+    adapterWalletReadyState() {
         if (sys.OS.IOS === sys.os) {
             let isMediumScreen = true;
             native.jsbBridgeWrapper.dispatchEventToNative("setMediumScreen", isMediumScreen ? "1" : "0");
         }
     }
 
-    setLanguage() {
-        const language = Language.JA;
-        native.jsbBridgeWrapper.dispatchEventToNative("setLanguage", language);
-    }
+    reconnectIfNeeded() {
 
-    setDisplayWallet() {
-        let isDisplayWallet = true;
-        native.jsbBridgeWrapper.dispatchEventToNative("setDisplayWallet", isDisplayWallet ? "1" : "0");
     }
-
-    setInterfaceStyle() {
-        let style = UserInterfaceStyle.Light;
-        native.jsbBridgeWrapper.dispatchEventToNative("setInterfaceStyle", style);
-    }
-
-    openWebWallet() {
-        native.jsbBridgeWrapper.dispatchEventToNative("openWebWallet", "");
-    }
-
-    setSecurityAccountConfig() {
-        const obj = {
-            prompt_setting_when_sign: 1,
-            prompt_master_password_setting_when_login: 2,
-        };
-        const json = JSON.stringify(obj);
-        native.jsbBridgeWrapper.dispatchEventToNative("setSecurityAccountConfig", json);
-    }
-
+    
     update(deltaTime: number) { }
 }
 
