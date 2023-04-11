@@ -25,24 +25,43 @@ export class AuthDemo extends Component {
             this.loginCallback(json);
         });
 
+
+        native.jsbBridgeWrapper.addNativeEventListener("logoutCallback", (json: string) => {
+            this.logoutCallback(json);
+        });
+
         native.jsbBridgeWrapper.addNativeEventListener("fastLogoutCallback", (json: string) => {
             this.fastLogoutCallback(json);
         });
+
+        native.jsbBridgeWrapper.addNativeEventListener("setChainInfoCallback", (json: string) => {
+            this.setChainInfoCallback(json);
+        });
+
+        native.jsbBridgeWrapper.addNativeEventListener("setChainInfoAsyncCallback", (json: string) => {
+            this.setChainInfoAsyncCallback(json);
+        });
+
         native.jsbBridgeWrapper.addNativeEventListener("signMessageCallback", (signature: string) => {
             this.signMessageCallback(signature);
         });
+
         native.jsbBridgeWrapper.addNativeEventListener("signTypedDataCallback", (signature: string) => {
             this.signTypedDataCallback(signature);
         });
+
         native.jsbBridgeWrapper.addNativeEventListener("signAndSendTransactionCallback", (signature: string) => {
             this.signAndSendTransactionCallback(signature);
         });
+
         native.jsbBridgeWrapper.addNativeEventListener("signTransactionCallback", (signature: string) => {
             this.signTransactionCallback(signature);
         });
+
         native.jsbBridgeWrapper.addNativeEventListener("signAllTransactionsCallback", (signature: string) => {
             this.signAllTransactionsCallback(signature);
         });
+
         native.jsbBridgeWrapper.addNativeEventListener("getChainInfoCallback", (json: string) => {
             this.getChainInfoCallback(json);
         });
@@ -69,9 +88,21 @@ export class AuthDemo extends Component {
     public loginCallback(json: string): void {
         console.log("loginCallback: " + json);
     }
+    public logoutCallback(json: string): void {
+        console.log("logoutCallback: " + json);
+    }
     public fastLogoutCallback(json: string): void {
         console.log("fastLogoutCallback: " + json);
     }
+
+    public setChainInfoCallback(json: string): void {
+        console.log("setChainInfoCallback: " + json);
+    }
+
+    public setChainInfoAsyncCallback(json: string): void {
+        console.log("setChainInfoAsyncCallback: " + json);
+    }
+
     public signMessageCallback(signature: string): void {
         console.log("signMessageCallback: " + signature);
     }
@@ -164,34 +195,25 @@ export class AuthDemo extends Component {
         } else {
             if (testCase == 1) {
                 const receiver = '0x39b2DeB155Ee6a5a23E172bE11744329e95Af6df';
-                const amount = '100000';
+                const amount = '100000000';
                 transaction = await Helper.getEthereumTransacion(sender, receiver, amount);
             } else if (testCase == 2) {
                 const receiver = '0x39b2DeB155Ee6a5a23E172bE11744329e95Af6df';
-                const amount = '100000';
+                const amount = '100000000';
                 transaction = await Helper.getEthereumTransacionLegacy(sender, receiver, amount);
             } else if (testCase == 3) {
                 const receiver = '0x39b2DeB155Ee6a5a23E172bE11744329e95Af6df';
-                const amount = '100000';
-                const contractAddress = TestAccountEVM.tokenContractAddress;
+                const amount = '100000000';
+                const contractAddress = '0x326C977E6efc84E512bB9C30f76E30c160eD06FB';
                 transaction = await Helper.getEvmTokenTransaction(sender, receiver, amount, contractAddress);
             } else {
-                const receiver = TestAccountEVM.receiverAddress;
-                const amount = TestAccountEVM.amount;
-                const contractAddress = '0xeD24FC36d5Ee211Ea25A80239Fb8C4Cfd80f12Ee';
+                const receiver = '0x39b2DeB155Ee6a5a23E172bE11744329e95Af6df';
+                const amount = '100000000';
+                const contractAddress = '0x326C977E6efc84E512bB9C30f76E30c160eD06FB';
                 transaction = await Helper.getEvmTokenTransactionLegacy(sender, receiver, amount, contractAddress);
             }
         }
         console.log(transaction);
-        const result = await particleAuth.signAndSendTransaction(transaction);
-        if (result.status) {
-            const signature = result.data;
-            console.log(signature);
-        } else {
-            const error = result.data;
-            console.log(error);
-        }
-
         native.jsbBridgeWrapper.dispatchEventToNative("signAndSendTransaction", transaction);
     }
 
