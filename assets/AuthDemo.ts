@@ -81,6 +81,10 @@ export class AuthDemo extends Component {
             this.getUserInfoCallback(json);
         });
 
+        native.jsbBridgeWrapper.addNativeEventListener("setUserInfoCallback", (status: string) => {
+            this.setUserInfoCallback(status);
+        });
+
     }
 
     // Event call back
@@ -139,6 +143,9 @@ export class AuthDemo extends Component {
     public getUserInfoCallback(json: string): void {
         console.log("getUserInfoCallback: " + json);
     }
+    public setUserInfoCallback(status: string): void {
+        console.log("setUserInfoCallback: " + status);
+    }
 
 
     // Call native
@@ -148,7 +155,7 @@ export class AuthDemo extends Component {
             chain_name: chainInfo.chain_name,
             chain_id: chainInfo.chain_id,
             chain_id_name: chainInfo.chain_id_name,
-            env: "debug",
+            env: "dev",
         };
 
         const json = JSON.stringify(obj);
