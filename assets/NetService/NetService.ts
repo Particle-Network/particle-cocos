@@ -1,6 +1,6 @@
 
 import { ParticleInfo } from './ParticleInfo';
-import { Base64Convertor } from './hex-converter';
+
 
 /**
  * Makes a JSON RPC request to the given URL, with the given RPC method and params.
@@ -28,7 +28,8 @@ export async function JsonRpcRequest(
     const password = ParticleInfo.clientKey;
 
     if (username && password) {
-        const encodedAuth = Base64Convertor.base64Encode(`${username}:${password}`);
+
+        const encodedAuth = btoa(`${username}:${password}`);
         headers.Authorization = `Basic ${encodedAuth}`;
 
         fetchUrl = `${rpcUrl}${pathname}`;

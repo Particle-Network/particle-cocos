@@ -4,6 +4,7 @@ import { iOSModalPresentStyle, LoginType, SupportAuthType } from './Models/Login
 import { Language } from './Models/Language';
 import * as Helper from './Helper';
 import { UserInterfaceStyle } from './Models/UserInterfaceStyle';
+import { EvmService } from './NetService/EvmService';
 const { ccclass, property } = _decorator;
 
 @ccclass('AuthDemo')
@@ -11,9 +12,6 @@ export class AuthDemo extends Component {
 
     @property
     private publicAddress: string = '';
-
-    @property
-    private chainInfo: ChainInfo = ChainInfo.EthereumGoerli;
 
 
     start() {
@@ -75,8 +73,8 @@ export class AuthDemo extends Component {
             this.isLoginAsyncCallback(json);
         });
 
-        native.jsbBridgeWrapper.addNativeEventListener("getAddressCallback", (json: string) => {
-            this.getAddressCallback(json);
+        native.jsbBridgeWrapper.addNativeEventListener("getAddressCallback", (address: string) => {
+            this.getAddressCallback(address);
         });
 
         native.jsbBridgeWrapper.addNativeEventListener("getUserInfoCallback", (json: string) => {
@@ -133,8 +131,9 @@ export class AuthDemo extends Component {
         console.log("isLoginAsyncCallback: " + json);
     }
 
-    public getAddressCallback(json: string): void {
-        console.log("getAddressCallback: " + json);
+    public getAddressCallback(address: string): void {
+        this.publicAddress = address;
+        console.log("getAddressCallback: " + address);
     }
 
     public getUserInfoCallback(json: string): void {
@@ -144,10 +143,11 @@ export class AuthDemo extends Component {
 
     // Call native
     Init() {
+        const chainInfo = EvmService.currentChainInfo;
         const obj = {
-            chain_name: this.chainInfo.chain_name,
-            chain_id: this.chainInfo.chain_id,
-            chain_id_name: this.chainInfo.chain_id_name,
+            chain_name: chainInfo.chain_name,
+            chain_id: chainInfo.chain_id,
+            chain_id_name: chainInfo.chain_id_name,
             env: "debug",
         };
 
@@ -179,43 +179,47 @@ export class AuthDemo extends Component {
         native.jsbBridgeWrapper.dispatchEventToNative("signMessage", message);
     }
 
-   async signAndSendTransaction() {
-        const sender = this.publicAddress;
-        const chainInfo = this.chainInfo;
-        let transaction = '';
-        // There are four test cases
-        // Before test, make sure your public address have some native token for fee.
-        // 1. send evm native in Ethereum goerli, the transacion is type 0x2, for blockchains support EIP1559
-        // 2. send evm native in BSC testnet, the transacion is type 0x0, for blockchians don't supoort EIP1559
-        // 3. send evm token in Ethereum goerli, the transacion is type 0x2, for blockchains support EIP1559
-        // 4. send evm token in BSC testnet, the transacion is type 0x0, for blockchians don't supoort EIP1559
-        let testCase = 1;
+    async signAndSendTransaction() {
+        try {
+            const sender = this.publicAddress;
+            const chainInfo = EvmService.currentChainInfo;
+            let transaction = '';
+            // There are four test cases
+            // Before test, make sure your public address have some native token for fee.
+            // 1. send evm native in Ethereum goerli, the transacion is type 0x2, for blockchains support EIP1559
+            // 2. send evm native in BSC testnet, the transacion is type 0x0, for blockchians don't supoort EIP1559
+            // 3. send evm token in Ethereum goerli, the transacion is type 0x2, for blockchains support EIP1559
+            // 4. send evm token in BSC testnet, the transacion is type 0x0, for blockchians don't supoort EIP1559
+            let testCase = 1;
 
-        if (chainInfo.chain_name.toLowerCase() == 'solana') {
-            transaction = await Helper.getSolanaTransaction(sender, '9LR6zGAFB3UJcLg9tWBQJxEJCbZh2UTnSU14RBxsK1ZN', 1000);
-        } else {
-            if (testCase == 1) {
-                const receiver = '0x39b2DeB155Ee6a5a23E172bE11744329e95Af6df';
-                const amount = '100000000';
-                transaction = await Helper.getEthereumTransacion(sender, receiver, amount);
-            } else if (testCase == 2) {
-                const receiver = '0x39b2DeB155Ee6a5a23E172bE11744329e95Af6df';
-                const amount = '100000000';
-                transaction = await Helper.getEthereumTransacionLegacy(sender, receiver, amount);
-            } else if (testCase == 3) {
-                const receiver = '0x39b2DeB155Ee6a5a23E172bE11744329e95Af6df';
-                const amount = '100000000';
-                const contractAddress = '0x326C977E6efc84E512bB9C30f76E30c160eD06FB';
-                transaction = await Helper.getEvmTokenTransaction(sender, receiver, amount, contractAddress);
+            if (chainInfo.chain_name.toLowerCase() == 'solana') {
+                transaction = await Helper.getSolanaTransaction(sender, '9LR6zGAFB3UJcLg9tWBQJxEJCbZh2UTnSU14RBxsK1ZN', 1000);
             } else {
-                const receiver = '0x39b2DeB155Ee6a5a23E172bE11744329e95Af6df';
-                const amount = '100000000';
-                const contractAddress = '0x326C977E6efc84E512bB9C30f76E30c160eD06FB';
-                transaction = await Helper.getEvmTokenTransactionLegacy(sender, receiver, amount, contractAddress);
+                if (testCase == 1) {
+                    const receiver = '0x39b2DeB155Ee6a5a23E172bE11744329e95Af6df';
+                    const amount = '1000000000000000';
+                    transaction = await Helper.getEthereumTransacion(sender, receiver, amount);
+                } else if (testCase == 2) {
+                    const receiver = '0x39b2DeB155Ee6a5a23E172bE11744329e95Af6df';
+                    const amount = '1000000000000000';
+                    transaction = await Helper.getEthereumTransacionLegacy(sender, receiver, amount);
+                } else if (testCase == 3) {
+                    const receiver = '0x39b2DeB155Ee6a5a23E172bE11744329e95Af6df';
+                    const amount = '1000000000000000';
+                    const contractAddress = '0x326C977E6efc84E512bB9C30f76E30c160eD06FB';
+                    transaction = await Helper.getEvmTokenTransaction(sender, receiver, amount, contractAddress);
+                } else {
+                    const receiver = '0x39b2DeB155Ee6a5a23E172bE11744329e95Af6df';
+                    const amount = '1000000000000000';
+                    const contractAddress = '0x326C977E6efc84E512bB9C30f76E30c160eD06FB';
+                    transaction = await Helper.getEvmTokenTransactionLegacy(sender, receiver, amount, contractAddress);
+                }
             }
+            console.log(transaction);
+            native.jsbBridgeWrapper.dispatchEventToNative("signAndSendTransaction", transaction);
+        } catch (error) {
+
         }
-        console.log(transaction);
-        native.jsbBridgeWrapper.dispatchEventToNative("signAndSendTransaction", transaction);
     }
 
     signTypedData() {
@@ -241,7 +245,7 @@ export class AuthDemo extends Component {
 
     setChaininfo() {
         const chainInfo = ChainInfo.EthereumGoerli;
-
+        EvmService.currentChainInfo = chainInfo;
         const obj = {
             chain_name: chainInfo.chain_name,
             chain_id: chainInfo.chain_id,
@@ -253,7 +257,7 @@ export class AuthDemo extends Component {
 
     setChainInfoAsync() {
         const chainInfo = ChainInfo.PolygonMumbai;
-
+        EvmService.currentChainInfo = chainInfo;
         const obj = {
             chain_name: chainInfo.chain_name,
             chain_id: chainInfo.chain_id,

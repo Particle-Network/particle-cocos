@@ -1,4 +1,5 @@
 
+import { ChainInfo } from '../Models/ChainInfo';
 import { SerializeTransactionParams, SolanaReqBodyMethod } from './NetParams';
 import JsonRpcRequest from './NetService';
 import { ParticleInfo } from './ParticleInfo';
@@ -7,7 +8,7 @@ export class SolanaService {
     static async rpc(method: string, params: any) {
         const rpcUrl = 'https://rpc.particle.network/';
         const path = 'solana';
-        const chainInfo = ParticleInfo.chainInfo;
+        const chainInfo = ChainInfo.SolanaDevnet;
         const chainId = chainInfo.chain_id;
         const result = await JsonRpcRequest(rpcUrl, path, method, params, chainId);
         return result;

@@ -4,8 +4,6 @@ import BigNumber from 'bignumber.js';
 import { HexConverter } from './hex-converter';
 import { ChainInfo } from '../Models/ChainInfo';
 
-
-
 export class EvmService {
     /// current chain info
     static currentChainInfo: ChainInfo = ChainInfo.EthereumGoerli;
