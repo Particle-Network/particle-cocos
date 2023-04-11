@@ -3,6 +3,7 @@ import { ChainInfo } from './Models/ChainInfo';
 import { iOSModalPresentStyle, LoginType, SupportAuthType } from './Models/LoginInfo';
 import { Language } from './Models/Language';
 import * as Helper from './Helper';
+import { UserInterfaceStyle } from './Models/UserInterfaceStyle';
 const { ccclass, property } = _decorator;
 
 @ccclass('AuthDemo')
@@ -69,7 +70,7 @@ export class AuthDemo extends Component {
         native.jsbBridgeWrapper.addNativeEventListener("isLoginCallback", (json: string) => {
             this.isLoginCallback(json);
         });
-        
+
         native.jsbBridgeWrapper.addNativeEventListener("isLoginAsyncCallback", (json: string) => {
             this.isLoginAsyncCallback(json);
         });
@@ -81,7 +82,6 @@ export class AuthDemo extends Component {
         native.jsbBridgeWrapper.addNativeEventListener("getUserInfoCallback", (json: string) => {
             this.getUserInfoCallback(json);
         });
-
 
     }
 
@@ -223,15 +223,17 @@ export class AuthDemo extends Component {
         const version = "v4";
         const obj = { message: typedData, version: version };
         const json = JSON.stringify(obj);
-        native.jsbBridgeWrapper.dispatchEventToNative("signTypeData", json);
+        native.jsbBridgeWrapper.dispatchEventToNative("signTypedData", json);
     }
 
     signTransaction() {
+        // only support solana, not support evm
         const transaction = "";
         native.jsbBridgeWrapper.dispatchEventToNative("signTransaction", transaction);
     }
 
     signAllTransactions() {
+        // only support solana, not support evm
         const transactions = ["", ""];
         const json = JSON.stringify(transactions);
         native.jsbBridgeWrapper.dispatchEventToNative("signAllTransactions", json);
@@ -312,6 +314,11 @@ export class AuthDemo extends Component {
     setDisplayWallet() {
         let isDisplayWallet = true;
         native.jsbBridgeWrapper.dispatchEventToNative("setDisplayWallet", isDisplayWallet ? "1" : "0");
+    }
+
+    setInterfaceStyle() {
+        let style = UserInterfaceStyle.Light;
+        native.jsbBridgeWrapper.dispatchEventToNative("setDisplayWallet", style);
     }
 
     openWebWallet() {
