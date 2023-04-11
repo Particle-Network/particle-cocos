@@ -1,11 +1,20 @@
 import { _decorator, Component, native, Node, sys } from 'cc';
 import { ChainInfo } from './Models/ChainInfo';
-import { iOSModalPresentStyle } from './Models/LoginInfo';
+import { iOSModalPresentStyle, LoginType, SupportAuthType } from './Models/LoginInfo';
 import { Language } from './Models/Language';
+import * as Helper from './Helper';
 const { ccclass, property } = _decorator;
 
 @ccclass('AuthDemo')
 export class AuthDemo extends Component {
+
+    @property
+    private publicAddress: string = '';
+
+    @property
+    private chainInfo: ChainInfo = ChainInfo.EthereumGoerli;
+
+
     start() {
         this.registerAllScriptEvent();
     }
@@ -56,7 +65,7 @@ export class AuthDemo extends Component {
 
     }
 
-    //Methods to apply
+    // Event call back
     public loginCallback(json: string): void {
         console.log("loginCallback: " + json);
     }
@@ -101,23 +110,24 @@ export class AuthDemo extends Component {
     }
 
 
+    // Call native
     Init() {
         const obj = {
-            chain_name: "Ethereum",
-            chain_id: 5,
-            chain_id_name: "Goerli",
+            chain_name: this.chainInfo.chain_name,
+            chain_id: this.chainInfo.chain_id,
+            chain_id_name: this.chainInfo.chain_id_name,
             env: "debug",
         };
-        const json = JSON.stringify(obj);
 
+        const json = JSON.stringify(obj);
         native.jsbBridgeWrapper.dispatchEventToNative("initialize", json);
     }
 
     login() {
         const obj = {
-            login_type: "email",
+            login_type: LoginType.Email,
             account: "",
-            support_auth_type_values: ["all"],
+            support_auth_type_values: [SupportAuthType.All],
             login_form_mode: false,
         };
         const json = JSON.stringify(obj);
@@ -137,8 +147,51 @@ export class AuthDemo extends Component {
         native.jsbBridgeWrapper.dispatchEventToNative("signMessage", message);
     }
 
-    signAndSendTransaction() {
-        const transaction = "";
+   async signAndSendTransaction() {
+        const sender = this.publicAddress;
+        const chainInfo = this.chainInfo;
+        let transaction = '';
+        // There are four test cases
+        // Before test, make sure your public address have some native token for fee.
+        // 1. send evm native in Ethereum goerli, the transacion is type 0x2, for blockchains support EIP1559
+        // 2. send evm native in BSC testnet, the transacion is type 0x0, for blockchians don't supoort EIP1559
+        // 3. send evm token in Ethereum goerli, the transacion is type 0x2, for blockchains support EIP1559
+        // 4. send evm token in BSC testnet, the transacion is type 0x0, for blockchians don't supoort EIP1559
+        let testCase = 1;
+
+        if (chainInfo.chain_name.toLowerCase() == 'solana') {
+            transaction = await Helper.getSolanaTransaction(sender, '9LR6zGAFB3UJcLg9tWBQJxEJCbZh2UTnSU14RBxsK1ZN', 1000);
+        } else {
+            if (testCase == 1) {
+                const receiver = '0x39b2DeB155Ee6a5a23E172bE11744329e95Af6df';
+                const amount = '100000';
+                transaction = await Helper.getEthereumTransacion(sender, receiver, amount);
+            } else if (testCase == 2) {
+                const receiver = '0x39b2DeB155Ee6a5a23E172bE11744329e95Af6df';
+                const amount = '100000';
+                transaction = await Helper.getEthereumTransacionLegacy(sender, receiver, amount);
+            } else if (testCase == 3) {
+                const receiver = '0x39b2DeB155Ee6a5a23E172bE11744329e95Af6df';
+                const amount = '100000';
+                const contractAddress = TestAccountEVM.tokenContractAddress;
+                transaction = await Helper.getEvmTokenTransaction(sender, receiver, amount, contractAddress);
+            } else {
+                const receiver = TestAccountEVM.receiverAddress;
+                const amount = TestAccountEVM.amount;
+                const contractAddress = '0xeD24FC36d5Ee211Ea25A80239Fb8C4Cfd80f12Ee';
+                transaction = await Helper.getEvmTokenTransactionLegacy(sender, receiver, amount, contractAddress);
+            }
+        }
+        console.log(transaction);
+        const result = await particleAuth.signAndSendTransaction(transaction);
+        if (result.status) {
+            const signature = result.data;
+            console.log(signature);
+        } else {
+            const error = result.data;
+            console.log(error);
+        }
+
         native.jsbBridgeWrapper.dispatchEventToNative("signAndSendTransaction", transaction);
     }
 
@@ -224,7 +277,7 @@ export class AuthDemo extends Component {
     setMediumScreen() {
         if (sys.OS.IOS === sys.os) {
             let isMediumScreen = true;
-            native.jsbBridgeWrapper.dispatchEventToNative("setMediumScreen", isMediumScreen ? "1": "0");
+            native.jsbBridgeWrapper.dispatchEventToNative("setMediumScreen", isMediumScreen ? "1" : "0");
         }
     }
 
@@ -235,7 +288,7 @@ export class AuthDemo extends Component {
 
     setDisplayWallet() {
         let isDisplayWallet = true;
-        native.jsbBridgeWrapper.dispatchEventToNative("setDisplayWallet", isDisplayWallet ? "1": "0");
+        native.jsbBridgeWrapper.dispatchEventToNative("setDisplayWallet", isDisplayWallet ? "1" : "0");
     }
 
     openWebWallet() {
