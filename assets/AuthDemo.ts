@@ -69,6 +69,7 @@ export class AuthDemo extends Component {
         native.jsbBridgeWrapper.addNativeEventListener("isLoginCallback", (json: string) => {
             this.isLoginCallback(json);
         });
+        
         native.jsbBridgeWrapper.addNativeEventListener("isLoginAsyncCallback", (json: string) => {
             this.isLoginAsyncCallback(json);
         });
