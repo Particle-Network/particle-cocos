@@ -331,7 +331,7 @@ export class ConnectDemo extends Component {
         const obj = {
             wallet_type: walletType,
             public_address: this.publicAddress,
-            chain_id: EvmService.currentChainInfo.chain_id;
+            chain_id: EvmService.currentChainInfo.chain_id
           };
           const json = JSON.stringify(obj);
 
