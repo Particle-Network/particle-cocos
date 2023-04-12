@@ -1,6 +1,5 @@
 //
 //  ParticleAuthPlugin.swift
-//  ParticleAuthExample
 //
 //  Created by link on 2022/9/28.
 //
@@ -11,7 +10,7 @@ import ParticleNetworkBase
 import RxSwift
 import SwiftyJSON
 
-public typealias RCTResponseSenderBlock = ([String]) -> Void
+public typealias CocosResponseCallbackBlock = ([String]) -> Void
 
 @objc(ParticleAuthSchemeManager)
 public class ParticleAuthSchemeManager: NSObject {
@@ -50,7 +49,7 @@ public class ParticleAuthPlugin: NSObject {
     }
     
     @objc
-    public func setChainInfo(_ json: String, callback: @escaping RCTResponseSenderBlock) {
+    public func setChainInfo(_ json: String, callback: @escaping CocosResponseCallbackBlock) {
         let data = JSON(parseJSON: json)
         let name = data["chain_name"].stringValue.lowercased()
         let chainId = data["chain_id"].intValue
@@ -63,7 +62,7 @@ public class ParticleAuthPlugin: NSObject {
     }
     
     @objc
-    public func setChainInfoAsync(_ json: String, callback: @escaping RCTResponseSenderBlock) {
+    public func setChainInfoAsync(_ json: String, callback: @escaping CocosResponseCallbackBlock) {
         let data = JSON(parseJSON: json)
         let name = data["chain_name"].stringValue.lowercased()
         let chainId = data["chain_id"].intValue
@@ -82,13 +81,13 @@ public class ParticleAuthPlugin: NSObject {
             switch result {
             case .failure(let error):
                 let response = self.ResponseFromError(error)
-                let statusModel = ReactStatusModel(status: false, data: response)
+                let statusModel = CocosStatusModel(status: false, data: response)
                 let data = try! JSONEncoder().encode(statusModel)
                 guard let json = String(data: data, encoding: .utf8) else { return }
                 callback(["1"])
             case .success(let userInfo):
                 guard let userInfo = userInfo else { return }
-                let statusModel = ReactStatusModel(status: true, data: userInfo)
+                let statusModel = CocosStatusModel(status: true, data: userInfo)
                 let data = try! JSONEncoder().encode(statusModel)
                 guard let json = String(data: data, encoding: .utf8) else { return }
                 callback(["1"])
@@ -97,7 +96,7 @@ public class ParticleAuthPlugin: NSObject {
     }
     
     @objc
-    public func getChainInfo(_ callback: @escaping RCTResponseSenderBlock) {
+    public func getChainInfo(_ callback: @escaping CocosResponseCallbackBlock) {
         let chainInfo = ParticleNetwork.getChainInfo()
         
         let jsonString = ["chain_name": chainInfo.name, "chain_id": chainInfo.chainId, "chain_id_name": chainInfo.network].jsonString() ?? ""
@@ -106,7 +105,7 @@ public class ParticleAuthPlugin: NSObject {
     }
     
     @objc
-    public func login(_ json: String, callback: @escaping RCTResponseSenderBlock) {
+    public func login(_ json: String, callback: @escaping CocosResponseCallbackBlock) {
         let data = JSON(parseJSON: json)
         let type = data["login_type"].stringValue.lowercased()
         let account = data["account"].string
@@ -160,13 +159,13 @@ public class ParticleAuthPlugin: NSObject {
             switch result {
             case .failure(let error):
                 let response = self.ResponseFromError(error)
-                let statusModel = ReactStatusModel(status: false, data: response)
+                let statusModel = CocosStatusModel(status: false, data: response)
                 let data = try! JSONEncoder().encode(statusModel)
                 guard let json = String(data: data, encoding: .utf8) else { return }
                 callback([json])
             case .success(let userInfo):
                 guard let userInfo = userInfo else { return }
-                let statusModel = ReactStatusModel(status: true, data: userInfo)
+                let statusModel = CocosStatusModel(status: true, data: userInfo)
                 let data = try! JSONEncoder().encode(statusModel)
                 guard let json = String(data: data, encoding: .utf8) else { return }
                 callback([json])
@@ -175,7 +174,7 @@ public class ParticleAuthPlugin: NSObject {
     }
     
     @objc
-    public func setUserInfo(_ json: String, callback: @escaping RCTResponseSenderBlock) {
+    public func setUserInfo(_ json: String, callback: @escaping CocosResponseCallbackBlock) {
         ParticleAuthService.setUserInfo(json: json).subscribe { [weak self] result in
             guard let self = self else { return }
             switch result {
@@ -196,18 +195,18 @@ public class ParticleAuthPlugin: NSObject {
     }
     
     @objc
-    public func logout(_ callback: @escaping RCTResponseSenderBlock) {
+    public func logout(_ callback: @escaping CocosResponseCallbackBlock) {
         ParticleAuthService.logout().subscribe { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .failure(let error):
                 let response = self.ResponseFromError(error)
-                let statusModel = ReactStatusModel(status: false, data: response)
+                let statusModel = CocosStatusModel(status: false, data: response)
                 let data = try! JSONEncoder().encode(statusModel)
                 guard let json = String(data: data, encoding: .utf8) else { return }
                 callback([json])
             case .success(let success):
-                let statusModel = ReactStatusModel(status: true, data: success)
+                let statusModel = CocosStatusModel(status: true, data: success)
                 let data = try! JSONEncoder().encode(statusModel)
                 guard let json = String(data: data, encoding: .utf8) else { return }
                 callback([json])
@@ -216,18 +215,18 @@ public class ParticleAuthPlugin: NSObject {
     }
 
     @objc
-    public func fastLogout(_ callback: @escaping RCTResponseSenderBlock) {
+    public func fastLogout(_ callback: @escaping CocosResponseCallbackBlock) {
         ParticleAuthService.fastLogout().subscribe { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .failure(let error):
                 let response = self.ResponseFromError(error)
-                let statusModel = ReactStatusModel(status: false, data: response)
+                let statusModel = CocosStatusModel(status: false, data: response)
                 let data = try! JSONEncoder().encode(statusModel)
                 guard let json = String(data: data, encoding: .utf8) else { return }
                 callback([json])
             case .success(let success):
-                let statusModel = ReactStatusModel(status: true, data: success)
+                let statusModel = CocosStatusModel(status: true, data: success)
                 let data = try! JSONEncoder().encode(statusModel)
                 guard let json = String(data: data, encoding: .utf8) else { return }
                 callback([json])
@@ -236,23 +235,23 @@ public class ParticleAuthPlugin: NSObject {
     }
     
     @objc
-    public func isLogin(_ callback: RCTResponseSenderBlock) {
+    public func isLogin(_ callback: CocosResponseCallbackBlock) {
         callback([ParticleAuthService.isLogin() == true ? "1" : "0"])
     }
     
     @objc
-    public func isLoginAsync(_ callback: @escaping RCTResponseSenderBlock) {
+    public func isLoginAsync(_ callback: @escaping CocosResponseCallbackBlock) {
         ParticleAuthService.isLoginAsync().subscribe { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .failure(let error):
                 let response = self.ResponseFromError(error)
-                let statusModel = ReactStatusModel(status: false, data: response)
+                let statusModel = CocosStatusModel(status: false, data: response)
                 let data = try! JSONEncoder().encode(statusModel)
                 guard let json = String(data: data, encoding: .utf8) else { return }
                 callback([json])
             case .success(let userInfo):
-                let statusModel = ReactStatusModel(status: true, data: userInfo)
+                let statusModel = CocosStatusModel(status: true, data: userInfo)
                 let data = try! JSONEncoder().encode(statusModel)
                 guard let json = String(data: data, encoding: .utf8) else { return }
                 callback([json])
@@ -261,7 +260,7 @@ public class ParticleAuthPlugin: NSObject {
     }
     
     @objc
-    public func signMessage(_ message: String, callback: @escaping RCTResponseSenderBlock) {
+    public func signMessage(_ message: String, callback: @escaping CocosResponseCallbackBlock) {
         var serializedMessage = ""
         switch ParticleNetwork.getChainInfo().chain {
         case .solana:
@@ -275,12 +274,12 @@ public class ParticleAuthPlugin: NSObject {
             switch result {
             case .failure(let error):
                 let response = self.ResponseFromError(error)
-                let statusModel = ReactStatusModel(status: false, data: response)
+                let statusModel = CocosStatusModel(status: false, data: response)
                 let data = try! JSONEncoder().encode(statusModel)
                 guard let json = String(data: data, encoding: .utf8) else { return }
                 callback([json])
             case .success(let signedMessage):
-                let statusModel = ReactStatusModel(status: true, data: signedMessage)
+                let statusModel = CocosStatusModel(status: true, data: signedMessage)
                 let data = try! JSONEncoder().encode(statusModel)
                 guard let json = String(data: data, encoding: .utf8) else { return }
                 callback([json])
@@ -289,18 +288,18 @@ public class ParticleAuthPlugin: NSObject {
     }
     
     @objc
-    public func signTransaction(_ transaction: String, callback: @escaping RCTResponseSenderBlock) {
+    public func signTransaction(_ transaction: String, callback: @escaping CocosResponseCallbackBlock) {
         ParticleAuthService.signTransaction(transaction).subscribe { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .failure(let error):
                 let response = self.ResponseFromError(error)
-                let statusModel = ReactStatusModel(status: false, data: response)
+                let statusModel = CocosStatusModel(status: false, data: response)
                 let data = try! JSONEncoder().encode(statusModel)
                 guard let json = String(data: data, encoding: .utf8) else { return }
                 callback([json])
             case .success(let signed):
-                let statusModel = ReactStatusModel(status: true, data: signed)
+                let statusModel = CocosStatusModel(status: true, data: signed)
                 let data = try! JSONEncoder().encode(statusModel)
                 guard let json = String(data: data, encoding: .utf8) else { return }
                 callback([json])
@@ -309,19 +308,19 @@ public class ParticleAuthPlugin: NSObject {
     }
     
     @objc
-    public func signAllTransactions(_ transactions: String, callback: @escaping RCTResponseSenderBlock) {
+    public func signAllTransactions(_ transactions: String, callback: @escaping CocosResponseCallbackBlock) {
         let transactions = JSON(parseJSON: transactions).arrayValue.map { $0.stringValue }
         ParticleAuthService.signAllTransactions(transactions).subscribe { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .failure(let error):
                 let response = self.ResponseFromError(error)
-                let statusModel = ReactStatusModel(status: false, data: response)
+                let statusModel = CocosStatusModel(status: false, data: response)
                 let data = try! JSONEncoder().encode(statusModel)
                 guard let json = String(data: data, encoding: .utf8) else { return }
                 callback([json])
             case .success(let signedMessage):
-                let statusModel = ReactStatusModel(status: true, data: signedMessage)
+                let statusModel = CocosStatusModel(status: true, data: signedMessage)
                 let data = try! JSONEncoder().encode(statusModel)
                 guard let json = String(data: data, encoding: .utf8) else { return }
                 callback([json])
@@ -330,18 +329,18 @@ public class ParticleAuthPlugin: NSObject {
     }
     
     @objc
-    public func signAndSendTransaction(_ message: String, callback: @escaping RCTResponseSenderBlock) {
+    public func signAndSendTransaction(_ message: String, callback: @escaping CocosResponseCallbackBlock) {
         ParticleAuthService.signAndSendTransaction(message).subscribe { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .failure(let error):
                 let response = self.ResponseFromError(error)
-                let statusModel = ReactStatusModel(status: false, data: response)
+                let statusModel = CocosStatusModel(status: false, data: response)
                 let data = try! JSONEncoder().encode(statusModel)
                 guard let json = String(data: data, encoding: .utf8) else { return }
                 callback([json])
             case .success(let signature):
-                let statusModel = ReactStatusModel(status: true, data: signature)
+                let statusModel = CocosStatusModel(status: true, data: signature)
                 let data = try! JSONEncoder().encode(statusModel)
                 guard let json = String(data: data, encoding: .utf8) else { return }
                 callback([json])
@@ -350,7 +349,7 @@ public class ParticleAuthPlugin: NSObject {
     }
     
     @objc
-    public func signTypedData(_ json: String, callback: @escaping RCTResponseSenderBlock) {
+    public func signTypedData(_ json: String, callback: @escaping CocosResponseCallbackBlock) {
         let data = JSON(parseJSON: json)
         let message = data["message"].stringValue
         let version = data["version"].stringValue.lowercased()
@@ -362,12 +361,12 @@ public class ParticleAuthPlugin: NSObject {
             switch result {
             case .failure(let error):
                 let response = self.ResponseFromError(error)
-                let statusModel = ReactStatusModel(status: false, data: response)
+                let statusModel = CocosStatusModel(status: false, data: response)
                 let data = try! JSONEncoder().encode(statusModel)
                 guard let json = String(data: data, encoding: .utf8) else { return }
                 callback([json])
             case .success(let signedMessage):
-                let statusModel = ReactStatusModel(status: true, data: signedMessage)
+                let statusModel = CocosStatusModel(status: true, data: signedMessage)
                 let data = try! JSONEncoder().encode(statusModel)
                 guard let json = String(data: data, encoding: .utf8) else { return }
                 callback([json])
@@ -376,12 +375,12 @@ public class ParticleAuthPlugin: NSObject {
     }
     
     @objc
-    public func getAddress(_ callback: RCTResponseSenderBlock) {
+    public func getAddress(_ callback: CocosResponseCallbackBlock) {
         callback([ParticleAuthService.getAddress()])
     }
     
     @objc
-    public func getUserInfo(_ callback: RCTResponseSenderBlock) {
+    public func getUserInfo(_ callback: CocosResponseCallbackBlock) {
         guard let userInfo = ParticleAuthService.getUserInfo() else {
             callback([""])
             return
@@ -452,13 +451,13 @@ public class ParticleAuthPlugin: NSObject {
         }
     }
     
-    @objc func openAccountAndSecurity(callback: @escaping RCTResponseSenderBlock) {
+    @objc func openAccountAndSecurity(callback: @escaping CocosResponseCallbackBlock) {
         ParticleAuthService.openAccountAndSecurity().subscribe { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .failure(let error):
                 let response = self.ResponseFromError(error)
-                let statusModel = ReactStatusModel(status: false, data: response)
+                let statusModel = CocosStatusModel(status: false, data: response)
                 let data = try! JSONEncoder().encode(statusModel)
                 guard let json = String(data: data, encoding: .utf8) else { return }
                 callback([json])

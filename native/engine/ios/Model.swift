@@ -25,7 +25,7 @@ public extension NSObject {
             } else if chainId == 5 {
                 chainInfo = .ethereum(.goerli)
             } else if chainId == 11155111 {
-                chainInfo = .ethereum(.sepl)
+                chainInfo = .ethereum(.sepolia)
             }
         } else if name == "bsc" {
             if chainId == 56 {
@@ -268,27 +268,27 @@ public extension NSObject {
         return chain
     }
 
-    func ResponseFromError(_ error: Error) -> ReactResponseError {
+    func ResponseFromError(_ error: Error) -> CocosResponseError {
         if let responseError = error as? ParticleNetwork.ResponseError {
-            return ReactResponseError(code: responseError.code, message: responseError.message ?? "", data: responseError.data)
+            return CocosResponseError(code: responseError.code, message: responseError.message ?? "", data: responseError.data)
         } else {
-            return ReactResponseError(code: nil, message: String(describing: error), data: nil)
+            return CocosResponseError(code: nil, message: String(describing: error), data: nil)
         }
     }
 }
 
-public struct ReactResponseError: Codable {
+public struct CocosResponseError: Codable {
     let code: Int?
     let message: String?
     let data: String?
 }
 
-public struct ReactStatusModel<T: Codable>: Codable {
+public struct CocosStatusModel<T: Codable>: Codable {
     let status: Bool
     let data: T
 }
 
-public struct ReactConnectLoginResult: Codable {
+public struct CocosConnectLoginResult: Codable {
     let message: String
     let signature: String
 }

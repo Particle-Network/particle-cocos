@@ -24,7 +24,7 @@ extension String {
     init(base58Encoding bytes: Data, alphabet: [UInt8] = Base58String.btcAlphabet) {
         var x = BigUInt(bytes)
         let radix = BigUInt(alphabet.count)
-        
+
         var answer = [UInt8]()
         answer.reserveCapacity(bytes.count)
 
@@ -57,11 +57,10 @@ extension Data {
                 return nil
             }
         }
-        
+
         let bytes = answer.serialize()
         let leadingOnes = byteString.prefix(while: { value in value == alphabet[0] })
         let leadingZeros: [UInt8] = Array(repeating: 0, count: leadingOnes.count)
         self = leadingZeros + bytes
     }
 }
-
