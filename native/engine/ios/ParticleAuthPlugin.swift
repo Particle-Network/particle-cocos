@@ -11,6 +11,15 @@ import ParticleNetworkBase
 import RxSwift
 import SwiftyJSON
 
+public typealias RCTResponseSenderBlock = ([String]) -> Void
+
+@objc(ParticleAuthSchemeManager)
+public class ParticleAuthSchemeManager: NSObject {
+    static func handleUrl(url: URL) -> Bool {
+        return ParticleAuthService.handleUrl(url)
+    }
+}
+
 @objc(ParticleAuthPlugin)
 public class ParticleAuthPlugin: NSObject {
     let bag = DisposeBag()

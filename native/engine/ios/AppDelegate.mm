@@ -33,7 +33,7 @@
 #include "platform/ios/IOSPlatform.h"
 #import "platform/ios/AppDelegateBridge.h"
 #import "service/SDKWrapper.h"
-#import "ParticleAuthSchemeManager.h"
+#import "ParticleCocosDemo_mobile-Swift.h"
 
 @implementation AppDelegate
 @synthesize window;
