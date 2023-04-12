@@ -19,6 +19,9 @@ export class ConnectDemo extends Component {
     @property 
     private signInWithEthreumSignature: string = '';
 
+    hidden(){
+        this.node.active = false;
+    }
 
     /**
      * This is an Ethereum mnemonic phrase for testing purposes only.

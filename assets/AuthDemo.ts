@@ -16,6 +16,9 @@ export class AuthDemo extends Component {
     start() {
         this._registerAllScriptEvent();
     }
+    hidden(){
+        this.node.active = false;
+    }
 
     private _registerAllScriptEvent() {
 
