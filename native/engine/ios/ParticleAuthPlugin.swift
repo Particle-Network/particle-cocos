@@ -14,7 +14,7 @@ public typealias CocosResponseCallbackBlock = ([String]) -> Void
 
 @objc(ParticleAuthSchemeManager)
 public class ParticleAuthSchemeManager: NSObject {
-    static func handleUrl(url: URL) -> Bool {
+    @objc static func handleUrl(_ url: URL) -> Bool {
         return ParticleAuthService.handleUrl(url)
     }
 }

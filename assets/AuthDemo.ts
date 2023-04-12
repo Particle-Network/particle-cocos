@@ -5,6 +5,7 @@ import { Language } from './Models/Language';
 import * as Helper from './Helper';
 import { UserInterfaceStyle } from './Models/UserInterfaceStyle';
 import { EvmService } from './NetService/EvmService';
+
 const { ccclass, property } = _decorator;
 
 @ccclass('AuthDemo')

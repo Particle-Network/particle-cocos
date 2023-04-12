@@ -1,30 +1,34 @@
-import { _decorator, Component, Node } from 'cc';
+import { _decorator, Button, CCObject, Component, Node, Sprite, UIOpacity } from 'cc';
 import { AuthDemo } from './AuthDemo';
 const { ccclass, property } = _decorator;
 
 @ccclass('MainUIDemo')
 export class MainUIDemo extends Component {
 
-    @property({ type: Node })
-    private authDemo = null;
+    @property (Sprite) 
+    public icon : Sprite | undefined;
 
-    @property({ type: Node })
-    private connectDemo = null;
+    @property (Button) 
+    private authButton : Button | undefined;
 
-    @property({ type: Node })
-    private walletDemo = null;
+    @property (Node)
+    private authDemo : Node | undefined;
 
     start() {
         console.log("MainUIDemo start");
-        this.authDemo.active = false;
-   
+
     }
 
     update(deltaTime: number) {
         
     }
+
     showAuthDemo(){
-        this.authDemo.active = true;
+        console.log('show auth demo');
+        this.authDemo!.active = true;
+        this.icon!.node.active = false;
+        this.authButton!.node.active = false;
+
     }
 }
 

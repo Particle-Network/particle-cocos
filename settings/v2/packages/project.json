@@ -4,6 +4,7 @@
     "designResolution": {
       "width": 1080,
       "height": 2333
-    }
+    },
+    "renderPipeline": "fd8ec536-a354-4a17-9c74-4f3883c378c8"
   }
 }
