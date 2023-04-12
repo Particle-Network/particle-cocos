@@ -1,4 +1,4 @@
-import { _decorator, Component, native, Node, sys } from 'cc';
+import { _decorator, Component, native, sys } from 'cc';
 import { ChainInfo } from './Models/ChainInfo';
 import { iOSModalPresentStyle, LoginType, SupportAuthType } from './Models/LoginInfo';
 import { Language } from './Models/Language';
@@ -14,135 +14,135 @@ export class AuthDemo extends Component {
     private publicAddress: string = '';
 
     start() {
-        this.registerAllScriptEvent();
+        this._registerAllScriptEvent();
     }
 
-    public registerAllScriptEvent() {
+    private _registerAllScriptEvent() {
 
         native.jsbBridgeWrapper.addNativeEventListener("loginCallback", (json: string) => {
-            this.loginCallback(json);
+            this._loginCallback(json);
         });
 
 
         native.jsbBridgeWrapper.addNativeEventListener("logoutCallback", (json: string) => {
-            this.logoutCallback(json);
+            this._logoutCallback(json);
         });
 
         native.jsbBridgeWrapper.addNativeEventListener("fastLogoutCallback", (json: string) => {
-            this.fastLogoutCallback(json);
+            this._fastLogoutCallback(json);
         });
 
         native.jsbBridgeWrapper.addNativeEventListener("setChainInfoCallback", (json: string) => {
-            this.setChainInfoCallback(json);
+            this._setChainInfoCallback(json);
         });
 
         native.jsbBridgeWrapper.addNativeEventListener("setChainInfoAsyncCallback", (json: string) => {
-            this.setChainInfoAsyncCallback(json);
+            this._setChainInfoAsyncCallback(json);
         });
 
         native.jsbBridgeWrapper.addNativeEventListener("signMessageCallback", (signature: string) => {
-            this.signMessageCallback(signature);
+            this._signMessageCallback(signature);
         });
 
         native.jsbBridgeWrapper.addNativeEventListener("signTypedDataCallback", (signature: string) => {
-            this.signTypedDataCallback(signature);
+            this._signTypedDataCallback(signature);
         });
 
         native.jsbBridgeWrapper.addNativeEventListener("signAndSendTransactionCallback", (signature: string) => {
-            this.signAndSendTransactionCallback(signature);
+            this._signAndSendTransactionCallback(signature);
         });
 
         native.jsbBridgeWrapper.addNativeEventListener("signTransactionCallback", (signature: string) => {
-            this.signTransactionCallback(signature);
+            this._signTransactionCallback(signature);
         });
 
         native.jsbBridgeWrapper.addNativeEventListener("signAllTransactionsCallback", (signature: string) => {
-            this.signAllTransactionsCallback(signature);
+            this._signAllTransactionsCallback(signature);
         });
 
         native.jsbBridgeWrapper.addNativeEventListener("getChainInfoCallback", (json: string) => {
-            this.getChainInfoCallback(json);
+            this._getChainInfoCallback(json);
         });
 
         native.jsbBridgeWrapper.addNativeEventListener("isLoginCallback", (json: string) => {
-            this.isLoginCallback(json);
+            this._isLoginCallback(json);
         });
 
         native.jsbBridgeWrapper.addNativeEventListener("isLoginAsyncCallback", (json: string) => {
-            this.isLoginAsyncCallback(json);
+            this._isLoginAsyncCallback(json);
         });
 
         native.jsbBridgeWrapper.addNativeEventListener("getAddressCallback", (address: string) => {
-            this.getAddressCallback(address);
+            this._getAddressCallback(address);
         });
 
         native.jsbBridgeWrapper.addNativeEventListener("getUserInfoCallback", (json: string) => {
-            this.getUserInfoCallback(json);
+            this._getUserInfoCallback(json);
         });
 
         native.jsbBridgeWrapper.addNativeEventListener("setUserInfoCallback", (status: string) => {
-            this.setUserInfoCallback(status);
+            this._setUserInfoCallback(status);
         });
 
     }
 
     // Event call back
-    public loginCallback(json: string): void {
+    private _loginCallback(json: string): void {
         console.log("loginCallback: " + json);
     }
-    public logoutCallback(json: string): void {
+    private _logoutCallback(json: string): void {
         console.log("logoutCallback: " + json);
     }
-    public fastLogoutCallback(json: string): void {
+    private _fastLogoutCallback(json: string): void {
         console.log("fastLogoutCallback: " + json);
     }
 
-    public setChainInfoCallback(json: string): void {
+    private _setChainInfoCallback(json: string): void {
         console.log("setChainInfoCallback: " + json);
     }
 
-    public setChainInfoAsyncCallback(json: string): void {
+    private _setChainInfoAsyncCallback(json: string): void {
         console.log("setChainInfoAsyncCallback: " + json);
     }
 
-    public signMessageCallback(signature: string): void {
+    private _signMessageCallback(signature: string): void {
         console.log("signMessageCallback: " + signature);
     }
 
-    public signTypedDataCallback(signature: string): void {
+    private _signTypedDataCallback(signature: string): void {
         console.log("signTypedDataCallback: " + signature);
     }
 
-    public signAndSendTransactionCallback(signature: string): void {
+    private _signAndSendTransactionCallback(signature: string): void {
         console.log("signAndSendTransactionCallback: " + signature);
     }
-    public signTransactionCallback(signature: string): void {
+    private _signTransactionCallback(signature: string): void {
         console.log("signTransactionCallback: " + signature);
     }
-    public signAllTransactionsCallback(signature: string): void {
+    private _signAllTransactionsCallback(signature: string): void {
         console.log("signAllTransactionsCallback: " + signature);
     }
-    public getChainInfoCallback(json: string): void {
+    private _getChainInfoCallback(json: string): void {
         console.log("getChainInfoCallback: " + json);
     }
 
-    public isLoginCallback(json: string): void {
+    private _isLoginCallback(json: string): void {
         console.log("isLoginCallback: " + json);
     }
 
-    public isLoginAsyncCallback(json: string): void {
+    private _isLoginAsyncCallback(json: string): void {
         console.log("isLoginAsyncCallback: " + json);
     }
 
-    public getAddressCallback(address: string): void {
+    private _getAddressCallback(address: string): void {
         this.publicAddress = address;
         console.log("getAddressCallback: " + address);
     }
 
-    public getUserInfoCallback(json: string): void {
+    private _getUserInfoCallback(json: string): void {
         console.log("getUserInfoCallback: " + json);
     }
-    public setUserInfoCallback(status: string): void {
+    private _setUserInfoCallback(status: string): void {
         console.log("setUserInfoCallback: " + status);
     }
 

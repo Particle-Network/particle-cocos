@@ -1,13 +1,10 @@
-import { _decorator, Component, native, Node, sys } from 'cc';
-import { ChainInfo } from './Models/ChainInfo';
-import { Env, iOSModalPresentStyle, LoginType, SupportAuthType } from './Models/LoginInfo';
-import { Language } from './Models/Language';
+import { _decorator, Component, native, sys } from 'cc';
+import { Env, LoginType, SupportAuthType } from './Models/LoginInfo';
 import * as Helper from './Helper';
-import { UserInterfaceStyle } from './Models/UserInterfaceStyle';
 import { EvmService } from './NetService/EvmService';
-import { DappMetaData } from './Models/DappMetaData';
 import { WalletType } from './Models/WalletType';
 import { ParticleConnectConfig } from './Models/ConnectConfig';
+import JsonRpcRequest from './NetService/NetService';
 const { ccclass, property } = _decorator;
 
 @ccclass('ConnectDemo')
@@ -16,135 +13,217 @@ export class ConnectDemo extends Component {
     @property
     private publicAddress: string = '';
 
+
+    @property
+    private signInWithEthereumSourceMessage: string = '';
+    @property 
+    private signInWithEthreumSignature: string = '';
+
+
+    /**
+     * This is an Ethereum mnemonic phrase for testing purposes only.
+     */
+    @property 
+    private testMnemonic: string = "hood result social fetch pet code check yard school jealous trick lazy";
+
+    /**
+     * This is an Ethereum private key for testing purposes only.
+     */
+    @property
+    private testPrivateKey: string = "eacd18277e3cfca6446801b7587c9d787d5ee5d93f6a38752f7d94eddadc469e";
+
     start() {
-        this.registerAllScriptEvent();
+        this._registerAllScriptEvent();
     }
 
-    public registerAllScriptEvent() {
+    private _registerAllScriptEvent() {
 
-        native.jsbBridgeWrapper.addNativeEventListener("loginCallback", (json: string) => {
-            this.loginCallback(json);
+        native.jsbBridgeWrapper.addNativeEventListener("adapterConnectCallback", (json: string) => {
+            this._adapterConnectCallback(json);
         });
 
 
-        native.jsbBridgeWrapper.addNativeEventListener("logoutCallback", (json: string) => {
-            this.logoutCallback(json);
+        native.jsbBridgeWrapper.addNativeEventListener("adapterConnectParticleWithConfigCallback", (json: string) => {
+            this._adapterConnectParticleWithConfigCallback(json);
         });
 
-        native.jsbBridgeWrapper.addNativeEventListener("fastLogoutCallback", (json: string) => {
-            this.fastLogoutCallback(json);
+        native.jsbBridgeWrapper.addNativeEventListener("adapterDisconnectCallback", (json: string) => {
+            this._adapterDisconnectCallback(json);
         });
 
-        native.jsbBridgeWrapper.addNativeEventListener("setChainInfoCallback", (json: string) => {
-            this.setChainInfoCallback(json);
+        native.jsbBridgeWrapper.addNativeEventListener("adapterIsConnectedCallback", (json: string) => {
+            this._adapterIsConnectedCallback(json);
         });
 
-        native.jsbBridgeWrapper.addNativeEventListener("setChainInfoAsyncCallback", (json: string) => {
-            this.setChainInfoAsyncCallback(json);
+
+        native.jsbBridgeWrapper.addNativeEventListener("adapterSignMessageCallback", (signature: string) => {
+            this._adapterSignMessageCallback(signature);
         });
 
-        native.jsbBridgeWrapper.addNativeEventListener("signMessageCallback", (signature: string) => {
-            this.signMessageCallback(signature);
+        native.jsbBridgeWrapper.addNativeEventListener("adapterSignAndSendTransactionCallback", (signature: string) => {
+            this._adapterSignAndSendTransactionCallback(signature);
         });
 
-        native.jsbBridgeWrapper.addNativeEventListener("signTypedDataCallback", (signature: string) => {
-            this.signTypedDataCallback(signature);
+        native.jsbBridgeWrapper.addNativeEventListener("adapterSignTypedDataCallback", (signature: string) => {
+            this._adapterSignTypedDataCallback(signature);
         });
 
-        native.jsbBridgeWrapper.addNativeEventListener("signAndSendTransactionCallback", (signature: string) => {
-            this.signAndSendTransactionCallback(signature);
+        native.jsbBridgeWrapper.addNativeEventListener("adapterSignTransactionCallback", (signature: string) => {
+            this._adapterSignTransactionCallback(signature);
         });
 
-        native.jsbBridgeWrapper.addNativeEventListener("signTransactionCallback", (signature: string) => {
-            this.signTransactionCallback(signature);
+        native.jsbBridgeWrapper.addNativeEventListener("adapterSignAllTransactionsCallback", (signature: string) => {
+            this._adapterSignAllTransactionsCallback(signature);
         });
 
-        native.jsbBridgeWrapper.addNativeEventListener("signAllTransactionsCallback", (signature: string) => {
-            this.signAllTransactionsCallback(signature);
+        native.jsbBridgeWrapper.addNativeEventListener("adapterImportWalletFromPrivateKeyCallback", (json: string) => {
+            this._adapterImportWalletFromPrivateKeyCallback(json);
         });
 
-        native.jsbBridgeWrapper.addNativeEventListener("getChainInfoCallback", (json: string) => {
-            this.getChainInfoCallback(json);
+        native.jsbBridgeWrapper.addNativeEventListener("adapterImportWalletFromMnemonicCallback", (json: string) => {
+            this._adapterImportWalletFromMnemonicCallback(json);
         });
 
-        native.jsbBridgeWrapper.addNativeEventListener("isLoginCallback", (json: string) => {
-            this.isLoginCallback(json);
+        native.jsbBridgeWrapper.addNativeEventListener("adapterSignInWithEthereumCallback", (json: string) => {
+            this._adapterSignInWithEthereumCallback(json);
         });
 
-        native.jsbBridgeWrapper.addNativeEventListener("isLoginAsyncCallback", (json: string) => {
-            this.isLoginAsyncCallback(json);
+        native.jsbBridgeWrapper.addNativeEventListener("adapterVerifyCallback", (json: string) => {
+            this._adapterVerifyCallback(json);
         });
 
-        native.jsbBridgeWrapper.addNativeEventListener("getAddressCallback", (address: string) => {
-            this.getAddressCallback(address);
+        native.jsbBridgeWrapper.addNativeEventListener("adapterSwitchEthereumChainCallback", (json: string) => {
+            this._adapterSwitchEthereumChainCallback(json);
         });
 
-        native.jsbBridgeWrapper.addNativeEventListener("getUserInfoCallback", (json: string) => {
-            this.getUserInfoCallback(json);
+        native.jsbBridgeWrapper.addNativeEventListener("adapterAddEthereumChainCallback", (json: string) => {
+            this._adapterAddEthereumChainCallback(json);
+        });
+
+        native.jsbBridgeWrapper.addNativeEventListener("adapterWalletReadyStateCallback", (json: string) => {
+            this._adapterWalletReadyStateCallback(json);
+        });
+
+        native.jsbBridgeWrapper.addNativeEventListener("adapterWalletReadyStateCallback", (json: string) => {
+            this._adapterWalletReadyStateCallback(json);
         });
 
     }
 
     // Event call back
-    public loginCallback(json: string): void {
-        console.log("loginCallback: " + json);
-    }
-    public logoutCallback(json: string): void {
-        console.log("logoutCallback: " + json);
-    }
-    public fastLogoutCallback(json: string): void {
-        console.log("fastLogoutCallback: " + json);
+    private _adapterConnectCallback(json: string): void {
+
+        console.log("adapterConnectCallback: " + json);
+
+        let result = JSON.parse(json);
+        if (result.status) {
+            console.log('connect success');
+            const account = result.data;
+            this.publicAddress = account.publicAddress;
+    
+        } else {
+            console.log('connect failure');
+            const error = result.data;
+            console.log(error);
+        }
     }
 
-    public setChainInfoCallback(json: string): void {
-        console.log("setChainInfoCallback: " + json);
+    private _adapterConnectParticleWithConfigCallback(json: string): void {
+        console.log("adapterConnectParticleWithConfigCallback: " + json);
+
+        let result = JSON.parse(json);
+        if (result.status) {
+            console.log('connect success');
+            const account = result.data;
+            this.publicAddress = account.publicAddress;
+    
+        } else {
+            console.log('connect failure');
+            const error = result.data;
+            console.log(error);
+        }
+    }
+    private _adapterDisconnectCallback(json: string): void {
+        console.log("adapterDisconnectCallback: " + json);
     }
 
-    public setChainInfoAsyncCallback(json: string): void {
-        console.log("setChainInfoAsyncCallback: " + json);
+    private _adapterIsConnectedCallback(json: string): void {
+        console.log("adapterIsConnectedCallback: " + json);
     }
 
-    public signMessageCallback(signature: string): void {
-        console.log("signMessageCallback: " + signature);
+    private _adapterSignMessageCallback(signature: string): void {
+        console.log("adapterSignMessageCallback: " + signature);
     }
 
-    public signTypedDataCallback(signature: string): void {
-        console.log("signTypedDataCallback: " + signature);
+    private _adapterSignAndSendTransactionCallback(signature: string): void {
+        console.log("adapterSignAndSendTransactionCallback: " + signature);
     }
 
-    public signAndSendTransactionCallback(signature: string): void {
-        console.log("signAndSendTransactionCallback: " + signature);
+    private _adapterSignTypedDataCallback(signature: string): void {
+        console.log("adapterSignTypedDataCallback: " + signature);
     }
-    public signTransactionCallback(signature: string): void {
-        console.log("signTransactionCallback: " + signature);
-    }
-    public signAllTransactionsCallback(signature: string): void {
-        console.log("signAllTransactionsCallback: " + signature);
-    }
-    public getChainInfoCallback(json: string): void {
-        console.log("getChainInfoCallback: " + json);
+    private _adapterSignTransactionCallback(signature: string): void {
+        console.log("adapterSignTransactionCallback: " + signature);
     }
 
-    public isLoginCallback(json: string): void {
-        console.log("isLoginCallback: " + json);
+    private _adapterSignAllTransactionsCallback(signature: string): void {
+        console.log("adapterSignAllTransactionsCallback: " + signature);
     }
 
-    public isLoginAsyncCallback(json: string): void {
-        console.log("isLoginAsyncCallback: " + json);
+    private _adapterImportWalletFromPrivateKeyCallback(json: string): void {
+        console.log("adapterImportWalletFromPrivateKeyCallback: " + json);
     }
 
-    public getAddressCallback(address: string): void {
-        this.publicAddress = address;
-        console.log("getAddressCallback: " + address);
+    private _adapterImportWalletFromMnemonicCallback(json: string): void {
+        console.log("adapterImportWalletFromMnemonicCallback: " + json);
     }
 
-    public getUserInfoCallback(json: string): void {
-        console.log("getUserInfoCallback: " + json);
+    private _adapterSignInWithEthereumCallback(json: string): void {
+        console.log("adapterSignInWithEthereumCallback: " + json);
+        let result = JSON.parse(json);
+        if (result.status) {
+            const message = result.data.message;
+            this.signInWithEthereumSourceMessage = message;
+            const signature = result.data.signature;
+            this.signInWithEthreumSignature = signature;
+            console.log('signInWithEthreum message:', message);
+            console.log('signInWithEthreum signature:', signature);
+        } else {
+            const error = result.data;
+            console.log(error);
+        }
+    }
+
+    private _adapterVerifyCallback(json: string): void {
+        console.log("adapterVerifyCallback: " + json);
+
+        let result = JSON.parse(json);
+        if (result.status) {
+            const flag = result.data;
+            console.log(flag);
+        } else {
+            const error = result.data;
+            console.log(error);
+        }
+
+        
+    }
+
+    private _adapterSwitchEthereumChainCallback(json: string): void {
+        console.log("adapterSwitchEthereumChainCallback: " + json);
+    }
+
+    private _adapterAddEthereumChainCallback(json: string): void {
+        console.log("adapterAddEthereumChainCallback: " + json);
+    }
+
+    private _adapterWalletReadyStateCallback(json: string): void {
+        console.log("adapterWalletReadyStateCallback: " + json);
     }
 
 
     // Call native
-    Init() {
+    particleConnectInitialize() {
         const metadata = {
             name: 'Particle Connect',
             icon: 'https://connect.particle.network/icons/512.png',
@@ -182,6 +261,11 @@ export class ConnectDemo extends Component {
         const obj = { wallet_type: walletType, config: connectConfig};
         const json = JSON.stringify(obj);
         native.jsbBridgeWrapper.dispatchEventToNative("adapterConnect", json);
+    }
+
+    adapterGetAccounts() {
+        const walletType = WalletType.MetaMask;
+        native.jsbBridgeWrapper.dispatchEventToNative("adapterGetAccounts", walletType);
     }
 
     adapterDisconnect() {
@@ -283,7 +367,7 @@ export class ConnectDemo extends Component {
     adapterImportWalletFromPrivateKey() {
         // only support WalletType EvmPrivateKey, SolanaPriveteKey
         const walletType = WalletType.EvmPrivateKey;
-        const privateKey = "";
+        const privateKey = this.testPrivateKey;
         const obj = { wallet_type: walletType, private_key: privateKey };
         const json = JSON.stringify(obj);
         native.jsbBridgeWrapper.dispatchEventToNative("adapterImportWalletFromPrivateKey", json);
@@ -293,7 +377,7 @@ export class ConnectDemo extends Component {
         // only support WalletType EvmPrivateKey, SolanaPriveteKey
         const walletType = WalletType.EvmPrivateKey;
         // mnemonic is a word list, split by space, example "word1 work2 ... " at least 12 words.
-        const mnemonic = "";
+        const mnemonic = this.testMnemonic;
         const obj = { wallet_type: walletType, mnemonic: mnemonic };
         const json = JSON.stringify(obj);
         native.jsbBridgeWrapper.dispatchEventToNative("adapterImportWalletFromMnemonic", json);
@@ -306,8 +390,8 @@ export class ConnectDemo extends Component {
         native.jsbBridgeWrapper.dispatchEventToNative("adapterExportWalletPrivateKey", json);
     }
 
-    // Sign in with ethereum
-    adapterLogin() {
+    // Sign in with ethereum, eip4361 https://eips.ethereum.org/EIPS/eip-4361
+    adapterSignInWithEthereum() {
         const walletType = WalletType.MetaMask;
         const domain = 'login.xyz';
         const uri = 'https://login.xyz/demo#login';
@@ -318,9 +402,15 @@ export class ConnectDemo extends Component {
     }
 
     adapterVerify() {
+        if (this.signInWithEthereumSourceMessage == undefined || this.signInWithEthreumSignature == undefined) {
+            console.log('signInWithEthereum message or signature is underfined');
+            return;
+        }
+
         const walletType = WalletType.MetaMask;
-        const message = "";
-        const signature = "";
+        const message = this.signInWithEthereumSourceMessage;
+        const signature = this.signInWithEthreumSignature;
+
         const obj = { wallet_type: walletType, public_address: this.publicAddress, message: message, signature: signature };
         const json = JSON.stringify(obj);
         native.jsbBridgeWrapper.dispatchEventToNative("adapterVerify", json);
@@ -333,27 +423,37 @@ export class ConnectDemo extends Component {
             public_address: this.publicAddress,
             chain_id: EvmService.currentChainInfo.chain_id
           };
-          const json = JSON.stringify(obj);
-
-        native.jsbBridgeWrapper.dispatchEventToNative("openAccountAndSecurity", json);
+        const json = JSON.stringify(obj);
+        native.jsbBridgeWrapper.dispatchEventToNative("adapterSwitchEthereumChain", json);
     }
 
     adapterAddEthereumChain() {
-        if (sys.OS.IOS === sys.os) {
-            let style = iOSModalPresentStyle.FormSheet;
-            native.jsbBridgeWrapper.dispatchEventToNative("setModalPresentStyle", style);
-        }
+        const walletType = WalletType.MetaMask;
+        const chainInfo = EvmService.currentChainInfo;
+        const obj = {
+            wallet_type: walletType,
+            public_address: this.publicAddress,
+            chain_name: chainInfo.chain_name,
+            chain_id: chainInfo.chain_id,
+            chain_id_name: chainInfo.chain_id_name,
+          };
+          const json = JSON.stringify(obj);
+        native.jsbBridgeWrapper.dispatchEventToNative("adapterAddEthereumChain", json);
     }
 
     adapterWalletReadyState() {
-        if (sys.OS.IOS === sys.os) {
-            let isMediumScreen = true;
-            native.jsbBridgeWrapper.dispatchEventToNative("setMediumScreen", isMediumScreen ? "1" : "0");
-        }
+        const walletType = WalletType.MetaMask;
+        native.jsbBridgeWrapper.dispatchEventToNative("adapterWalletReadyState", walletType);
     }
 
     reconnectIfNeeded() {
-
+        if (sys.OS.IOS === sys.os) {
+            const walletType = WalletType.MetaMask;
+            const obj = { wallet_type: walletType, public_address: this.publicAddress };
+            const json = JSON.stringify(obj);
+        
+            native.jsbBridgeWrapper.dispatchEventToNative("reconnectIfNeeded",json);
+          } 
     }
     
     update(deltaTime: number) { }
