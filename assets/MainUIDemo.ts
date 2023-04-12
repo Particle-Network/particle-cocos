@@ -17,8 +17,7 @@ export class MainUIDemo extends Component {
     start() {
         console.log("MainUIDemo start");
         this.authDemo.active = false;
-        this.connectDemo.active = false;
-        this.walletDemo.active = false;
+   
     }
 
     update(deltaTime: number) {
@@ -26,21 +25,6 @@ export class MainUIDemo extends Component {
     }
     showAuthDemo(){
         this.authDemo.active = true;
-        this.connectDemo.active = false;
-        this.walletDemo.active = false;
-
-    }
-    showConnectDemo(){
-        this.authDemo.active = false;
-        this.connectDemo.active = true;
-        this.walletDemo.active = false;
-
-    }
-    showWalletDemo(){
-        this.authDemo.active = false;
-        this.connectDemo.active = false;
-        this.walletDemo.active = true;
-
     }
 }
 
