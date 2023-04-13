@@ -1,4 +1,4 @@
-import { _decorator, Component, native, sys } from 'cc';
+import { _decorator, Component, find, native, sys } from 'cc';
 import { ChainInfo } from './Models/ChainInfo';
 import { iOSModalPresentStyle, LoginType, SupportAuthType } from './Models/LoginInfo';
 import { Language } from './Models/Language';
@@ -15,14 +15,25 @@ export class AuthDemo extends Component {
     private publicAddress: string = '';
 
     start() {
-        this._registerAllScriptEvent();
+        // this._registerAllScriptEvent();
     }
+
     hidden(){
         this.node.active = false;
+        const iconNode = find("Canvas/MainUIDemo/Icon");
+        if (iconNode != null) {
+            iconNode.active = true;
+        }
+
+        const authButtonNode = find("Canvas/MainUIDemo/AuthButton");
+        if (authButtonNode != null) {
+            authButtonNode.active = true;
+        }
     }
 
     private _registerAllScriptEvent() {
 
+        
         native.jsbBridgeWrapper.addNativeEventListener("loginCallback", (json: string) => {
             this._loginCallback(json);
         });
