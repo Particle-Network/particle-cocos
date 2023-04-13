@@ -1,42 +1,16 @@
-import { _decorator, Component, find, native, sys } from 'cc';
-import { ChainInfo } from './Models/ChainInfo';
-import { iOSModalPresentStyle, LoginType, SupportAuthType } from './Models/LoginInfo';
-import { Language } from './Models/Language';
-import * as Helper from './Helper';
-import { UserInterfaceStyle } from './Models/UserInterfaceStyle';
-import { EvmService } from './NetService/EvmService';
+import { native, sys } from "cc";
 import { EventEmitter } from 'eventemitter3';
+import { ChainInfo } from "./Models/ChainInfo";
+import { EvmService } from "./NetService/EvmService";
+import { iOSModalPresentStyle } from "./Models/LoginInfo";
+import { Language } from "./Models/Language";
+import { UserInterfaceStyle } from "./Models/UserInterfaceStyle";
 
-const { ccclass, property } = _decorator;
-
-@ccclass('AuthDemo')
-export class AuthDemo extends Component {
-
+export class particleAuth {
     private ee = new EventEmitter();
-
-    @property
-    private publicAddress: string = '';
-
-    start() {
-        this._registerAllScriptEvent();
-    }
-
-    hidden(){
-        this.node.active = false;
-        const iconNode = find("Canvas/MainUIDemo/Icon");
-        if (iconNode != null) {
-            iconNode.active = true;
-        }
-
-        const authButtonNode = find("Canvas/MainUIDemo/AuthButton");
-        if (authButtonNode != null) {
-            authButtonNode.active = true;
-        }
-    }
 
     private _registerAllScriptEvent() {
 
-        
         native.jsbBridgeWrapper.addNativeEventListener("loginCallback", (json: string) => {
             this._loginCallback(json);
         });
@@ -153,7 +127,6 @@ export class AuthDemo extends Component {
     }
 
     private _getAddressCallback(address: string): void {
-        this.publicAddress = address;
         console.log("getAddressCallback: " + address);
     }
 
@@ -164,8 +137,6 @@ export class AuthDemo extends Component {
         console.log("setUserInfoCallback: " + status);
     }
 
-
-    // Call native
     Init() {
         const chainInfo = EvmService.currentChainInfo;
         const obj = {
@@ -371,6 +342,4 @@ export class AuthDemo extends Component {
         native.jsbBridgeWrapper.dispatchEventToNative("setSecurityAccountConfig", json);
     }
 
-    update(deltaTime: number) { }
 }
-

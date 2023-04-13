@@ -4,7 +4,7 @@ import { sendEVMRpc } from './connection';
 import type { ParticleOptions, RequestArguments } from './types';
 import { notSupportMethods, signerMethods } from './types';
 import { ChainInfo } from '../Models/ChainInfo';
-import { SupportAuthType } from '../index';
+import { SupportAuthType } from '../Models/LoginInfo';
 
 class ParticleProvider {
     private events = new EventEmitter();
