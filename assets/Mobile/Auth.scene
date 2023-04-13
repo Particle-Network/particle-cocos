@@ -1508,7 +1508,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "web3_requestAccounts",
+    "_name": "web3_getAccounts",
     "_objFlags": 0,
     "_parent": {
       "__id__": 20
@@ -1799,7 +1799,7 @@
     },
     "component": "",
     "_componentId": "71100YFVCZLnqUv/v7ScfvI",
-    "handler": "init",
+    "handler": "web3_getAccounts",
     "customEventData": ""
   },
   {
@@ -2095,7 +2095,7 @@
     },
     "component": "",
     "_componentId": "71100YFVCZLnqUv/v7ScfvI",
-    "handler": "init",
+    "handler": "web3_getBalance",
     "customEventData": ""
   },
   {
@@ -2391,7 +2391,7 @@
     },
     "component": "",
     "_componentId": "71100YFVCZLnqUv/v7ScfvI",
-    "handler": "init",
+    "handler": "web3_getChainId",
     "customEventData": ""
   },
   {
@@ -2687,7 +2687,7 @@
     },
     "component": "",
     "_componentId": "71100YFVCZLnqUv/v7ScfvI",
-    "handler": "init",
+    "handler": "web3_personalSign",
     "customEventData": ""
   },
   {
@@ -2983,7 +2983,7 @@
     },
     "component": "",
     "_componentId": "71100YFVCZLnqUv/v7ScfvI",
-    "handler": "init",
+    "handler": "web3_signTypedData_v1",
     "customEventData": ""
   },
   {
@@ -3279,7 +3279,7 @@
     },
     "component": "",
     "_componentId": "71100YFVCZLnqUv/v7ScfvI",
-    "handler": "init",
+    "handler": "web3_signTypedData_v3",
     "customEventData": ""
   },
   {
@@ -3575,7 +3575,7 @@
     },
     "component": "",
     "_componentId": "71100YFVCZLnqUv/v7ScfvI",
-    "handler": "init",
+    "handler": "web3_signTypedData_v4",
     "customEventData": ""
   },
   {
@@ -3871,7 +3871,7 @@
     },
     "component": "",
     "_componentId": "71100YFVCZLnqUv/v7ScfvI",
-    "handler": "init",
+    "handler": "web3_sendTransaction",
     "customEventData": ""
   },
   {
@@ -4167,7 +4167,7 @@
     },
     "component": "",
     "_componentId": "71100YFVCZLnqUv/v7ScfvI",
-    "handler": "init",
+    "handler": "web3_wallet_switchEthereumChain",
     "customEventData": ""
   },
   {

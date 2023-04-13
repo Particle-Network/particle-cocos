@@ -44,7 +44,7 @@ export class AuthDemo extends Component {
     }
 
 
-    web3_getAccounts = async () => {
+    async web3_getAccounts() {
         try {
             const accounts = await this.web3.eth.getAccounts();
             console.log('web3.eth.getAccounts', accounts);
@@ -53,7 +53,7 @@ export class AuthDemo extends Component {
         }
     };
 
-    web3_getBalance = async () => {
+    async web3_getBalance() {
         try {
             const accounts = await this.web3.eth.getAccounts();
             const balance = await this.web3.eth.getBalance(accounts[0]);
@@ -63,7 +63,7 @@ export class AuthDemo extends Component {
         }
     };
 
-    web3_getChainId = async () => {
+    async web3_getChainId() {
         try {
             const chainId = await this.web3.eth.getChainId();
             console.log('web3.eth.getChainId', chainId);
@@ -72,7 +72,7 @@ export class AuthDemo extends Component {
         }
     };
 
-    web3_personalSign = async () => {
+    async web3_personalSign() {
         try {
             // for persion_sign
             // don't use web3.eth.personal.sign
@@ -87,7 +87,7 @@ export class AuthDemo extends Component {
         }
     };
 
-    web3_signTypedData_v1 = async () => {
+    async web3_signTypedData_v1() {
         try {
             const accounts = await this.web3.eth.getAccounts();
             const result = await this.web3.currentProvider.request({
@@ -106,7 +106,7 @@ export class AuthDemo extends Component {
         }
     };
 
-    web3_signTypedData_v3 = async () => {
+    async web3_signTypedData_v3() {
         try {
             const accounts = await this.web3.eth.getAccounts();
             const result = await this.web3.currentProvider.request({
@@ -152,7 +152,7 @@ export class AuthDemo extends Component {
         }
     };
 
-    web3_signTypedData_v4 = async () => {
+    async web3_signTypedData_v4() {
         try {
             const accounts = await this.web3.eth.getAccounts();
             const result = await this.web3.currentProvider.request({
@@ -250,7 +250,7 @@ export class AuthDemo extends Component {
         }
     };
 
-    web3_sendTransaction = async () => {
+    async web3_sendTransaction() {
         try {
             const accounts = await this.web3.eth.getAccounts();
             const result = await this.web3.eth.sendTransaction({
@@ -265,7 +265,7 @@ export class AuthDemo extends Component {
         }
     };
 
-    web3_wallet_switchEthereumChain = async () => {
+    async web3_wallet_switchEthereumChain(){
         try {
             const result = await this.web3.currentProvider.request({
                 method: 'wallet_switchEthereumChain',
@@ -287,7 +287,7 @@ export class AuthDemo extends Component {
 
     async login() {
         const type = LoginType.Phone;
-        const supportAuthType = [SupportAuthType.Email, SupportAuthType.Apple, SupportAuthType.Discord];
+        const supportAuthType = [SupportAuthType.Email, SupportAuthType.Google, SupportAuthType.Apple, SupportAuthType.Discord];
         const result = await particleAuth.login(type, '', supportAuthType, undefined);
         if (result.status) {
             const userInfo = result.data;
