@@ -1,6 +1,18 @@
 import axios from 'axios';
 import type { ConnectionOptions, RequestArguments } from './types';
+import { Asset, assetManager } from 'cc';
 
+assetManager.loadRemote('libs/axios.min.js', (err: Error, asset: Asset) => {
+    if (err) {
+      console.error('Error loading Axios:', err);
+      return;
+    }
+  
+    const axiosInstance = window.axios;
+    // Now, you can use axiosInstance to make HTTP requests.
+});
+
+  
 const instance = axios.create({
     baseURL: 'https://rpc.particle.network',
     timeout: 30_000, // 30 secs

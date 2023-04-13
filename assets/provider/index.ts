@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import { EventTarget } from 'cc';
 import * as particleAuth from '../particleAuth';
 import { sendEVMRpc } from './connection';
 import type { ParticleOptions, RequestArguments } from './types';
@@ -7,31 +7,31 @@ import { ChainInfo } from '../Models/ChainInfo';
 import { SupportAuthType } from '../Models/LoginInfo';
 
 class ParticleProvider {
-    private events = new EventEmitter();
+    private events = new EventTarget();
 
     constructor(private options: ParticleOptions) {
         console.log(this.options, particleAuth);
-        this.events.setMaxListeners(100);
+        // this.events.setMaxListeners(100);
     }
 
-    public on(event: string | symbol, listener: any): void {
+    public on(event: string , listener: any): void {
         this.events.on(event, listener);
     }
 
-    public once(event: string | symbol, listener: any): void {
+    public once(event: string, listener: any): void {
         this.events.once(event, listener);
     }
 
-    public off(event: string | symbol, listener: any): void {
+    public off(event: string, listener: any): void {
         this.events.off(event, listener);
     }
 
-    public removeListener(event: string | symbol, listener: any): void {
-        this.events.removeListener(event, listener);
+    public removeListener(event: string, listener: any): void {
+        this.events.off(event, listener);
     }
 
-    public removeAllListeners(event: string | symbol): void {
-        this.events.removeAllListeners(event);
+    public removeAllListeners(event: string): void {
+        this.events.off(event);
     }
 
     public async enable(): Promise<string[]> {

@@ -1,12 +1,13 @@
 import { native, sys } from "cc";
-import { EventEmitter } from 'eventemitter3';
+import { EventTarget } from 'cc';
+
 import { ChainInfo } from "./Models/ChainInfo";
 import { Env, LoginType, SupportAuthType, iOSModalPresentStyle } from "./Models/LoginInfo";
 import { Language } from "./Models/Language";
 import { UserInterfaceStyle } from "./Models/UserInterfaceStyle";
 import { SecurityAccountConfig } from "./Models/SecurityAccountConfig";
 
-    const ee = new EventEmitter();
+    const event = new EventTarget();
 
     export function registerAllScriptEvent() {
 
@@ -78,76 +79,76 @@ import { SecurityAccountConfig } from "./Models/SecurityAccountConfig";
 
     // Event call back
     function _loginCallback(json: string): void {
-        ee.emit("loginCallback", json);
+        event.emit("loginCallback", json);
         console.log("loginCallback: " + json);
     }
     function _logoutCallback(json: string): void {
-        ee.emit("logoutCallback", json);
+        event.emit("logoutCallback", json);
         console.log("logoutCallback: " + json);
     }
     function _fastLogoutCallback(json: string): void {
-        ee.emit("fastLogoutCallback", json);
+        event.emit("fastLogoutCallback", json);
         console.log("fastLogoutCallback: " + json);
     }
 
     function _setChainInfoCallback(json: string): void {
-        ee.emit("setChainInfoCallback", json);
+        event.emit("setChainInfoCallback", json);
         console.log("setChainInfoCallback: " + json);
     }
 
     function _setChainInfoAsyncCallback(json: string): void {
-        ee.emit("setChainInfoAsyncCallback", json);
+        event.emit("setChainInfoAsyncCallback", json);
         console.log("setChainInfoAsyncCallback: " + json);
     }
 
     function _signMessageCallback(json: string): void {
-        ee.emit("signMessageCallback", json);
+        event.emit("signMessageCallback", json);
         console.log("signMessageCallback: " + json);
     }
 
     function _signTypedDataCallback(json: string): void {
-        ee.emit("signTypedDataCallback", json);
+        event.emit("signTypedDataCallback", json);
         console.log("signTypedDataCallback: " + json);
     }
 
     function _signAndSendTransactionCallback(json: string): void {
-        ee.emit("signAndSendTransactionCallback", json);
+        event.emit("signAndSendTransactionCallback", json);
         console.log("signAndSendTransactionCallback: " + json);
     }
     function _signTransactionCallback(json: string): void {
-        ee.emit("signTransactionCallback", json);
+        event.emit("signTransactionCallback", json);
         console.log("signTransactionCallback: " + json);
     }
     function _signAllTransactionsCallback(json: string): void {
-        ee.emit("signAllTransactionsCallback", json);
+        event.emit("signAllTransactionsCallback", json);
         console.log("signAllTransactionsCallback: " + json);
     }
     function _getChainInfoCallback(json: string): void {
-        ee.emit("getChainInfoCallback", json);
+        event.emit("getChainInfoCallback", json);
         console.log("getChainInfoCallback: " + json);
     }
 
     function _isLoginCallback(json: string): void {
-        ee.emit("isLoginCallback", json);
+        event.emit("isLoginCallback", json);
         console.log("isLoginCallback: " + json);
     }
 
     function _isLoginAsyncCallback(json: string): void {
-        ee.emit("isLoginAsyncCallback", json);
+        event.emit("isLoginAsyncCallback", json);
         console.log("isLoginAsyncCallback: " + json);
     }
 
     function _getAddressCallback(json: string): void {
-        ee.emit("getAddressCallback", json);
+        event.emit("getAddressCallback", json);
         console.log("getAddressCallback: " + json);
     }
 
     function _getUserInfoCallback(json: string): void {
-        ee.emit("getUserInfoCallback", json);
+        event.emit("getUserInfoCallback", json);
         console.log("getUserInfoCallback: " + json);
     }
     function _setUserInfoCallback(json: string): void {
-        ee.emit("setUserInfoCallback", json);
+        event.emit("setUserInfoCallback", json);
         console.log("setUserInfoCallback: " + json);
     }
 
@@ -174,8 +175,8 @@ import { SecurityAccountConfig } from "./Models/SecurityAccountConfig";
         const json = JSON.stringify(obj);
         
         return new Promise((resolve, reject) => {
-            ee.removeAllListeners("loginCallback");
-            ee.once("loginCallback", (result: string) => {
+            event.off("loginCallback");
+            event.once("loginCallback", (result: string) => {
                  resolve(JSON.parse(result));
             });
             native.jsbBridgeWrapper.dispatchEventToNative("login", json);
@@ -185,8 +186,8 @@ import { SecurityAccountConfig } from "./Models/SecurityAccountConfig";
 
     export function logout() : Promise<any> {
         return new Promise((resolve, reject) => {
-            ee.removeAllListeners("logoutCallback");
-            ee.once("logoutCallback", (result: string) => {
+            event.off("logoutCallback");
+            event.once("logoutCallback", (result: string) => {
                  resolve(JSON.parse(result));
             });
             native.jsbBridgeWrapper.dispatchEventToNative("logout", "");
@@ -195,8 +196,8 @@ import { SecurityAccountConfig } from "./Models/SecurityAccountConfig";
 
     export function fastLogout() : Promise<any> {
         return new Promise((resolve, reject) => {
-            ee.removeAllListeners("fastLogoutCallback");
-            ee.once("fastLogoutCallback", (result: string) => {
+            event.off("fastLogoutCallback");
+            event.once("fastLogoutCallback", (result: string) => {
                  resolve(JSON.parse(result));
             });
             native.jsbBridgeWrapper.dispatchEventToNative("fastLogout", "");
@@ -205,8 +206,8 @@ import { SecurityAccountConfig } from "./Models/SecurityAccountConfig";
 
     export function signMessage(message: string) : Promise<any> {
         return new Promise((resolve, reject) => {
-            ee.removeAllListeners("signMessageCallback");
-            ee.once("signMessageCallback", (result: string) => {
+            event.off("signMessageCallback");
+            event.once("signMessageCallback", (result: string) => {
                  resolve(JSON.parse(result));
             });
             native.jsbBridgeWrapper.dispatchEventToNative("signMessage", "");
@@ -215,8 +216,8 @@ import { SecurityAccountConfig } from "./Models/SecurityAccountConfig";
 
     export function signAndSendTransaction(transaction: string)  : Promise<any> {
         return new Promise((resolve, reject) => {
-            ee.removeAllListeners("signAndSendTransactionCallback");
-            ee.once("signAndSendTransactionCallback", (result: string) => {
+            event.off("signAndSendTransactionCallback");
+            event.once("signAndSendTransactionCallback", (result: string) => {
                  resolve(JSON.parse(result));
             });
             native.jsbBridgeWrapper.dispatchEventToNative("signAndSendTransaction", transaction);
@@ -229,8 +230,8 @@ import { SecurityAccountConfig } from "./Models/SecurityAccountConfig";
         const json = JSON.stringify(obj);
        
         return new Promise((resolve, reject) => {
-            ee.removeAllListeners("signTypedDataCallback");
-            ee.once("signTypedDataCallback", (result: string) => {
+            event.off("signTypedDataCallback");
+            event.once("signTypedDataCallback", (result: string) => {
                  resolve(JSON.parse(result));
             });
             native.jsbBridgeWrapper.dispatchEventToNative("signTypedData", json);
@@ -243,8 +244,8 @@ import { SecurityAccountConfig } from "./Models/SecurityAccountConfig";
      */
     export function signTransaction(transaction: string)  : Promise<any>{
         return new Promise((resolve, reject) => {
-            ee.removeAllListeners("signTransactionCallback");
-            ee.once("signTransactionCallback", (result: string) => {
+            event.off("signTransactionCallback");
+            event.once("signTransactionCallback", (result: string) => {
                  resolve(JSON.parse(result));
             });
             native.jsbBridgeWrapper.dispatchEventToNative("signTransaction", transaction);
@@ -259,8 +260,8 @@ import { SecurityAccountConfig } from "./Models/SecurityAccountConfig";
         const json = JSON.stringify(transactions);
        
         return new Promise((resolve, reject) => {
-            ee.removeAllListeners("signAllTransactionsCallback");
-            ee.once("signAllTransactionsCallback", (result: string) => {
+            event.off("signAllTransactionsCallback");
+            event.once("signAllTransactionsCallback", (result: string) => {
                  resolve(JSON.parse(result));
             });
             native.jsbBridgeWrapper.dispatchEventToNative("signAllTransactions", json);
@@ -276,8 +277,8 @@ import { SecurityAccountConfig } from "./Models/SecurityAccountConfig";
         const json = JSON.stringify(obj);
 
         return new Promise((resolve, reject) => {
-            ee.removeAllListeners("setChainInfoCallback");
-            ee.once("setChainInfoCallback", (result: string) => {
+            event.off("setChainInfoCallback");
+            event.once("setChainInfoCallback", (result: string) => {
                  resolve(JSON.parse(result));
             });
             native.jsbBridgeWrapper.dispatchEventToNative("setChainInfo", json);
@@ -294,8 +295,8 @@ import { SecurityAccountConfig } from "./Models/SecurityAccountConfig";
         
 
         return new Promise((resolve, reject) => {
-            ee.removeAllListeners("setChainInfoAsyncCallback");
-            ee.once("setChainInfoAsyncCallback", (result: string) => {
+            event.off("setChainInfoAsyncCallback");
+            event.once("setChainInfoAsyncCallback", (result: string) => {
                  resolve(JSON.parse(result));
             });
             native.jsbBridgeWrapper.dispatchEventToNative("setChainInfoAsync", json);
@@ -306,8 +307,8 @@ import { SecurityAccountConfig } from "./Models/SecurityAccountConfig";
     export function setUserInfo(jsonString: string) : Promise<any>{
 
         return new Promise((resolve, reject) => {
-            ee.removeAllListeners("setUserInfoCallback");
-            ee.once("setUserInfoCallback", (result: string) => {
+            event.off("setUserInfoCallback");
+            event.once("setUserInfoCallback", (result: string) => {
                  resolve(JSON.parse(result));
             });
             native.jsbBridgeWrapper.dispatchEventToNative("setUserInfo", jsonString);
@@ -317,8 +318,8 @@ import { SecurityAccountConfig } from "./Models/SecurityAccountConfig";
     export function getChainInfo() : Promise<ChainInfo>{
 
         return new Promise((resolve, reject) => {
-            ee.removeAllListeners("getChainInfoCallback");
-            ee.once("getChainInfoCallback", (result: string) => {
+            event.off("getChainInfoCallback");
+            event.once("getChainInfoCallback", (result: string) => {
                  resolve(JSON.parse(result) as ChainInfo);
             });
             native.jsbBridgeWrapper.dispatchEventToNative("getChainInfo", "");
@@ -328,8 +329,8 @@ import { SecurityAccountConfig } from "./Models/SecurityAccountConfig";
     export function isLogin(): Promise<boolean> {
 
         return new Promise((resolve, reject) => {
-            ee.removeAllListeners("isLoginCallback");
-            ee.once("isLoginCallback", (result: string) => {
+            event.off("isLoginCallback");
+            event.once("isLoginCallback", (result: string) => {
                  resolve(result == "1");
             });
             native.jsbBridgeWrapper.dispatchEventToNative("isLogin", "");
@@ -338,8 +339,8 @@ import { SecurityAccountConfig } from "./Models/SecurityAccountConfig";
 
     export function isLoginAsync(): Promise<any> {
         return new Promise((resolve, reject) => {
-            ee.removeAllListeners("isLoginAsyncCallback");
-            ee.once("isLoginAsyncCallback", (result: string) => {
+            event.off("isLoginAsyncCallback");
+            event.once("isLoginAsyncCallback", (result: string) => {
                  resolve(JSON.parse(result));
             });
             native.jsbBridgeWrapper.dispatchEventToNative("isLoginAsync", "");
@@ -348,8 +349,8 @@ import { SecurityAccountConfig } from "./Models/SecurityAccountConfig";
 
     export function getAddress(): Promise<string> {
         return new Promise((resolve, reject) => {
-            ee.removeAllListeners("getAddressCallback");
-            ee.once("getAddressCallback", (result: string) => {
+            event.off("getAddressCallback");
+            event.once("getAddressCallback", (result: string) => {
                  resolve(result);
             });
             native.jsbBridgeWrapper.dispatchEventToNative("getAddress", "");
@@ -358,8 +359,8 @@ import { SecurityAccountConfig } from "./Models/SecurityAccountConfig";
 
     export function getUserInfo() : Promise<any>{
         return new Promise((resolve, reject) => {
-            ee.removeAllListeners("getUserInfoCallback");
-            ee.once("getUserInfoCallback", (result: string) => {
+            event.off("getUserInfoCallback");
+            event.once("getUserInfoCallback", (result: string) => {
                  resolve(JSON.parse(result));
             });
             native.jsbBridgeWrapper.dispatchEventToNative("getUserInfo", "");
@@ -368,8 +369,8 @@ import { SecurityAccountConfig } from "./Models/SecurityAccountConfig";
 
     export function openAccountAndSecurity() : Promise<any> {
         return new Promise((resolve, reject) => {
-            ee.removeAllListeners("openAccountAndSecurityCallback");
-            ee.once("openAccountAndSecurityCallback", (result: string) => {
+            event.off("openAccountAndSecurityCallback");
+            event.once("openAccountAndSecurityCallback", (result: string) => {
                  resolve(JSON.parse(result));
             });
             native.jsbBridgeWrapper.dispatchEventToNative("openAccountAndSecurity", "");
@@ -383,10 +384,10 @@ import { SecurityAccountConfig } from "./Models/SecurityAccountConfig";
         }
     }
 
-    export function setMediumScreen(isMediumScreen: boolean) {
+    export function setMediumScreen(isMediumScreventn: boolean) {
 
         if (sys.OS.IOS === sys.os) {
-            native.jsbBridgeWrapper.dispatchEventToNative("setMediumScreen", isMediumScreen ? "1" : "0");
+            native.jsbBridgeWrapper.dispatchEventToNative("setMediumScreen", isMediumScreventn ? "1" : "0");
         }
     }
 
