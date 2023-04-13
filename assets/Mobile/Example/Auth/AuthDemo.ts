@@ -255,7 +255,7 @@ export class AuthDemo extends Component {
                 value: '1000000',
                 data: '0x',
             });
-            console.log('web3.eth.sendTransaction', result);
+            console.log('web3.eth.sendTransaction', JSON.stringify(result));
         } catch (error) {
             console.log('web3.eth.sendTransaction', error);
         }
