@@ -1,6 +1,6 @@
 import { _decorator, Component, Label } from 'cc';
-import { ChainInfo } from '../Core/Models/ChainInfo';
-import { EvmService } from '../Core/NetService/EvmService';
+import { ChainInfo } from '../../Core/Models/ChainInfo';
+import { EvmService } from '../../Core/NetService/EvmService';
 import { MainUIDemo } from './MainUIDemo';
 
 const { ccclass, property } = _decorator;

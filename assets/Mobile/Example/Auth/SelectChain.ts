@@ -1,6 +1,6 @@
 
 import { _decorator, Component, Node, resources, Prefab, instantiate } from 'cc';
-import { ChainInfo } from '../Core/Models/ChainInfo';
+import { ChainInfo } from '../../Core/Models/ChainInfo';
 import { ChainInfoItem } from './ChainInfoItem';
 const { ccclass, property } = _decorator;
 

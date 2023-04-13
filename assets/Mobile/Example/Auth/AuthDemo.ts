@@ -1,13 +1,13 @@
 import { _decorator, Component, find, sys } from 'cc';
-import { Env, iOSModalPresentStyle, LoginType, SupportAuthType } from '../Core/Models/LoginInfo';
-import { Language } from '../Core/Models/Language';
+import { Env, iOSModalPresentStyle, LoginType, SupportAuthType } from '../../Core/Models/LoginInfo';
+import { Language } from '../../Core/Models/Language';
 import * as Helper from './Helper';
-import { UserInterfaceStyle } from '../Core/Models/UserInterfaceStyle';
-import { EvmService } from '../Core/NetService/EvmService';
-import * as particleAuth from '../Core/particleAuth';
-import { SecurityAccountConfig } from '../Core/Models/SecurityAccountConfig';
+import { UserInterfaceStyle } from '../../Core/Models/UserInterfaceStyle';
+import { EvmService } from '../../Core/NetService/EvmService';
+import * as particleAuth from '../../Core/particleAuth';
+import { SecurityAccountConfig } from '../../Core/Models/SecurityAccountConfig';
 import { MainUIDemo } from './MainUIDemo';
-import { createWeb3 } from '../Core/web3Demo';
+import { createWeb3 } from '../../Core/web3Demo';
 
 const { ccclass, property } = _decorator;
 
