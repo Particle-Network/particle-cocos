@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import * as particleAuth from '../index';
+import * as particleAuth from '../particleAuth';
 import { sendEVMRpc } from './connection';
 import type { ParticleOptions, RequestArguments } from './types';
 import { notSupportMethods, signerMethods } from './types';
