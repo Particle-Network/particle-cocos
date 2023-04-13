@@ -1,4 +1,3 @@
-
 import { _decorator, Component, find, sys } from 'cc';
 import { ChainInfo } from './Models/ChainInfo';
 import { Env, iOSModalPresentStyle, LoginType, SupportAuthType } from './Models/LoginInfo';
@@ -19,7 +18,6 @@ export class AuthDemo extends Component {
     private publicAddress: string = '';
 
     start() {
-
         if (sys.os == sys.OS.IOS || sys.os == sys.OS.ANDROID) {
             particleAuth.registerAllScriptEvent();
         }
@@ -28,8 +26,6 @@ export class AuthDemo extends Component {
     selectChain(){
         MainUIDemo.getInstance().showSelectChain();
     }
-
-
 
     hidden() {
         this.node.active = false;
