@@ -121,15 +121,7 @@ class ParticleProvider {
                 });
             }
         } else {
-            return sendEVMRpc(payload).then((output: any) => {
-                console.log('output ', output);
-                
-                if (output.error) {
-                    return Promise.reject(output.error);
-                } else {
-                    return Promise.resolve(output.result);
-                }
-            });
+            return sendEVMRpc(payload);
         }
     }
 }
