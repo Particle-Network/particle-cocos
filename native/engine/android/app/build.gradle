@@ -33,10 +33,10 @@ android {
             ndk { abiFilters PROP_APP_ABI.split(':') }
         }
 
-        manifestPlaceholders["PN_PROJECT_ID"] = "2ac9501b-bde1-4e09-9c1a-403768db896b"
+        manifestPlaceholders["PN_PROJECT_ID"] = "77eeb8ec-dd64-48e9-b786-aa340ce42a40"
         manifestPlaceholders["PN_PROJECT_CLIENT_KEY"] =
-                "c4CqHS0nbdVBthI1XDw3jky0OoFj3Yu3YcgKhNSk"
-        manifestPlaceholders["PN_APP_ID"] = "f53fe952-6562-4cd5-b1bc-1ca96a0c8e48"
+                "cpahKexYg891D1BQ3IwMv9fd6E5JKdizMZcFRZ6x"
+        manifestPlaceholders["PN_APP_ID"] = "96ad2ff1-4a57-4069-90da-9306bf1492e1"
 
     }
 
@@ -124,8 +124,6 @@ dependencies {
     implementation("com.blankj:utilcodex:1.31.0")
     implementation("commons-codec:commons-codec:1.15")
     implementation("com.google.code.gson:gson:2.8.5")
-    implementation("com.google.android.material:material:1.5.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
 }
 
 

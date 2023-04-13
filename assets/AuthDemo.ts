@@ -15,7 +15,9 @@ export class AuthDemo extends Component {
     private publicAddress: string = '';
 
     start() {
-        // this._registerAllScriptEvent();
+        if(sys.os == sys.OS.IOS||sys.os == sys.OS.ANDROID){
+            this._registerAllScriptEvent();
+        }
     }
 
     hidden(){
