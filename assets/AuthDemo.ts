@@ -1,4 +1,4 @@
-import { _decorator, Asset, assetManager, Component, find } from 'cc';
+import { _decorator, Component, find, sys } from 'cc';
 import { ChainInfo } from './Models/ChainInfo';
 import { Env, iOSModalPresentStyle, LoginType, SupportAuthType } from './Models/LoginInfo';
 import { Language } from './Models/Language';
@@ -7,7 +7,7 @@ import { UserInterfaceStyle } from './Models/UserInterfaceStyle';
 import { EvmService } from './NetService/EvmService';
 import * as particleAuth from './particleAuth';
 import { SecurityAccountConfig } from './Models/SecurityAccountConfig';
-
+import { MainUIDemo } from './MainUIDemo';
 
 const { ccclass, property } = _decorator;
 
@@ -18,7 +18,13 @@ export class AuthDemo extends Component {
     private publicAddress: string = '';
 
     start() {
-        particleAuth.registerAllScriptEvent();
+        if (sys.os == sys.OS.IOS || sys.os == sys.OS.ANDROID) {
+            particleAuth.registerAllScriptEvent();
+        }
+    }
+
+    selectChain(){
+        MainUIDemo.getInstance().showSelectChain();
     }
 
     hidden() {
