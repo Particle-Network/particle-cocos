@@ -7,5 +7,9 @@
     "strict": true,
     "allowSyntheticDefaultImports": true, // 需要开启
     "lib": ["DOM", "ES2017"],
-  }
+  },
+  "include": [
+    "assets/**/*.ts",
+    "types/**/*.d.ts"
+  ]
 }

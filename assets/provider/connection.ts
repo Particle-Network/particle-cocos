@@ -1,18 +1,9 @@
-import axios from 'axios';
+import axios from 'web3/dist/web3.min.js';;
+
 import type { ConnectionOptions, RequestArguments } from './types';
-import { Asset, assetManager } from 'cc';
 
-assetManager.loadRemote('libs/axios.min.js', (err: Error, asset: Asset) => {
-    if (err) {
-      console.error('Error loading Axios:', err);
-      return;
-    }
-  
-    const axiosInstance = window.axios;
-    // Now, you can use axiosInstance to make HTTP requests.
-});
-
-  
+console.log('axios ', axios);
+// @ts-ignore
 const instance = axios.create({
     baseURL: 'https://rpc.particle.network',
     timeout: 30_000, // 30 secs
@@ -35,7 +26,7 @@ function request(path: string, args: RequestArguments, config: ConnectionOptions
                 'Content-Type': 'application/json',
             },
         })
-        .then((res) => res.data);
+        .then((res: any) => res.data);
 }
 
 export function randomId(): number {
