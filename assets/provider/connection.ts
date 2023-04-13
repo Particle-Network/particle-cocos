@@ -3,13 +3,14 @@ import axios from 'web3/dist/web3.min.js';;
 import type { ConnectionOptions, RequestArguments } from './types';
 
 console.log('axios ', axios);
-// @ts-ignore
+
+const instance : any = undefined;
+
 // const instance = axios.create({
 //     baseURL: 'https://rpc.particle.network',
 //     timeout: 30_000, // 30 secs
 // });
 
-const instance : ant = undefined;
 
 function request(path: string, args: RequestArguments, config: ConnectionOptions) {
     args.jsonrpc = '2.0';
