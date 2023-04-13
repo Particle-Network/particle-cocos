@@ -1,12 +1,10 @@
-import { _decorator, Component, find, sys } from 'cc';
+import { _decorator, Component, find, native, sys } from 'cc';
 import { ChainInfo } from './Models/ChainInfo';
-import { Env, iOSModalPresentStyle, LoginType, SupportAuthType } from './Models/LoginInfo';
+import { iOSModalPresentStyle, LoginType, SupportAuthType } from './Models/LoginInfo';
 import { Language } from './Models/Language';
 import * as Helper from './Helper';
 import { UserInterfaceStyle } from './Models/UserInterfaceStyle';
 import { EvmService } from './NetService/EvmService';
-import * as particleAuth from './particleAuth';
-import { SecurityAccountConfig } from './Models/SecurityAccountConfig';
 import { MainUIDemo } from './MainUIDemo';
 
 const { ccclass, property } = _decorator;
@@ -18,16 +16,12 @@ export class AuthDemo extends Component {
     private publicAddress: string = '';
 
     start() {
-        if (sys.os == sys.OS.IOS || sys.os == sys.OS.ANDROID) {
-            particleAuth.registerAllScriptEvent();
+        if(sys.os == sys.OS.IOS||sys.os == sys.OS.ANDROID){
+            this._registerAllScriptEvent();
         }
     }
 
-    selectChain(){
-        MainUIDemo.getInstance().showSelectChain();
-    }
-
-    hidden() {
+    hidden(){
         this.node.active = false;
         const iconNode = find("Canvas/MainUIDemo/Icon");
         if (iconNode != null) {
@@ -40,58 +34,175 @@ export class AuthDemo extends Component {
         }
     }
 
+    private _registerAllScriptEvent() {
+
+        
+        native.jsbBridgeWrapper.addNativeEventListener("loginCallback", (json: string) => {
+            this._loginCallback(json);
+        });
+
+
+        native.jsbBridgeWrapper.addNativeEventListener("logoutCallback", (json: string) => {
+            this._logoutCallback(json);
+        });
+
+        native.jsbBridgeWrapper.addNativeEventListener("fastLogoutCallback", (json: string) => {
+            this._fastLogoutCallback(json);
+        });
+
+        native.jsbBridgeWrapper.addNativeEventListener("setChainInfoCallback", (json: string) => {
+            this._setChainInfoCallback(json);
+        });
+
+        native.jsbBridgeWrapper.addNativeEventListener("setChainInfoAsyncCallback", (json: string) => {
+            this._setChainInfoAsyncCallback(json);
+        });
+
+        native.jsbBridgeWrapper.addNativeEventListener("signMessageCallback", (signature: string) => {
+            this._signMessageCallback(signature);
+        });
+
+        native.jsbBridgeWrapper.addNativeEventListener("signTypedDataCallback", (signature: string) => {
+            this._signTypedDataCallback(signature);
+        });
+
+        native.jsbBridgeWrapper.addNativeEventListener("signAndSendTransactionCallback", (signature: string) => {
+            this._signAndSendTransactionCallback(signature);
+        });
+
+        native.jsbBridgeWrapper.addNativeEventListener("signTransactionCallback", (signature: string) => {
+            this._signTransactionCallback(signature);
+        });
+
+        native.jsbBridgeWrapper.addNativeEventListener("signAllTransactionsCallback", (signature: string) => {
+            this._signAllTransactionsCallback(signature);
+        });
+
+        native.jsbBridgeWrapper.addNativeEventListener("getChainInfoCallback", (json: string) => {
+            this._getChainInfoCallback(json);
+        });
+
+        native.jsbBridgeWrapper.addNativeEventListener("isLoginCallback", (json: string) => {
+            this._isLoginCallback(json);
+        });
+
+        native.jsbBridgeWrapper.addNativeEventListener("isLoginAsyncCallback", (json: string) => {
+            this._isLoginAsyncCallback(json);
+        });
+
+        native.jsbBridgeWrapper.addNativeEventListener("getAddressCallback", (address: string) => {
+            this._getAddressCallback(address);
+        });
+
+        native.jsbBridgeWrapper.addNativeEventListener("getUserInfoCallback", (json: string) => {
+            this._getUserInfoCallback(json);
+        });
+
+        native.jsbBridgeWrapper.addNativeEventListener("setUserInfoCallback", (status: string) => {
+            this._setUserInfoCallback(status);
+        });
+
+    }
+
+    // Event call back
+    private _loginCallback(json: string): void {
+        console.log("loginCallback: " + json);
+    }
+    private _logoutCallback(json: string): void {
+        console.log("logoutCallback: " + json);
+    }
+    private _fastLogoutCallback(json: string): void {
+        console.log("fastLogoutCallback: " + json);
+    }
+
+    private _setChainInfoCallback(json: string): void {
+        console.log("setChainInfoCallback: " + json);
+    }
+
+    private _setChainInfoAsyncCallback(json: string): void {
+        console.log("setChainInfoAsyncCallback: " + json);
+    }
+
+    private _signMessageCallback(signature: string): void {
+        console.log("signMessageCallback: " + signature);
+    }
+
+    private _signTypedDataCallback(signature: string): void {
+        console.log("signTypedDataCallback: " + signature);
+    }
+
+    private _signAndSendTransactionCallback(signature: string): void {
+        console.log("signAndSendTransactionCallback: " + signature);
+    }
+    private _signTransactionCallback(signature: string): void {
+        console.log("signTransactionCallback: " + signature);
+    }
+    private _signAllTransactionsCallback(signature: string): void {
+        console.log("signAllTransactionsCallback: " + signature);
+    }
+    private _getChainInfoCallback(json: string): void {
+        console.log("getChainInfoCallback: " + json);
+    }
+
+    private _isLoginCallback(json: string): void {
+        console.log("isLoginCallback: " + json);
+    }
+
+    private _isLoginAsyncCallback(json: string): void {
+        console.log("isLoginAsyncCallback: " + json);
+    }
+
+    private _getAddressCallback(address: string): void {
+        this.publicAddress = address;
+        console.log("getAddressCallback: " + address);
+    }
+
+    private _getUserInfoCallback(json: string): void {
+        console.log("getUserInfoCallback: " + json);
+    }
+    private _setUserInfoCallback(status: string): void {
+        console.log("setUserInfoCallback: " + status);
+    }
+    selectChain(){
+        MainUIDemo.getInstance().showSelectChain();
+    }
+
     // Call native
-    init() {
+    Init() {
         const chainInfo = EvmService.currentChainInfo;
-        const env = Env.Dev;
-        particleAuth.init(chainInfo, env);
+        const obj = {
+            chain_name: chainInfo.chain_name,
+            chain_id: chainInfo.chain_id,
+            chain_id_name: chainInfo.chain_id_name,
+            env: "dev",
+        };
+
+        const json = JSON.stringify(obj);
+        native.jsbBridgeWrapper.dispatchEventToNative("initialize", json);
     }
 
-    async login() {
-        const type = LoginType.Phone;
-        const supportAuthType = [SupportAuthType.Email, SupportAuthType.Apple, SupportAuthType.Discord];
-        const result = await particleAuth.login(type, '', supportAuthType, undefined);
-        if (result.status) {
-            const userInfo = result.data;
-            console.log(userInfo);
-        } else {
-            const error = result.data;
-            console.log(error);
-        }
-
+    login() {
+        const obj = {
+            login_type: LoginType.Email,
+            account: "",
+            support_auth_type_values: [SupportAuthType.All],
+            login_form_mode: false,
+        };
+        const json = JSON.stringify(obj);
+        native.jsbBridgeWrapper.dispatchEventToNative("login", json);
     }
 
-    async logout() {
-        const result = await particleAuth.logout();
-        if (result.status) {
-            console.log(result.data);
-        } else {
-            const error = result.data;
-            console.log(error);
-        }
+    logout() {
+        native.jsbBridgeWrapper.dispatchEventToNative("logout", "");
     }
 
-    async fastLogout() {
-        const result = await particleAuth.fastLogout();
-        if (result.status) {
-            console.log(result.data);
-        } else {
-            const error = result.data;
-            console.log(error);
-        }
-
+    fastLogout() {
+        native.jsbBridgeWrapper.dispatchEventToNative("fastLogout", "");
     }
 
-    async signMessage() {
-        const message = 'Hello world!';
-        const result = await particleAuth.signMessage(message);
-        if (result.status) {
-            const signedMessage = result.data;
-            console.log(signedMessage);
-        } else {
-            const error = result.data;
-            console.log(error);
-        }
+    signMessage() {
+        const message = "Hello Cocos !";
+        native.jsbBridgeWrapper.dispatchEventToNative("signMessage", message);
     }
 
     async signAndSendTransaction() {
@@ -131,172 +242,126 @@ export class AuthDemo extends Component {
                 }
             }
             console.log(transaction);
-            const result = await particleAuth.signAndSendTransaction(transaction);
-            if (result.status) {
-                const signature = result.data;
-                console.log(signature);
-            } else {
-                const error = result.data;
-                console.log(error);
-            }
+            native.jsbBridgeWrapper.dispatchEventToNative("signAndSendTransaction", transaction);
         } catch (error) {
 
         }
     }
 
-    async signTypedData() {
+    signTypedData() {
         const typedData = "{\"types\":{\"OrderComponents\":[{\"name\":\"offerer\",\"type\":\"address\"},{\"name\":\"zone\",\"type\":\"address\"},{\"name\":\"offer\",\"type\":\"OfferItem[]\"},{\"name\":\"consideration\",\"type\":\"ConsiderationItem[]\"},{\"name\":\"orderType\",\"type\":\"uint8\"},{\"name\":\"startTime\",\"type\":\"uint256\"},{\"name\":\"endTime\",\"type\":\"uint256\"},{\"name\":\"zoneHash\",\"type\":\"bytes32\"},{\"name\":\"salt\",\"type\":\"uint256\"},{\"name\":\"conduitKey\",\"type\":\"bytes32\"},{\"name\":\"counter\",\"type\":\"uint256\"}],\"OfferItem\":[{\"name\":\"itemType\",\"type\":\"uint8\"},{\"name\":\"token\",\"type\":\"address\"},{\"name\":\"identifierOrCriteria\",\"type\":\"uint256\"},{\"name\":\"startAmount\",\"type\":\"uint256\"},{\"name\":\"endAmount\",\"type\":\"uint256\"}],\"ConsiderationItem\":[{\"name\":\"itemType\",\"type\":\"uint8\"},{\"name\":\"token\",\"type\":\"address\"},{\"name\":\"identifierOrCriteria\",\"type\":\"uint256\"},{\"name\":\"startAmount\",\"type\":\"uint256\"},{\"name\":\"endAmount\",\"type\":\"uint256\"},{\"name\":\"recipient\",\"type\":\"address\"}],\"EIP712Domain\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"version\",\"type\":\"string\"},{\"name\":\"chainId\",\"type\":\"uint256\"},{\"name\":\"verifyingContract\",\"type\":\"address\"}]},\"domain\":{\"name\":\"Seaport\",\"version\":\"1.1\",\"chainId\":5,\"verifyingContract\":\"0x00000000006c3852cbef3e08e8df289169ede581\"},\"primaryType\":\"OrderComponents\",\"message\":{\"offerer\":\"0x6fc702d32e6cb268f7dc68766e6b0fe94520499d\",\"zone\":\"0x0000000000000000000000000000000000000000\",\"offer\":[{\"itemType\":\"2\",\"token\":\"0xd15b1210187f313ab692013a2544cb8b394e2291\",\"identifierOrCriteria\":\"33\",\"startAmount\":\"1\",\"endAmount\":\"1\"}],\"consideration\":[{\"itemType\":\"0\",\"token\":\"0x0000000000000000000000000000000000000000\",\"identifierOrCriteria\":\"0\",\"startAmount\":\"9750000000000000\",\"endAmount\":\"9750000000000000\",\"recipient\":\"0x6fc702d32e6cb268f7dc68766e6b0fe94520499d\"},{\"itemType\":\"0\",\"token\":\"0x0000000000000000000000000000000000000000\",\"identifierOrCriteria\":\"0\",\"startAmount\":\"250000000000000\",\"endAmount\":\"250000000000000\",\"recipient\":\"0x66682e752d592cbb2f5a1b49dd1c700c9d6bfb32\"}],\"orderType\":\"0\",\"startTime\":\"1669188008\",\"endTime\":\"115792089237316195423570985008687907853269984665640564039457584007913129639935\",\"zoneHash\":\"0x3000000000000000000000000000000000000000000000000000000000000000\",\"salt\":\"48774942683212973027050485287938321229825134327779899253702941089107382707469\",\"conduitKey\":\"0x0000000000000000000000000000000000000000000000000000000000000000\",\"counter\":\"0\"}}";
         const version = "v4";
-        const result = await particleAuth.signTypedData(typedData, version);
-        if (result.status) {
-            const signature = result.data;
-            console.log(signature);
-        } else {
-            const error = result.data;
-            console.log(error);
-        }
+        const obj = { message: typedData, version: version };
+        const json = JSON.stringify(obj);
+        native.jsbBridgeWrapper.dispatchEventToNative("signTypedData", json);
     }
 
-    async signTransaction() {
+    signTransaction() {
         // only support solana, not support evm
-        const chainInfo = await particleAuth.getChainInfo();
-        if (chainInfo.chain_name.toLowerCase() != 'solana') {
-            console.log('signTransaction only supports solana');
-            return;
-        }
-        const sender = await particleAuth.getAddress();
-        const to = "";
-        const amount = 1000;
-        console.log('sender: ', sender);
-        const transaction = await Helper.getSolanaTransaction(sender, to, amount);
-        console.log('transaction:', transaction);
-        const result = await particleAuth.signTransaction(transaction);
-        if (result.status) {
-            const signedTransaction = result.data;
-            console.log(signedTransaction);
-        } else {
-            const error = result.data;
-            console.log(error);
-        }
+        const transaction = "";
+        native.jsbBridgeWrapper.dispatchEventToNative("signTransaction", transaction);
     }
 
-    async signAllTransactions() {
+    signAllTransactions() {
         // only support solana, not support evm
-        const chainInfo = await particleAuth.getChainInfo();
-        if (chainInfo.chain_name.toLowerCase() != 'solana') {
-            console.log('signAllTransactions only supports solana');
-            return;
-        }
-        const sender = await particleAuth.getAddress();
-        const to = "";
-        const amount = 1000;
-        const mintAddress = "";
-        const transaction1 = await Helper.getSolanaTransaction(sender, to, amount);
-        const transaction2 = await Helper.getSplTokenTransaction(sender, to, amount, mintAddress);
-        const transactions = [transaction1, transaction2];
-        const result = await particleAuth.signAllTransactions(transactions);
-        if (result.status) {
-            const signedTransactions = result.data;
-            console.log(signedTransactions);
-        } else {
-            const error = result.data;
-            console.log(error);
-        }
+        const transactions = ["", ""];
+        const json = JSON.stringify(transactions);
+        native.jsbBridgeWrapper.dispatchEventToNative("signAllTransactions", json);
     }
 
-    async setChaininfo() {
+    setChaininfo() {
         const chainInfo = ChainInfo.EthereumGoerli;
         EvmService.currentChainInfo = chainInfo;
-        const result = await particleAuth.setChainInfo(chainInfo);
-        console.log(result);
+        const obj = {
+            chain_name: chainInfo.chain_name,
+            chain_id: chainInfo.chain_id,
+            chain_id_name: chainInfo.chain_id_name,
+        };
+        const json = JSON.stringify(obj);
+        native.jsbBridgeWrapper.dispatchEventToNative("setChainInfo", json);
     }
 
-    async setChainInfoAsync() {
-        const chainInfo = ChainInfo.PolygonMainnet;
+    setChainInfoAsync() {
+        const chainInfo = ChainInfo.PolygonMumbai;
         EvmService.currentChainInfo = chainInfo;
-        const result = await particleAuth.setChainInfoAsync(chainInfo);
-        console.log(result);
+        const obj = {
+            chain_name: chainInfo.chain_name,
+            chain_id: chainInfo.chain_id,
+            chain_id_name: chainInfo.chain_id_name,
+        };
+        const json = JSON.stringify(obj);
+        native.jsbBridgeWrapper.dispatchEventToNative("setChainInfoAsync", json);
     }
 
-    async setUserInfo() {
-        const json = '';
-        const result = await particleAuth.setUserInfo(json);
-        console.log(result);
+    setUserInfo() {
+        const userInfoJsonString = "";
+        native.jsbBridgeWrapper.dispatchEventToNative("setUserInfo", userInfoJsonString);
     }
 
-    async getChainInfo() {
-        const result = await particleAuth.getChainInfo();
-        console.log(result);
+    getChainInfo() {
+        native.jsbBridgeWrapper.dispatchEventToNative("getChainInfo", "");
     }
 
-    async isLogin() {
-        const result = await particleAuth.isLogin();
-
+    isLogin() {
+        native.jsbBridgeWrapper.dispatchEventToNative("isLogin", "");
     }
 
-    async isLoginAsync() {
-        const result = await particleAuth.isLoginAsync();
-        if (result.status) {
-            const userInfo = result.data;
-            console.log(userInfo);
-        } else {
-            const error = result.data;
-            console.log(error);
-        }
+    isLoginAsync() {
+        native.jsbBridgeWrapper.dispatchEventToNative("isLoginAsync", "");
     }
 
-    async getAddress() {
-        const result = await particleAuth.getAddress();
-        console.log(result);
+    getAddress() {
+        native.jsbBridgeWrapper.dispatchEventToNative("getAddress", "");
     }
 
-    async getUserInfo() {
-        const result = await particleAuth.getUserInfo();
-        console.log(result);
+    getUserInfo() {
+        native.jsbBridgeWrapper.dispatchEventToNative("getUserInfo", "");
     }
 
-    async openAccountAndSecurity() {
-        const result = await particleAuth.openAccountAndSecurity();
-        if (result.status) {
-            console.log(result.data);
-        } else {
-            const error = result.data;
-            console.log(error);
-        }
+    openAccountAndSecurity() {
+        native.jsbBridgeWrapper.dispatchEventToNative("openAccountAndSecurity", "");
     }
 
     setModalPresentStyle() {
-        const style = iOSModalPresentStyle.FormSheet;
-        particleAuth.setModalPresentStyle(style);
+        if (sys.OS.IOS === sys.os) {
+            let style = iOSModalPresentStyle.FormSheet;
+            native.jsbBridgeWrapper.dispatchEventToNative("setModalPresentStyle", style);
+        }
     }
 
     setMediumScreen() {
-        const isMediumScreen = true;
-        particleAuth.setMediumScreen(isMediumScreen);
+        if (sys.OS.IOS === sys.os) {
+            let isMediumScreen = true;
+            native.jsbBridgeWrapper.dispatchEventToNative("setMediumScreen", isMediumScreen ? "1" : "0");
+        }
     }
 
     setLanguage() {
         const language = Language.JA;
-        particleAuth.setLanguage(language);
+        native.jsbBridgeWrapper.dispatchEventToNative("setLanguage", language);
     }
 
     setDisplayWallet() {
         let isDisplayWallet = true;
-        particleAuth.setDisplayWallet(isDisplayWallet);
+        native.jsbBridgeWrapper.dispatchEventToNative("setDisplayWallet", isDisplayWallet ? "1" : "0");
     }
 
     setInterfaceStyle() {
         let style = UserInterfaceStyle.Light;
-        particleAuth.setInterfaceStyle(style);
+        native.jsbBridgeWrapper.dispatchEventToNative("setInterfaceStyle", style);
     }
 
     openWebWallet() {
-        particleAuth.openWebWallet();
+        native.jsbBridgeWrapper.dispatchEventToNative("openWebWallet", "");
     }
 
     setSecurityAccountConfig() {
-        const config = new SecurityAccountConfig(1, 2);
-        particleAuth.setSecurityAccountConfig(config);
+        const obj = {
+            prompt_setting_when_sign: 1,
+            prompt_master_password_setting_when_login: 2,
+        };
+        const json = JSON.stringify(obj);
+        native.jsbBridgeWrapper.dispatchEventToNative("setSecurityAccountConfig", json);
     }
 
     update(deltaTime: number) { }
