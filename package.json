@@ -5,8 +5,7 @@
     "version": "3.7.2"
   },
   "dependencies": {
-    "bignumber.js": "^9.1.0"
-  },
-  "devDependencies": {
+    "bignumber.js": "^9.1.0",
+    "eventemitter3": "^5.0.0"
   }
 }

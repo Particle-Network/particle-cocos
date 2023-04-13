@@ -163,9 +163,7 @@ export class AuthDemo extends Component {
     private _setUserInfoCallback(status: string): void {
         console.log("setUserInfoCallback: " + status);
     }
-    selectChain(){
-        MainUIDemo.getInstance().showSelectChain();
-    }
+
 
     // Call native
     Init() {
