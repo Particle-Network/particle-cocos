@@ -29,15 +29,6 @@ export class SelectChain extends Component {
                 console.log("newNode",newNode);
                 this.chainParentNode!.addChild(newNode);
             });
-
-            // // Instantiate the prefab
-            // var newNode = instantiate(prefab);
-            // newNode.addComponent("ChainInfoItem");
-            // var newNode2 = instantiate(prefab);
-            // // Add the instantiated node to the scene
-            // console.log("newNode",newNode,newNode2);
-            // this.chainParentNode!.addChild(newNode);
-            // this.chainParentNode!.addChild(newNode2);
           });
           
     }
