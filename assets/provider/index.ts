@@ -54,7 +54,10 @@ class ParticleProvider {
             } else if (payload.method === 'eth_accounts' || payload.method === 'eth_requestAccounts') {
                 const isLogin = await particleAuth.isLogin();
                 if (!isLogin) {
-                    await particleAuth.login(undefined, undefined, [SupportAuthType.All]);
+                    const result = await particleAuth.login(undefined, undefined, [SupportAuthType.All]);
+                    if (result.status == false) {
+                        return Promise.reject(result.data);
+                    } 
                 }
                 const account = await particleAuth.getAddress();
                 return [account];
@@ -123,7 +126,7 @@ class ParticleProvider {
             return sendEVMRpc(payload, {
                 ...this.options,
                 chainId: chainInfo.chain_id,
-            }).then((output) => {
+            }).then((output: any) => {
                 if (output.error) {
                     return Promise.reject(output.error);
                 } else {

@@ -1478,7 +1478,7 @@
     },
     "component": "",
     "_componentId": "71100YFVCZLnqUv/v7ScfvI",
-    "handler": "Init",
+    "handler": "init",
     "customEventData": ""
   },
   {
