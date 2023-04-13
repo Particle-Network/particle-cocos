@@ -135,7 +135,8 @@ object ParticleAuthPlugin {
                 e.printStackTrace()
             }
         }
-        ParticleNetwork.login(LoginType.valueOf(loginData.loginType.uppercase()),
+        val loginType = if(!TextUtils.isEmpty(loginData.loginType)) loginData.loginType.uppercase() else LoginType.EMAIL.name
+        ParticleNetwork.login(LoginType.valueOf(loginType),
             account,
             supportAuthType,
             loginFormMode,

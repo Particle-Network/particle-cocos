@@ -6,7 +6,7 @@ import { UserInterfaceStyle } from '../../Core/Models/UserInterfaceStyle';
 import { EvmService } from '../../Core/NetService/EvmService';
 import * as particleAuth from '../../Core/particleAuth';
 import { SecurityAccountConfig } from '../../Core/Models/SecurityAccountConfig';
-import { MainUIDemo } from './MainUIDemo';
+import { MainUIDemo } from '../MainUIDemo';
 import { createWeb3 } from '../../Core/web3Demo';
 
 const { ccclass, property } = _decorator;
