@@ -1,9 +1,9 @@
 
-import JsonRpcRequest from './NetService/NetService';
-import { SerializeTransactionParams, SolanaReqBodyMethod } from './NetService/NetParams';
+import JsonRpcRequest from '../Core/NetService/NetService';
+import { SerializeTransactionParams, SolanaReqBodyMethod } from '../Core/NetService/NetParams';
 import BigNumber from 'bignumber.js';
-import { EvmService } from './NetService/EvmService';
-import { HexConverter } from './NetService/hex-converter';
+import { EvmService } from '../Core/NetService/EvmService';
+import { HexConverter } from '../Core/NetService/hex-converter';
 
 export async function getSolanaTransaction(from: string, to: string, amount: number) {
     // mock a solana native transaction

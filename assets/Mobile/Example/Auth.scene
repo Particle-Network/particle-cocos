@@ -1647,7 +1647,7 @@
       "b": 0,
       "a": 255
     },
-    "_string": "web3_requestAccounts",
+    "_string": "web3_getAccounts",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 40,
@@ -11557,7 +11557,6 @@
     },
     "_enabled": true,
     "__prefab": null,
-    "publicAddress": "",
     "_id": "2f6i0KiMBMJ48GX10LUKiF"
   },
   {

@@ -32,3 +32,11 @@ export const signerMethods = [
     'wallet_switchEthereumChain', //EIP-3326
 ];
 
+export interface ParticleOptions {
+    projectId: string;
+    clientKey: string;
+}
+
+export interface ConnectionOptions extends ParticleOptions {
+    chainId: number;
+}

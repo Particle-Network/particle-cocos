@@ -1,14 +1,13 @@
 import { _decorator, Component, find, sys } from 'cc';
-import { ChainInfo } from './Models/ChainInfo';
-import { Env, iOSModalPresentStyle, LoginType, SupportAuthType } from './Models/LoginInfo';
-import { Language } from './Models/Language';
+import { Env, iOSModalPresentStyle, LoginType, SupportAuthType } from '../Core/Models/LoginInfo';
+import { Language } from '../Core/Models/Language';
 import * as Helper from './Helper';
-import { UserInterfaceStyle } from './Models/UserInterfaceStyle';
-import { EvmService } from './NetService/EvmService';
-import * as particleAuth from './particleAuth';
-import { SecurityAccountConfig } from './Models/SecurityAccountConfig';
+import { UserInterfaceStyle } from '../Core/Models/UserInterfaceStyle';
+import { EvmService } from '../Core/NetService/EvmService';
+import * as particleAuth from '../Core/particleAuth';
+import { SecurityAccountConfig } from '../Core/Models/SecurityAccountConfig';
 import { MainUIDemo } from './MainUIDemo';
-import { createWeb3 } from './web3Demo';
+import { createWeb3 } from '../Core/web3Demo';
 
 const { ccclass, property } = _decorator;
 
@@ -16,9 +15,6 @@ const { ccclass, property } = _decorator;
 export class AuthDemo extends Component {
 
     private web3 = createWeb3();
-
-    @property
-    private publicAddress: string = '';
 
     start() {
         if (sys.os == sys.OS.IOS || sys.os == sys.OS.ANDROID) {
@@ -265,11 +261,12 @@ export class AuthDemo extends Component {
         }
     };
 
-    async web3_wallet_switchEthereumChain(){
+    async web3_wallet_switchEthereumChain() {
+        const chainId = EvmService.currentChainInfo.chain_id;
         try {
             const result = await this.web3.currentProvider.request({
                 method: 'wallet_switchEthereumChain',
-                params: [{ chainId: '0x61' }],
+                params: [{ chainId: "0x" + chainId.toString(16) }],
             });
             console.log('web3 wallet_switchEthereumChain', result);
         } catch (error) {
@@ -334,7 +331,7 @@ export class AuthDemo extends Component {
 
     async signAndSendTransaction() {
         try {
-            const sender = this.publicAddress;
+            const sender = await particleAuth.getAddress();
             const chainInfo = EvmService.currentChainInfo;
             let transaction = '';
             // There are four test cases

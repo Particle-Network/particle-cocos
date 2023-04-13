@@ -2,9 +2,7 @@
 
 import { EvmService } from '../NetService/EvmService';
 import { SolanaService } from '../NetService/SolanaService';
-import type { ConnectionOptions, RequestArguments } from './types';
-
-
+import type { RequestArguments } from './types';
 
 export function sendEVMRpc(args: RequestArguments) {
     return EvmService.rpc(args.method, args.params)

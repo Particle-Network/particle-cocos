@@ -1,48 +1,47 @@
-import { _decorator, Button, CCObject, Component, Node, Sprite, sys} from 'cc';
-import { AuthDemo } from './AuthDemo';
+import { _decorator, Component, Node } from 'cc';
 const { ccclass, property } = _decorator;
 
 @ccclass('MainUIDemo')
 export class MainUIDemo extends Component {
 
 
-    @property (Node)
-    authDemo : Node | undefined;
+    @property(Node)
+    authDemo: Node | undefined;
 
-    @property (Node)
-    selectChain : Node | undefined;
+    @property(Node)
+    selectChain: Node | undefined;
 
-    public static instance : MainUIDemo;
+    public static instance: MainUIDemo;
     start() {
         MainUIDemo.instance = this!;
         this.hiddenSelectChain();
         this.hiddenAuthDemo();
     }
-    static getInstance(){
+    static getInstance() {
         return this.instance;
     }
 
     update(deltaTime: number) {
-        
+
     }
 
-    hidden(){   
+    hidden() {
         this.node.active = false;
     }
 
-    show(){   
+    show() {
         this.node.active = true;
     }
-    showSelectChain(){
+    showSelectChain() {
         this.selectChain!.active = true;
     }
-    hiddenSelectChain(){
+    hiddenSelectChain() {
         this.selectChain!.active = false;
     }
-    showAuthDemo(){
+    showAuthDemo() {
         this.authDemo!.active = true;
     }
-    hiddenAuthDemo(){
+    hiddenAuthDemo() {
         this.authDemo!.active = false;
     }
 }

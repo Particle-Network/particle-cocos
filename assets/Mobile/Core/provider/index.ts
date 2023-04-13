@@ -13,7 +13,7 @@ class ParticleProvider {
         // this.events.setMaxListeners(100);
     }
 
-    public on(event: string , listener: any): void {
+    public on(event: string, listener: any): void {
         this.events.on(event, listener);
     }
 
@@ -56,7 +56,7 @@ class ParticleProvider {
                     const result = await particleAuth.login(undefined, undefined, [SupportAuthType.All]);
                     if (result.status == false) {
                         return Promise.reject(result.data);
-                    } 
+                    }
                 }
                 const account = await particleAuth.getAddress();
                 return [account];
