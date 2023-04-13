@@ -210,7 +210,7 @@ import { SecurityAccountConfig } from "./Models/SecurityAccountConfig";
             event.once("signMessageCallback", (result: string) => {
                  resolve(JSON.parse(result));
             });
-            native.jsbBridgeWrapper.dispatchEventToNative("signMessage", "");
+            native.jsbBridgeWrapper.dispatchEventToNative("signMessage", message);
         });
     }
 

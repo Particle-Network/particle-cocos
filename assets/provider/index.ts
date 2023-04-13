@@ -121,8 +121,9 @@ class ParticleProvider {
                 });
             }
         } else {
-            const chainInfo = await particleAuth.getChainInfo();
             return sendEVMRpc(payload).then((output: any) => {
+                console.log('output ', output);
+                
                 if (output.error) {
                     return Promise.reject(output.error);
                 } else {
