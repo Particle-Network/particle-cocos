@@ -5,6 +5,7 @@ import type { RequestArguments } from './types';
 import { notSupportMethods, signerMethods } from './types';
 import { ChainInfo } from '../Models/ChainInfo';
 import { SupportAuthType } from '../Models/LoginInfo';
+import { HexConverter } from '../NetService/hex-converter';
 
 class ParticleProvider {
     private events = new EventTarget();
@@ -66,7 +67,8 @@ class ParticleProvider {
                     const chainInfo = await particleAuth.getChainInfo();
                     txData.chainId = `0x${chainInfo.chain_id.toString(16)}`;
                 }
-                const tx = Buffer.from(JSON.stringify(txData)).toString('hex');
+
+                const tx = HexConverter.jsonToHexString(txData);
                 const result: any = await particleAuth.signAndSendTransaction(`0x${tx}`);
                 if (result.status) {
                     return result.data;
