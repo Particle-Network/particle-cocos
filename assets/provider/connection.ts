@@ -6,11 +6,11 @@ import type { ConnectionOptions, RequestArguments } from './types';
 
 
 
-export function sendEVMRpc(args: RequestArguments, config: ConnectionOptions) {
+export function sendEVMRpc(args: RequestArguments) {
     return EvmService.rpc(args.method, args.params)
 }
 
-export function sendSolanaRpc(args: RequestArguments, config: ConnectionOptions) {
+export function sendSolanaRpc(args: RequestArguments) {
     return SolanaService.rpc(args.method, args.params)
 }
 

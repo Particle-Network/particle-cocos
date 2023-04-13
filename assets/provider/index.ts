@@ -1,7 +1,7 @@
 import { EventTarget } from 'cc';
 import * as particleAuth from '../particleAuth';
 import { sendEVMRpc } from './connection';
-import type { ParticleOptions, RequestArguments } from './types';
+import type { RequestArguments } from './types';
 import { notSupportMethods, signerMethods } from './types';
 import { ChainInfo } from '../Models/ChainInfo';
 import { SupportAuthType } from '../Models/LoginInfo';
@@ -9,8 +9,7 @@ import { SupportAuthType } from '../Models/LoginInfo';
 class ParticleProvider {
     private events = new EventTarget();
 
-    constructor(private options: ParticleOptions) {
-        console.log(this.options, particleAuth);
+    constructor() {
         // this.events.setMaxListeners(100);
     }
 
@@ -123,10 +122,7 @@ class ParticleProvider {
             }
         } else {
             const chainInfo = await particleAuth.getChainInfo();
-            return sendEVMRpc(payload, {
-                ...this.options,
-                chainId: chainInfo.chain_id,
-            }).then((output: any) => {
+            return sendEVMRpc(payload).then((output: any) => {
                 if (output.error) {
                     return Promise.reject(output.error);
                 } else {
