@@ -6,7 +6,7 @@ import { ChainInfo } from '../Models/ChainInfo';
 
 export class EvmService {
     /// current chain info
-    static currentChainInfo: ChainInfo = ChainInfo.EthereumGoerli;
+    static currentChainInfo: ChainInfo = ChainInfo.EthereumGoerli|undefined;
 
     /**
      * Support evm standard rpc methpd

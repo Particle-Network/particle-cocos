@@ -5,6 +5,7 @@ import { Language } from './Models/Language';
 import * as Helper from './Helper';
 import { UserInterfaceStyle } from './Models/UserInterfaceStyle';
 import { EvmService } from './NetService/EvmService';
+import { MainUIDemo } from './MainUIDemo';
 
 const { ccclass, property } = _decorator;
 
@@ -162,7 +163,9 @@ export class AuthDemo extends Component {
     private _setUserInfoCallback(status: string): void {
         console.log("setUserInfoCallback: " + status);
     }
-
+    selectChain(){
+        MainUIDemo.getInstance().showSelectChain();
+    }
 
     // Call native
     Init() {
