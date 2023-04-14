@@ -164,7 +164,12 @@ export function init(chainInfo: ChainInfo, env: Env) {
 }
 
 /**
- * 
+ * Login Particle Auth Service
+ * @param type Login type, support phone, email, json web token, google, apple and more.
+ * @param account When login type is email, phone or jwt, you could pass email address, phone number or jwt.
+ * @param supportAuthType Controls whether third-party login buttons are displayed. default will show all third-party login buttons.
+ * @param loginFormMode Controls whether show light UI in web, default is false.
+ * @returns Result, userinfo or error
  */
 export function login(type?: LoginType, account?: string, supportAuthTypes: SupportAuthType[] = [SupportAuthType.All], loginFormMode: boolean = false): Promise<any> {
     const obj = {
@@ -185,6 +190,10 @@ export function login(type?: LoginType, account?: string, supportAuthTypes: Supp
 
 }
 
+/**
+ * Logout
+ * @returns Result, success or error
+ */
 export function logout(): Promise<any> {
     return new Promise((resolve, reject) => {
         event.off("logoutCallback");
@@ -195,6 +204,10 @@ export function logout(): Promise<any> {
     });
 }
 
+/**
+ * Fast logout, silently
+ * @returns Result, success or error
+ */
 export function fastLogout(): Promise<any> {
     return new Promise((resolve, reject) => {
         event.off("fastLogoutCallback");
@@ -205,6 +218,11 @@ export function fastLogout(): Promise<any> {
     });
 }
 
+/**
+ * Sign message
+ * @param message Message that you want user to sign.
+ * @returns Result, signed message or error
+ */
 export function signMessage(message: string): Promise<any> {
     return new Promise((resolve, reject) => {
         event.off("signMessageCallback");
@@ -215,6 +233,11 @@ export function signMessage(message: string): Promise<any> {
     });
 }
 
+/**
+ * Sign and send transaction
+ * @param transaction Transaction that you want user to sign and send
+ * @returns Result, signature or error
+ */
 export function signAndSendTransaction(transaction: string): Promise<any> {
     return new Promise((resolve, reject) => {
         event.off("signAndSendTransactionCallback");
@@ -226,6 +249,12 @@ export function signAndSendTransaction(transaction: string): Promise<any> {
 
 }
 
+/**
+ * Sign typed data, only evm chain support sign typed data!
+ * @param typedData TypedData string
+ * @param version TypedData version, support v1, v3, v4
+ * @returns Result, signature or error
+ */
 export function signTypedData(typedData: string, version: string): Promise<any> {
     const obj = { message: typedData, version: version };
     const json = JSON.stringify(obj);
@@ -240,8 +269,9 @@ export function signTypedData(typedData: string, version: string): Promise<any> 
 }
 
 /**
- * Only support solana, not support evm.
- * @param transaction 
+ * Sign transaction, only solana chain support!
+ * @param transaction Transaction that you want user to sign.
+ * @returns Result, signed transaction or error
  */
 export function signTransaction(transaction: string): Promise<any> {
     return new Promise((resolve, reject) => {
@@ -254,8 +284,9 @@ export function signTransaction(transaction: string): Promise<any> {
 }
 
 /**
- * Only support solana, not support evm.
- * @param transactions 
+ * Sign all transactions, only solana chain support!
+ * @param transactions Transactions that you want user to sign
+ * @returns Result, signed transactions or error
  */
 export function signAllTransactions(transactions: string[]): Promise<any> {
     const json = JSON.stringify(transactions);
@@ -269,6 +300,11 @@ export function signAllTransactions(transactions: string[]): Promise<any> {
     });
 }
 
+/**
+ * Set chainInfo
+ * @param chainInfo ChainInfo
+ * @returns Result
+ */
 export function setChainInfo(chainInfo: ChainInfo): Promise<any> {
     const obj = {
         chain_name: chainInfo.chain_name,
@@ -286,6 +322,11 @@ export function setChainInfo(chainInfo: ChainInfo): Promise<any> {
     });
 }
 
+/**
+ * Set chainInfo async, because ParticleAuthService support both solana and evm, if switch to solana from evm, Auth Service will create a evm address if the user doesn't has a evm address.
+ * @param chainInfo
+ * @returns Result
+ */
 export function setChainInfoAsync(chainInfo: ChainInfo): Promise<any> {
     const obj = {
         chain_name: chainInfo.chain_name,
@@ -316,6 +357,10 @@ export function setUserInfo(jsonString: string): Promise<any> {
     });
 }
 
+/**
+ * Get chainInfo
+ * @returns ChainInfo
+ */
 export function getChainInfo(): Promise<ChainInfo> {
 
     return new Promise((resolve, reject) => {
@@ -327,6 +372,10 @@ export function getChainInfo(): Promise<ChainInfo> {
     });
 }
 
+/**
+ * Is user logged in
+ * @returns Result, if user is login return true, otherwise retrun false
+ */
 export function isLogin(): Promise<boolean> {
 
     return new Promise((resolve, reject) => {
@@ -338,6 +387,10 @@ export function isLogin(): Promise<boolean> {
     });
 }
 
+/**
+ * Check is user login is valid from server
+ * @returns Result, if user is valid, return userinfo, otherwise return error
+ */
 export function isLoginAsync(): Promise<any> {
     return new Promise((resolve, reject) => {
         event.off("isLoginAsyncCallback");
@@ -348,6 +401,10 @@ export function isLoginAsync(): Promise<any> {
     });
 }
 
+/**
+ * Get public address
+ * @returns Public address
+ */
 export function getAddress(): Promise<string> {
     return new Promise((resolve, reject) => {
         event.off("getAddressCallback");
@@ -358,6 +415,10 @@ export function getAddress(): Promise<string> {
     });
 }
 
+/**
+ * Get user info
+ * @returns User info
+ */
 export function getUserInfo(): Promise<any> {
     return new Promise((resolve, reject) => {
         event.off("getUserInfoCallback");
@@ -368,6 +429,10 @@ export function getUserInfo(): Promise<any> {
     });
 }
 
+/**
+ * Open account and security page
+ * use DeviceEventEmitter.addListener('securityFailedCallBack', this.securityFailedCallBack) get securityFailedCallBack
+ */
 export function openAccountAndSecurity(): Promise<any> {
     return new Promise((resolve, reject) => {
         event.off("openAccountAndSecurityCallback");
@@ -379,12 +444,23 @@ export function openAccountAndSecurity(): Promise<any> {
 
 }
 
+/**
+ * Set modal present style, only support iOS
+ * @param style Modal present style
+ */
 export function setModalPresentStyle(style: iOSModalPresentStyle) {
     if (sys.OS.IOS === sys.os) {
         native.jsbBridgeWrapper.dispatchEventToNative("setModalPresentStyle", style);
     }
 }
 
+/**
+ * Set medium screen, only support iOS 15.0 or later
+ *
+ * if you want a medium screen when present safari web view, call this method with true.
+ * and don't call setModalPresentStyle with fullScreen.
+ * @param isMediumScreen Is medium screen
+ */
 export function setMediumScreen(isMediumScreventn: boolean) {
 
     if (sys.OS.IOS === sys.os) {
@@ -392,22 +468,41 @@ export function setMediumScreen(isMediumScreventn: boolean) {
     }
 }
 
+/**
+ * Set language
+ * @param language Language
+ */
 export function setLanguage(language: Language) {
     native.jsbBridgeWrapper.dispatchEventToNative("setLanguage", language);
 }
 
+/**
+ * Set if display wallet in web page.
+ * @param isDisplay
+ */
 export function setDisplayWallet(isDisplayWallet: boolean) {
     native.jsbBridgeWrapper.dispatchEventToNative("setDisplayWallet", isDisplayWallet ? "1" : "0");
 }
 
+/**
+ * Set user interface style
+ * @param style 
+ */
 export function setInterfaceStyle(style: UserInterfaceStyle) {
     native.jsbBridgeWrapper.dispatchEventToNative("setInterfaceStyle", style);
 }
 
+/**
+ * Open web wallet
+ */
 export function openWebWallet() {
     native.jsbBridgeWrapper.dispatchEventToNative("openWebWallet", "");
 }
 
+/**
+ * Set security account config
+ * @param config 
+ */
 export function setSecurityAccountConfig(config: SecurityAccountConfig) {
     const obj = {
         prompt_setting_when_sign: config.promptSettingWhenSign,
