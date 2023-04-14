@@ -1,4 +1,4 @@
-import { _decorator, Component, find, sys } from 'cc';
+import { _decorator, Component, error, find, sys } from 'cc';
 import { Env, iOSModalPresentStyle, LoginType, SupportAuthType } from '../../Core/Models/LoginInfo';
 import { Language } from '../../Core/Models/Language';
 import * as Helper from './Helper';
@@ -282,9 +282,12 @@ export class AuthDemo extends Component {
     init() {
         // Get your project id and client from dashboard,  
         // https://dashboard.particle.network/
-        ParticleInfo.projectId = "your project id";
-        ParticleInfo.clientKey = "your client key";
+        ParticleInfo.projectId = ""; // your project id
+        ParticleInfo.clientKey = ""; // your client key
 
+        if (ParticleInfo.projectId == "" || ParticleInfo.clientKey == "") {
+            throw new Error('You need set project info');
+        }
         const chainInfo = EvmService.currentChainInfo;
         const env = Env.Dev;
         particleAuth.init(chainInfo, env);
