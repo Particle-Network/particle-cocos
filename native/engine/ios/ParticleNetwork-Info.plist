@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 <key>PROJECT_UUID</key>
-<string>77eeb8ec-dd64-48e9-b786-aa340ce42a40</string>
+<string>YOUR_PROJECT_UUID</string>
 <key>PROJECT_CLIENT_KEY</key>
-<string>cpahKexYg891D1BQ3IwMv9fd6E5JKdizMZcFRZ6x</string>
+<string>YOUR_PROJECT_CLIENT_KEY</string>
 <key>PROJECT_APP_UUID</key>
-<string>ac322f31-6b59-4847-80be-a5d353242fc6</string>
+<string>YOUR_PROJECT_APP_UUID</string>
 
 </dict>
 </plist>
