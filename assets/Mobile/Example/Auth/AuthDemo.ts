@@ -9,8 +9,10 @@ import { SecurityAccountConfig } from '../../Core/Models/SecurityAccountConfig';
 import { MainUIDemo } from '../MainUIDemo';
 import { createWeb3 } from '../../Core/web3Demo';
 import { ToastManager } from '../Toast/ToastManager';
+import { ParticleInfo } from '../../Core/NetService/ParticleInfo';
 
-const { ccclass, property } = _decorator;
+
+const { ccclass } = _decorator;
 
 @ccclass('AuthDemo')
 export class AuthDemo extends Component {
@@ -278,6 +280,11 @@ export class AuthDemo extends Component {
 
     // Call native
     init() {
+        // Get your project id and client from dashboard,  
+        // https://dashboard.particle.network/
+        ParticleInfo.projectId = "your project id";
+        ParticleInfo.clientKey = "your client key";
+
         const chainInfo = EvmService.currentChainInfo;
         const env = Env.Dev;
         particleAuth.init(chainInfo, env);
@@ -465,7 +472,7 @@ export class AuthDemo extends Component {
 
     async isLogin() {
         const result = await particleAuth.isLogin();
-
+        toastAndLog(result);
     }
 
     async isLoginAsync() {

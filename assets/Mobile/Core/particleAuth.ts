@@ -163,6 +163,9 @@ export function init(chainInfo: ChainInfo, env: Env) {
 
 }
 
+/**
+ * 
+ */
 export function login(type?: LoginType, account?: string, supportAuthTypes: SupportAuthType[] = [SupportAuthType.All], loginFormMode: boolean = false): Promise<any> {
     const obj = {
         login_type: type,
