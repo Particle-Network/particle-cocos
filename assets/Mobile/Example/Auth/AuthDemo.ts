@@ -8,6 +8,7 @@ import * as particleAuth from '../../Core/particleAuth';
 import { SecurityAccountConfig } from '../../Core/Models/SecurityAccountConfig';
 import { MainUIDemo } from '../MainUIDemo';
 import { createWeb3 } from '../../Core/web3Demo';
+import { ToastManager } from '../Toast/ToastManager';
 
 const { ccclass, property } = _decorator;
 
@@ -43,9 +44,9 @@ export class AuthDemo extends Component {
     async web3_getAccounts() {
         try {
             const accounts = await this.web3.eth.getAccounts();
-            console.log('web3.eth.getAccounts', accounts);
+            toastAndLog('web3.eth.getAccounts', accounts);
         } catch (error) {
-            console.log('web3.eth.getAccounts', error);
+            toastAndLog('web3.eth.getAccounts', error);
         }
     };
 
@@ -53,18 +54,18 @@ export class AuthDemo extends Component {
         try {
             const accounts = await this.web3.eth.getAccounts();
             const balance = await this.web3.eth.getBalance(accounts[0]);
-            console.log('web3.eth.getBalance', balance);
+            toastAndLog('web3.eth.getBalance', balance);
         } catch (error) {
-            console.log('web3.eth.getBalance', error);
+            toastAndLog('web3.eth.getBalance', error);
         }
     };
 
     async web3_getChainId() {
         try {
             const chainId = await this.web3.eth.getChainId();
-            console.log('web3.eth.getChainId', chainId);
+            toastAndLog('web3.eth.getChainId', chainId);
         } catch (error) {
-            console.log('web3.eth.getChainId', error);
+            toastAndLog('web3.eth.getChainId', error);
         }
     };
 
@@ -77,9 +78,9 @@ export class AuthDemo extends Component {
                 params: ['hello world'],
             });
 
-            console.log('web3.eth.personal.sign', result);
+            toastAndLog('web3.eth.personal.sign', result);
         } catch (error) {
-            console.log('web3.eth.personal.sign', error);
+            toastAndLog('web3.eth.personal.sign', error);
         }
     };
 
@@ -96,9 +97,9 @@ export class AuthDemo extends Component {
                     accounts[0],
                 ],
             });
-            console.log('web3 eth_signTypedData_v1', result);
+            toastAndLog('web3 eth_signTypedData_v1', result);
         } catch (error) {
-            console.log('web3 eth_signTypedData_v1', error);
+            toastAndLog('web3 eth_signTypedData_v1', error);
         }
     };
 
@@ -142,9 +143,9 @@ export class AuthDemo extends Component {
                     },
                 ],
             });
-            console.log('web3 eth_signTypedData_v3', result);
+            toastAndLog('web3 eth_signTypedData_v3', result);
         } catch (error) {
-            console.log('web3 eth_signTypedData_v3', error);
+            toastAndLog('web3 eth_signTypedData_v3', error);
         }
     };
 
@@ -240,9 +241,9 @@ export class AuthDemo extends Component {
                     },
                 ],
             });
-            console.log('web3 eth_signTypedData_v4', result);
+            toastAndLog('web3 eth_signTypedData_v4', result);
         } catch (error) {
-            console.log('web3 eth_signTypedData_v4', error);
+            toastAndLog('web3 eth_signTypedData_v4', error);
         }
     };
 
@@ -255,9 +256,9 @@ export class AuthDemo extends Component {
                 value: '1000000',
                 data: '0x',
             });
-            console.log('web3.eth.sendTransaction', JSON.stringify(result));
+            toastAndLog('web3.eth.sendTransaction', JSON.stringify(result));
         } catch (error) {
-            console.log('web3.eth.sendTransaction', error);
+            toastAndLog('web3.eth.sendTransaction', error);
         }
     };
 
@@ -268,9 +269,9 @@ export class AuthDemo extends Component {
                 method: 'wallet_switchEthereumChain',
                 params: [{ chainId: "0x" + chainId.toString(16) }],
             });
-            console.log('web3 wallet_switchEthereumChain', result);
+            toastAndLog('web3 wallet_switchEthereumChain', result);
         } catch (error) {
-            console.log('web3 wallet_switchEthereumChain', error);
+            toastAndLog('web3 wallet_switchEthereumChain', error);
         }
     };
 
@@ -288,10 +289,10 @@ export class AuthDemo extends Component {
         const result = await particleAuth.login(type, '', supportAuthType, undefined);
         if (result.status) {
             const userInfo = result.data;
-            console.log(userInfo);
+            toastAndLog(userInfo);
         } else {
             const error = result.data;
-            console.log(error);
+            toastAndLog(error);
         }
 
     }
@@ -299,20 +300,20 @@ export class AuthDemo extends Component {
     async logout() {
         const result = await particleAuth.logout();
         if (result.status) {
-            console.log(result.data);
+            toastAndLog(result.data);
         } else {
             const error = result.data;
-            console.log(error);
+            toastAndLog(error);
         }
     }
 
     async fastLogout() {
         const result = await particleAuth.fastLogout();
         if (result.status) {
-            console.log(result.data);
+            toastAndLog(result.data);
         } else {
             const error = result.data;
-            console.log(error);
+            toastAndLog(error);
         }
 
     }
@@ -322,10 +323,10 @@ export class AuthDemo extends Component {
         const result = await particleAuth.signMessage(message);
         if (result.status) {
             const signedMessage = result.data;
-            console.log(signedMessage);
+            toastAndLog(signedMessage);
         } else {
             const error = result.data;
-            console.log(error);
+            toastAndLog(error);
         }
     }
 
@@ -365,14 +366,14 @@ export class AuthDemo extends Component {
                     transaction = await Helper.getEvmTokenTransactionLegacy(sender, receiver, amount, contractAddress);
                 }
             }
-            console.log(transaction);
+            toastAndLog(transaction);
             const result = await particleAuth.signAndSendTransaction(transaction);
             if (result.status) {
                 const signature = result.data;
-                console.log(signature);
+                toastAndLog(signature);
             } else {
                 const error = result.data;
-                console.log(error);
+                toastAndLog(error);
             }
         } catch (error) {
 
@@ -385,10 +386,10 @@ export class AuthDemo extends Component {
         const result = await particleAuth.signTypedData(typedData, version);
         if (result.status) {
             const signature = result.data;
-            console.log(signature);
+            toastAndLog(signature);
         } else {
             const error = result.data;
-            console.log(error);
+            toastAndLog(error);
         }
     }
 
@@ -396,22 +397,22 @@ export class AuthDemo extends Component {
         // only support solana, not support evm
         const chainInfo = await particleAuth.getChainInfo();
         if (chainInfo.chain_name.toLowerCase() != 'solana') {
-            console.log('signTransaction only supports solana');
+            toastAndLog('signTransaction only supports solana');
             return;
         }
         const sender = await particleAuth.getAddress();
         const to = "";
         const amount = 1000;
-        console.log('sender: ', sender);
+        toastAndLog('sender: ', sender);
         const transaction = await Helper.getSolanaTransaction(sender, to, amount);
-        console.log('transaction:', transaction);
+        toastAndLog('transaction:', transaction);
         const result = await particleAuth.signTransaction(transaction);
         if (result.status) {
             const signedTransaction = result.data;
-            console.log(signedTransaction);
+            toastAndLog(signedTransaction);
         } else {
             const error = result.data;
-            console.log(error);
+            toastAndLog(error);
         }
     }
 
@@ -419,7 +420,7 @@ export class AuthDemo extends Component {
         // only support solana, not support evm
         const chainInfo = await particleAuth.getChainInfo();
         if (chainInfo.chain_name.toLowerCase() != 'solana') {
-            console.log('signAllTransactions only supports solana');
+            toastAndLog('signAllTransactions only supports solana');
             return;
         }
         const sender = await particleAuth.getAddress();
@@ -432,34 +433,34 @@ export class AuthDemo extends Component {
         const result = await particleAuth.signAllTransactions(transactions);
         if (result.status) {
             const signedTransactions = result.data;
-            console.log(signedTransactions);
+            toastAndLog(signedTransactions);
         } else {
             const error = result.data;
-            console.log(error);
+            toastAndLog(error);
         }
     }
 
     async setChaininfo() {
         const chainInfo = EvmService.currentChainInfo;
         const result = await particleAuth.setChainInfo(chainInfo);
-        console.log(result);
+        toastAndLog(result);
     }
 
     async setChainInfoAsync() {
         const chainInfo = EvmService.currentChainInfo;
         const result = await particleAuth.setChainInfoAsync(chainInfo);
-        console.log(result);
+        toastAndLog(result);
     }
 
     async setUserInfo() {
         const json = '';
         const result = await particleAuth.setUserInfo(json);
-        console.log(result);
+        toastAndLog(result);
     }
 
     async getChainInfo() {
         const result = await particleAuth.getChainInfo();
-        console.log(result);
+        toastAndLog(result);
     }
 
     async isLogin() {
@@ -471,30 +472,30 @@ export class AuthDemo extends Component {
         const result = await particleAuth.isLoginAsync();
         if (result.status) {
             const userInfo = result.data;
-            console.log(userInfo);
+            toastAndLog(userInfo);
         } else {
             const error = result.data;
-            console.log(error);
+            toastAndLog(error);
         }
     }
 
     async getAddress() {
         const result = await particleAuth.getAddress();
-        console.log(result);
+        toastAndLog(result);
     }
 
     async getUserInfo() {
         const result = await particleAuth.getUserInfo();
-        console.log(result);
+        toastAndLog(result);
     }
 
     async openAccountAndSecurity() {
         const result = await particleAuth.openAccountAndSecurity();
         if (result.status) {
-            console.log(result.data);
+            toastAndLog(result.data);
         } else {
             const error = result.data;
-            console.log(error);
+            toastAndLog(error);
         }
     }
 
@@ -535,3 +536,21 @@ export class AuthDemo extends Component {
     update(deltaTime: number) { }
 }
 
+function toastAndLog(message?: any, ...optionalParams: any[]) {
+    console.log(message, ...optionalParams);
+
+    let total: string = "";
+    if (isObject(message)) {
+        total +=  JSON.stringify(message);
+    } else {
+        total += message;
+    }
+    if (optionalParams.length != 0) {
+        total += JSON.stringify(optionalParams);
+    }
+
+    find("Canvas")?.getComponent(ToastManager)?.showToast(total);
+}
+function isObject(value: any): boolean {
+    return value !== null && typeof value === 'object';
+}

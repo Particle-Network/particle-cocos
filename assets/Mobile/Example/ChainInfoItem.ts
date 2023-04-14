@@ -1,7 +1,8 @@
-import { _decorator, Component, Label } from 'cc';
+import { _decorator, Component, find, Label } from 'cc';
 import { ChainInfo } from '../Core/Models/ChainInfo';
 import { EvmService } from '../Core/NetService/EvmService';
 import { MainUIDemo } from './MainUIDemo';
+import { ToastManager } from './Toast/ToastManager';
 
 const { ccclass, property } = _decorator;
 
@@ -25,6 +26,7 @@ export class ChainInfoItem extends Component {
 
     onChainInfoItemClick() {
         console.log("onChainInfoItemClick", this.chainInfo);
+        find("Canvas")?.getComponent(ToastManager)?.showToast(JSON.stringify(this.chainInfo));
         EvmService.currentChainInfo = this.chainInfo!;
         MainUIDemo.getInstance().hiddenSelectChain();
     }
