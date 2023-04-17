@@ -7,7 +7,7 @@
 
 Install Cocos Creator 3.7.2 or later. Earlier versions may also be compatible but will not be actively supported. Install Cocos Creator 3.7.2 or later. Earlier versions may also be compatible but will not be actively supported. 
 
-**[iOS and Android](https://docs.particle.network/dashboard/unity-sdk-prerequisites)**
+**iOS and Android**
 
 *(iOS only)* Install the following:
 
