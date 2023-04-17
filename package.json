@@ -1,0 +1,13 @@
+{
+  "name": "ParticleCocosDemo",
+  "uuid": "9cac77ad-60cf-4a6a-b09c-1376d106d3bb",
+  "creator": {
+    "version": "3.7.2"
+  },
+  "dependencies": {
+    "web3": "^1.9.0"
+  },
+  "devDependencies": {
+    "@types/web3": "^1.2.2"
+  }
+}
