@@ -1,6 +1,6 @@
 ![](https://img.shields.io/badge/ts-%F0%9F%92%AA-blue?style=round) 
 
-<img align="right" src="./screenshot/main.jpg" alt="img_v2_e4e49bb8-c9ad-4768-91d1-a600dffbcfbg" style="zoom:15%;" />
+<img align="right" src="./screenshot/main.jpg" width="200" alt="img_v2_e4e49bb8-c9ad-4768-91d1-a600dffbcfbg" style="zoom:15%;" />
 ![GitHub](https://img.shields.io/github/license/silviopaganini/nft-market?style=round)
 
 ## **Prerequisites**
