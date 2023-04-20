@@ -24,6 +24,7 @@ public class ParticleAuthPlugin: NSObject {
     let bag = DisposeBag()
     
     @objc static let shared = ParticleAuthPlugin()
+    
     @objc
     public func initialize(_ json: String) {
         let data = JSON(parseJSON: json)

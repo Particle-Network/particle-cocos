@@ -7,7 +7,7 @@ import { ChainInfo } from '../Models/ChainInfo';
 import { SupportAuthType } from '../Models/LoginInfo';
 import { HexConverter } from '../NetService/hex-converter';
 
-class ParticleProvider {
+class ParticleAuthProvider {
     private events = new EventTarget();
 
     constructor() {
@@ -42,6 +42,12 @@ class ParticleProvider {
 
     public async request(payload: RequestArguments): Promise<any> {
         if (!payload.method || notSupportMethods.includes(payload.method)) {
+            return Promise.reject({
+                code: -32601,
+                message: 'Method not supported',
+            });
+        }
+        if (payload.method === 'wallet_addEthereumChain') {
             return Promise.reject({
                 code: -32601,
                 message: 'Method not supported',
@@ -128,4 +134,4 @@ class ParticleProvider {
     }
 }
 
-export { ParticleProvider };
+export { ParticleAuthProvider };

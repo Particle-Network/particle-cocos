@@ -80,10 +80,12 @@ function _loginCallback(json: string): void {
     event.emit("loginCallback", json);
     console.log("loginCallback: " + json);
 }
+
 function _logoutCallback(json: string): void {
     event.emit("logoutCallback", json);
     console.log("logoutCallback: " + json);
 }
+
 function _fastLogoutCallback(json: string): void {
     event.emit("fastLogoutCallback", json);
     console.log("fastLogoutCallback: " + json);
@@ -150,6 +152,11 @@ function _setUserInfoCallback(json: string): void {
     console.log("setUserInfoCallback: " + json);
 }
 
+/**
+ * Init Particle Auth SDK
+ * @param chainInfo ChainInfo
+ * @param env Env
+ */
 export function init(chainInfo: ChainInfo, env: Env) {
 
     const obj = {

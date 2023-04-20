@@ -28,7 +28,7 @@ export class EvmService {
      * @param currencies Currencies array, like ["usd", "cny"]
      * @returns Json string
      */
-    static async getPrice(addresses: [string], currencies: [string]) {
+    static async getPrice(addresses: string[], currencies: string[]) {
         return await this.rpc(EVMReqBodyMethod.particleGetPrice, [addresses, currencies]);
     }
 

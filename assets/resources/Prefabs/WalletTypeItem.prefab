@@ -1,7 +1,7 @@
 [
   {
     "__type__": "cc.Prefab",
-    "_name": "ChainInfoItem",
+    "_name": "WalletTypeItem",
     "_objFlags": 0,
     "_native": "",
     "data": {
@@ -12,7 +12,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "ChainInfoItem",
+    "_name": "WalletTypeItem",
     "_objFlags": 0,
     "__editorExtras__": {},
     "_parent": null,
@@ -351,12 +351,12 @@
       "__id__": 1
     },
     "component": "",
-    "_componentId": "5a366QiQIBL9Y4wQL75D0sm",
-    "handler": "onChainInfoItemClick",
+    "_componentId": "a65eazLqoVD1rAoaga/XiZw",
+    "handler": "onWalletTypetemClick",
     "customEventData": ""
   },
   {
-    "__type__": "5a366QiQIBL9Y4wQL75D0sm",
+    "__type__": "a65eazLqoVD1rAoaga/XiZw",
     "_name": "",
     "_objFlags": 0,
     "node": {
@@ -373,7 +373,7 @@
   },
   {
     "__type__": "cc.CompPrefabInfo",
-    "fileId": "6fw/k/yN5IJpzpissnJrua"
+    "fileId": "292Qz3hlJB+aaxmxL5R3XY"
   },
   {
     "__type__": "cc.PrefabInfo",

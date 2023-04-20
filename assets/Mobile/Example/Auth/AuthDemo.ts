@@ -1,4 +1,4 @@
-import { _decorator, Component, error, find, sys } from 'cc';
+import { _decorator, Component, find, sys } from 'cc';
 import { Env, iOSModalPresentStyle, LoginType, SupportAuthType } from '../../Core/Models/LoginInfo';
 import { Language } from '../../Core/Models/Language';
 import * as Helper from './Helper';
@@ -7,7 +7,7 @@ import { EvmService } from '../../Core/NetService/EvmService';
 import * as particleAuth from '../../Core/particleAuth';
 import { SecurityAccountConfig } from '../../Core/Models/SecurityAccountConfig';
 import { MainUIDemo } from '../MainUIDemo';
-import { createWeb3 } from '../../Core/web3Demo';
+import { createWeb3FromParticleAuth } from '../../Core/web3Demo';
 import { ToastManager } from '../Toast/ToastManager';
 import { ParticleInfo } from '../../Core/NetService/ParticleInfo';
 
@@ -17,7 +17,7 @@ const { ccclass } = _decorator;
 @ccclass('AuthDemo')
 export class AuthDemo extends Component {
 
-    private web3 = createWeb3();
+    private web3 = createWeb3FromParticleAuth();
 
     start() {
         if (sys.os == sys.OS.IOS || sys.os == sys.OS.ANDROID) {
@@ -27,19 +27,6 @@ export class AuthDemo extends Component {
 
     selectChain() {
         MainUIDemo.getInstance().showSelectChain();
-    }
-
-    hidden() {
-        this.node.active = false;
-        const iconNode = find("Canvas/MainUIDemo/Icon");
-        if (iconNode != null) {
-            iconNode.active = true;
-        }
-
-        const authButtonNode = find("Canvas/MainUIDemo/AuthButton");
-        if (authButtonNode != null) {
-            authButtonNode.active = true;
-        }
     }
 
 

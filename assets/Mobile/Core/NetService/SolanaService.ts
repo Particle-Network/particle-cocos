@@ -14,7 +14,7 @@ export class SolanaService {
         return result;
     }
 
-    static async getPrice(addresses: [string], currencies: [string]) {
+    static async getPrice(addresses: string[], currencies: string[]) {
         return await this.rpc(SolanaReqBodyMethod.enhancedGetPrice, [addresses, currencies]);
     }
 

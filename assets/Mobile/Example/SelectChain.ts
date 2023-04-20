@@ -9,10 +9,7 @@ export class SelectChain extends Component {
   @property(Node)
   private chainParentNode: Node | undefined;
   start() {
-    // cc.loader.loadRes("Prefabs/ChainInfoItem", function (err, prefab) {
-    //     var newNode = cc.instantiate(prefab);
-    //     this.node.addChild(newNode);
-    // });
+    
     resources.load('Prefabs/ChainInfoItem', Prefab, (err, prefab) => {
       if (err) {
         console.log(err);
