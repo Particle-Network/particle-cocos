@@ -2,12 +2,19 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+<!--<key>PROJECT_UUID</key>-->
+<!--<string>YOUR_PROJECT_UUID</string>-->
+<!--<key>PROJECT_CLIENT_KEY</key>-->
+<!--<string>YOUR_PROJECT_CLIENT_KEY</string>-->
+<!--<key>PROJECT_APP_UUID</key>-->
+<!--<string>YOUR_PROJECT_APP_UUID</string>-->
+
 <key>PROJECT_UUID</key>
-<string>YOUR_PROJECT_UUID</string>
+<string>77eeb8ec-dd64-48e9-b786-aa340ce42a40</string>
 <key>PROJECT_CLIENT_KEY</key>
-<string>YOUR_PROJECT_CLIENT_KEY</string>
+<string>cpahKexYg891D1BQ3IwMv9fd6E5JKdizMZcFRZ6x</string>
 <key>PROJECT_APP_UUID</key>
-<string>YOUR_PROJECT_APP_UUID</string>
+<string>ac322f31-6b59-4847-80be-a5d353242fc6</string>
 
 </dict>
 </plist>

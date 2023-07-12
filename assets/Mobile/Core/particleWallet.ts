@@ -4,7 +4,7 @@ import { Language } from "./Models/Language";
 import { WalletDisplay } from "./Models/WalletDisplay";
 import { WalletType } from "./Models/WalletType";
 import { BuyCryptoConfig } from "./Models/BuyCryptoConfig";
-import { FaitCoin } from "./Models/FaitCoin";
+import { FiatCoin } from "./Models/FiatCoin";
 
 const event = new EventTarget();
 
@@ -255,11 +255,11 @@ export function supportWalletConnect(isEnable: boolean) {
 
 /**
  * Set fait coin
- * @param faitCoin FaitCoin
+ * @param fiatCoin FiatCoin
  */
-export function setFiatCoin(faitCoin: FaitCoin) {
+export function setFiatCoin(fiatCoin: FiatCoin) {
     if (sys.OS.IOS === sys.os) {
-        native.jsbBridgeWrapper.dispatchEventToNative("setFiatCoin", faitCoin);
+        native.jsbBridgeWrapper.dispatchEventToNative("setFiatCoin", fiatCoin);
     }
 }
 

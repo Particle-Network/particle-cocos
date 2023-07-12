@@ -16,7 +16,7 @@ export class ChainInfo {
     public static EthereumMainnet = new ChainInfo('Ethereum', 1, 'Mainnet');
     public static EthereumGoerli = new ChainInfo('Ethereum', 5, 'Goerli');
     public static EthereumSepolia = new ChainInfo('Ethereum', 11155111, 'Sepolia');
-
+    
     public static BSCMainnet = new ChainInfo('BSC', 56, 'Mainnet');
     public static BSCTestnet = new ChainInfo('BSC', 97, 'Testnet');
     public static PolygonMainnet = new ChainInfo('Polygon', 137, 'Mainnet');
@@ -33,7 +33,6 @@ export class ChainInfo {
     public static MoonriverMainnet = new ChainInfo('Moonriver', 1285, 'Mainnet');
     public static MoonriverTestnet = new ChainInfo('Moonriver', 1287, 'Testnet');
     public static HecoMainnet = new ChainInfo('Heco', 128, 'Mainnet');
-    public static HecoTestnet = new ChainInfo('Heco', 256, 'Testnet');
     public static AuroraMainnet = new ChainInfo('Aurora', 1313161554, 'Mainnet');
     public static AuroraTestnet = new ChainInfo('Aurora', 1313161555, 'Testnet');
     public static HarmonyMainnet = new ChainInfo('Harmony', 1666600000, 'Mainnet');
@@ -76,64 +75,14 @@ export class ChainInfo {
     public static PolygonZkEVMTestnet = new ChainInfo('PolygonZkEVM', 1442, 'Testnet');
 
     public static BaseTestnet = new ChainInfo('Base', 84531, 'Testnet');
-    static getAllChainInfos(){
-        return [
-            ChainInfo.SolanaMainnet,
-            ChainInfo.SolanaTestnet,
-            ChainInfo.SolanaDevnet,
-            ChainInfo.EthereumMainnet,
-            ChainInfo.EthereumGoerli,
-            ChainInfo.EthereumSepolia,
-            ChainInfo.BSCMainnet,
-            ChainInfo.BSCTestnet,
-            ChainInfo.PolygonMainnet,
-            ChainInfo.PolygonMumbai,
-            ChainInfo.AvalancheMainnet,
-            ChainInfo.AvalancheTestnet,
-            ChainInfo.FantomMainnet,
-            ChainInfo.FantomTestnet,
-            ChainInfo.ArbitrumOne,
-            ChainInfo.ArbitrumNova,
-            ChainInfo.ArbitrumGoerli,
-            ChainInfo.MoonbeamMainnet,
-            ChainInfo.MoonbeamTestnet,
-            ChainInfo.MoonriverMainnet,
-            ChainInfo.MoonriverTestnet,
-            ChainInfo.HecoMainnet,
-            ChainInfo.HecoTestnet,
-            ChainInfo.AuroraMainnet,
-            ChainInfo.AuroraTestnet,
-            ChainInfo.HarmonyMainnet,
-            ChainInfo.HarmonyTestnet,
-            ChainInfo.KCCMainnet,
-            ChainInfo.KCCTestnet,
-            ChainInfo.OptimismMainnet,
-            ChainInfo.OptimismGoerli,
-            ChainInfo.PlatonMainnet,
-            ChainInfo.PlatonTestnet,
-            ChainInfo.TronMainnet,
-            ChainInfo.TronShasta,
-            ChainInfo.TronNile,
-            ChainInfo.ThunderCoreMainnet,
-            ChainInfo.ThunderCoreTestnet,
-            ChainInfo.CronosMainnet,
-            ChainInfo.CronosTestnet,
-            ChainInfo.OasisEmeraldMainnet,
-            ChainInfo.OasisEmeraldTestnet,
-            ChainInfo.GnosisMainnet,
-            ChainInfo.GnosisTestnet,
-            ChainInfo.CeloMainnet,
-            ChainInfo.CeloTestnet,
-            ChainInfo.KlaytnMainnet,
-            ChainInfo.KlaytnTestnet,
-            ChainInfo.ScrollTestnet,
-            ChainInfo.ZkSyncMainnet,
-            ChainInfo.ZkSyncTestnet,
-            ChainInfo.MetisMainnet,
-            ChainInfo.MetisTestnet,
-            ChainInfo.ConfluxESpaceMainnet,
-            ChainInfo.ConfluxESpaceTestnet,
-            ChainInfo.MapoMainnet,
-            ChainInfo.MapoTestnet]
-    }
+    public static LineaGoerli = new ChainInfo('Linea', 59140, 'Goerli');
+    public static ComboTestnet = new ChainInfo('Combo', 91715, 'Testnet');
+    public static MantleTestnet = new ChainInfo('Mantle', 5001, 'Testnet');
+    public static ZkMetaTestnet = new ChainInfo('ZkMeta', 12009, 'Testnet');
+
+    public static OpBNBTestnet = new ChainInfo('OpBNB', 5611, 'Testnet');
+    public static OKBCTestnet = new ChainInfo('OKBC', 195, 'Testnet');
+    public static TaikoTestnet = new ChainInfo('Taiko', 167005, 'Testnet');
+
+    
 }

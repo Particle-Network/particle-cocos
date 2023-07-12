@@ -16,7 +16,7 @@ export class SelectChain extends Component {
         return;
       }
 
-      const chainInfos = ChainInfo.getAllChainInfos()
+      const chainInfos: ChainInfo[] = Object.values(ChainInfo);
       console.log("chainInfos", chainInfos);
       chainInfos.forEach((chainInfo: any) => {
         var newNode = instantiate(prefab);

@@ -30,7 +30,7 @@ public class ParticleAuthPlugin: NSObject {
         let data = JSON(parseJSON: json)
         let name = data["chain_name"].stringValue.lowercased()
         let chainId = data["chain_id"].intValue
-        guard let chainInfo = matchChain(name: name, chainId: chainId) else {
+        guard let chainInfo = ParticleNetwork.searchChainInfo(by: chainId) else {
             return print("initialize error, can't find right chain for \(name), chainId \(chainId)")
         }
         
@@ -52,9 +52,8 @@ public class ParticleAuthPlugin: NSObject {
     @objc
     public func setChainInfo(_ json: String, callback: @escaping CocosResponseCallbackBlock) {
         let data = JSON(parseJSON: json)
-        let name = data["chain_name"].stringValue.lowercased()
         let chainId = data["chain_id"].intValue
-        guard let chainInfo = matchChain(name: name, chainId: chainId) else {
+        guard let chainInfo = ParticleNetwork.searchChainInfo(by: chainId) else {
             callback(["0"])
             return
         }
@@ -65,9 +64,8 @@ public class ParticleAuthPlugin: NSObject {
     @objc
     public func setChainInfoAsync(_ json: String, callback: @escaping CocosResponseCallbackBlock) {
         let data = JSON(parseJSON: json)
-        let name = data["chain_name"].stringValue.lowercased()
         let chainId = data["chain_id"].intValue
-        guard let chainInfo = matchChain(name: name, chainId: chainId) else {
+        guard let chainInfo = ParticleNetwork.searchChainInfo(by: chainId) else {
             callback(["0"])
             return
         }

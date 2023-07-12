@@ -190,6 +190,19 @@ export function particleConnectInitialize(chainInfo: ChainInfo, env: Env, metada
     native.jsbBridgeWrapper.dispatchEventToNative("particleConnectInitialize", json);
 }
 
+/**
+ * Set the required chains for wallet connect v2. If not set, the current chain connection will be used.
+ * @param chainInfos Chain info list
+ */
+export function setWalletConnectV2SupportChainInfos(chainInfos: ChainInfo[]) {
+    if (sys.OS.IOS === sys.os) {
+      const json = JSON.stringify(chainInfos);
+      native.jsbBridgeWrapper.dispatchEventToNative("setWalletConnectV2SupportChainInfos", json);
+    } else {
+      // to do
+    }
+  }
+
 
 /**
 * Connect wallet

@@ -74,7 +74,7 @@ public class ParticleWalletPlugin: NSObject {
         let tokenId = data["token_id"].stringValue
         let toAddress = data["receiver_address"].string
         let amount = data["amount"].int
-        let config = NFTSendConfig(address: address, toAddress: toAddress, tokenId: tokenId, amount: UInt(amount ?? 1))
+        let config = NFTSendConfig(address: address, toAddress: toAddress, tokenId: tokenId, amount: BInt(amount ?? 1))
         PNRouter.navigatorNFTSend(nftSendConfig: config)
     }
     
@@ -169,9 +169,9 @@ public class ParticleWalletPlugin: NSObject {
     @objc
     public func supportChain(_ json: String) {
         let chains = JSON(parseJSON: json).arrayValue.map {
-            $0["chain_name"].stringValue.lowercased()
+            $0["chain_id"].intValue
         }.compactMap {
-            self.matchChain(name: $0)
+            ParticleNetwork.searchChainInfo(by: $0)?.chain
         }
         ParticleWalletGUI.supportChain(chains)
     }
@@ -328,7 +328,7 @@ public class ParticleWalletPlugin: NSObject {
          INR,
          KRW
          */
-        ParticleWalletGUI.setFiatCoin(json.uppercased())
+        ParticleNetwork.setFiatCoin(.init(rawValue: json) ?? .usd)
     }
     
 }

@@ -45,7 +45,7 @@ class ParticleConnectPlugin: NSObject {
         let data = JSON(parseJSON: json)
         let chainName = data["chain_name"].stringValue.lowercased()
         let chainId = data["chain_id"].intValue
-        guard let chainInfo = matchChain(name: chainName, chainId: chainId) else {
+        guard let chainInfo = ParticleNetwork.searchChainInfo(by: chainId) else {
             return print("initialize error, can't find right chain for \(chainName), chainId \(chainId)")
         }
         let env = data["env"].stringValue.lowercased()
@@ -62,12 +62,13 @@ class ParticleConnectPlugin: NSObject {
         let dAppName = data["metadata"]["name"].stringValue
         let dAppIconString = data["metadata"]["icon"].stringValue
         let dAppUrlString = data["metadata"]["url"].stringValue
-        
+        let dAppDescription = data["metadata"]["description"].stringValue
+        let walletConnectProjectId = data["metadata"]["walletConnectProjectId"].stringValue
         let dAppIconUrl = URL(string: dAppIconString) != nil ? URL(string: dAppIconString)! : URL(string: "https://connect.particle.network/icons/512.png")!
         
         let dAppUrl = URL(string: dAppUrlString) != nil ? URL(string: dAppUrlString)! : URL(string: "https://connect.particle.network")!
         
-        let dAppData = DAppMetaData(name: dAppName, icon: dAppIconUrl, url: dAppUrl)
+        let dAppData = DAppMetaData(name: dAppName, icon: dAppIconUrl, url: dAppUrl, description: dAppDescription)
         
         var adapters: [ConnectAdapter] = [ParticleConnectAdapter()]
 #if canImport(ConnectEVMAdapter)
@@ -117,6 +118,8 @@ class ParticleConnectPlugin: NSObject {
         ParticleConnect.initialize(env: devEnv, chainInfo: chainInfo, dAppData: dAppData) {
             adapters
         }
+        
+        ParticleConnect.setWalletConnectV2ProjectId(walletConnectProjectId)
     }
     
     @objc
@@ -288,6 +291,16 @@ class ParticleConnectPlugin: NSObject {
                 callback([json])
             }
         }.disposed(by: bag)
+    }
+    
+    @objc
+    public func setWalletConnectV2SupportChainInfos(_ json: String) {
+        let chainInfos = JSON(parseJSON: json).arrayValue.map {
+            $0["chain_id"].intValue
+        }.compactMap {
+            ParticleNetwork.searchChainInfo(by: $0)
+        }
+        ParticleConnect.setWalletConnectV2SupportChainInfos(chainInfos)
     }
     
     @objc
@@ -532,7 +545,7 @@ class ParticleConnectPlugin: NSObject {
             return
         }
         
-        adapter.signTypeData(publicAddress: publicAddress, data: message).subscribe { [weak self] result in
+        adapter.signTypedData(publicAddress: publicAddress, data: message).subscribe { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .failure(let error):

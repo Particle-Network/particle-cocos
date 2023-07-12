@@ -65,8 +65,8 @@ export class ConnectDemo extends Component {
 
         // Get your project id and client from dashboard,  
         // https://dashboard.particle.network/
-        ParticleInfo.projectId = ""; // your project id
-        ParticleInfo.clientKey = ""; // your client key
+        ParticleInfo.projectId = "5479798b-26a9-4943-b848-649bb104fdc3"; // your project id
+        ParticleInfo.clientKey = "cUKfeOA7rnNFCxSBtXE5byLgzIhzGrE4Y7rDdY4b"; // your client key
 
         if (ParticleInfo.projectId == "" || ParticleInfo.clientKey == "") {
             throw new Error('You need set project info');
@@ -74,7 +74,7 @@ export class ConnectDemo extends Component {
 
         const chainInfo = EvmService.currentChainInfo;
 
-        const dappMetaData = new DappMetaData('https://connect.particle.network', 'https://connect.particle.network/icons/512.png', 'Particle Connect')
+        const dappMetaData = new DappMetaData('https://connect.particle.network', 'https://connect.particle.network/icons/512.png', 'Particle Connect', "Particle Connect", "75ac08814504606fc06126541ace9df6");
         particleConnect.particleConnectInitialize(chainInfo, Env.Dev, dappMetaData);
 
         this.newWeb3 = createWeb3FromParticleConnect(WalletType.MetaMask);

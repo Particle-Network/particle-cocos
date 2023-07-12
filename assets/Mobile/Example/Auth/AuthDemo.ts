@@ -269,8 +269,8 @@ export class AuthDemo extends Component {
     init() {
         // Get your project id and client from dashboard,  
         // https://dashboard.particle.network/
-        ParticleInfo.projectId = ""; // your project id
-        ParticleInfo.clientKey = ""; // your client key
+        ParticleInfo.projectId = "5479798b-26a9-4943-b848-649bb104fdc3"; // your project id
+        ParticleInfo.clientKey = "cUKfeOA7rnNFCxSBtXE5byLgzIhzGrE4Y7rDdY4b"; // your client key
 
         if (ParticleInfo.projectId == "" || ParticleInfo.clientKey == "") {
             throw new Error('You need set project info');

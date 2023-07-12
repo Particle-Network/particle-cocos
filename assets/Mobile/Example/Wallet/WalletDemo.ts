@@ -5,7 +5,7 @@ import { WalletType } from '../../Core/Models/WalletType';
 import { BuyCryptoConfig, OpenBuyNetwork } from '../../Core/Models/BuyCryptoConfig';
 import { ChainInfo } from '../../Core/Models/ChainInfo';
 import { Language } from '../../Core/Models/Language';
-import { FaitCoin } from '../../Core/Models/FaitCoin';
+import { FiatCoin } from '../../Core/Models/FiatCoin';
 import { WalletDisplay } from '../../Core/Models/WalletDisplay';
 
 
@@ -138,8 +138,8 @@ export class WalletDemo extends Component {
     }
 
     setFiatCoin() {
-        const faitCoin = FaitCoin.HKD;
-        particleWallet.setFiatCoin(faitCoin);
+        const fiatCoin = FiatCoin.HKD;
+        particleWallet.setFiatCoin(fiatCoin);
     }
 
     setDisplayTokenAddresses() {
