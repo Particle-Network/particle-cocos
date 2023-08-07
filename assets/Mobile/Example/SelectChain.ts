@@ -1,7 +1,7 @@
 
 import { _decorator, Component, Node, resources, Prefab, instantiate, find } from 'cc';
-import { chains, ChainInfo } from '@particle-network/chains';
 import { ChainInfoItem } from './ChainInfoItem';
+import { getAllChainInfos } from '../Core/Models/Chains';
 const { ccclass, property } = _decorator;
 
 @ccclass('SelectChain')
@@ -16,7 +16,7 @@ export class SelectChain extends Component {
         return;
       }
 
-      const chainInfos = chains.getAllChainInfos();
+      const chainInfos = getAllChainInfos();
       console.log("chainInfos", chainInfos);
       chainInfos.forEach((chainInfo: any) => {
         var newNode = instantiate(prefab);

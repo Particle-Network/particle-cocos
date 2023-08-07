@@ -9,8 +9,8 @@ import { MainUIDemo } from '../MainUIDemo';
 import { createWeb3FromParticleAuth } from '../../Core/web3Demo';
 import { ToastManager } from '../Toast/ToastManager';
 import { ParticleInfo } from '../../Core/NetService/ParticleInfo';
-import { Polygon, PolygonMumbai } from '@particle-network/chains';
 import { FiatCoin } from '../../Core/Models/FiatCoin';
+import { Polygon, PolygonMumbai } from '../../Core/Models/ChainInfo';
 
 
 const { ccclass } = _decorator;

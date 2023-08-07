@@ -1,10 +1,10 @@
 import { native, sys, EventTarget } from "cc";
-import type { ChainInfo } from '@particle-network/chains';
 import { Env, LoginAuthorization, LoginType, SocialLoginPrompt, SupportAuthType, iOSModalPresentStyle } from "./Models/LoginInfo";
 import { Language } from "./Models/Language";
 import { Appearance } from "./Models/Appearance";
 import { SecurityAccountConfig } from "./Models/SecurityAccountConfig";
 import { FiatCoin } from "./Models/FiatCoin";
+import { ChainInfo } from "./Models/ChainInfo";
 
 const event = new EventTarget();
 

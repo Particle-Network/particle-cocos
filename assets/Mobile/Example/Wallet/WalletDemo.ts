@@ -5,7 +5,7 @@ import { WalletType } from '../../Core/Models/WalletType';
 import { BuyCryptoConfig, OpenBuyNetwork } from '../../Core/Models/BuyCryptoConfig';
 import { Language } from '../../Core/Models/Language';
 import { WalletDisplay } from '../../Core/Models/WalletDisplay';
-import { BNBChain, Ethereum, Polygon } from '@particle-network/chains';
+import { BNBChain, Ethereum, Polygon } from '../../Core/Models/ChainInfo';
 
 
 const { ccclass } = _decorator;

@@ -1,7 +1,6 @@
 import { _decorator, Component, find, sys } from 'cc';
 import { Env, LoginType, SupportAuthType } from '../../Core/Models/LoginInfo';
 import * as Helper from '../Auth/Helper';
-import { EvmService } from '../../Core/NetService/EvmService';
 import * as particleConnect from '../../Core/particleConnect';
 import * as particleAuth from '../../Core/particleAuth';
 import { MainUIDemo } from '../MainUIDemo';
@@ -11,7 +10,7 @@ import { ParticleInfo } from '../../Core/NetService/ParticleInfo';
 import { WalletType } from '../../Core/Models/WalletType';
 import { DappMetaData } from '../../Core/Models/DappMetaData';
 import { ParticleConnectConfig } from '../../Core/Models/ConnectConfig';
-import { Polygon, PolygonMumbai } from '@particle-network/chains';
+import { PolygonMumbai } from '../../Core/Models/ChainInfo';
 
 
 const { ccclass, property } = _decorator;

@@ -1,10 +1,8 @@
 import { native, sys, EventTarget } from "cc";
-import type { ChainInfo } from '@particle-network/chains';
-import { chains } from '@particle-network/chains';
-
 import { WalletDisplay } from "./Models/WalletDisplay";
 import { WalletType } from "./Models/WalletType";
 import { BuyCryptoConfig } from "./Models/BuyCryptoConfig";
+import { ChainInfo } from "./Models/ChainInfo";
 
 
 const event = new EventTarget();

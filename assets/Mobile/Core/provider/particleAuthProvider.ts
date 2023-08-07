@@ -5,7 +5,7 @@ import type { RequestArguments } from './types';
 import { notSupportMethods, signerMethods } from './types';
 import { SupportAuthType } from '../Models/LoginInfo';
 import { HexConverter } from '../NetService/hex-converter';
-import { chains, ChainInfo } from '@particle-network/chains';
+import { getEVMChainInfoById } from '../Models/Chains';
 
 class ParticleAuthProvider {
     private events = new EventTarget();
@@ -90,7 +90,7 @@ class ParticleAuthProvider {
                 }
             } else if (payload.method === 'wallet_switchEthereumChain') {
                 const chainId = Number(payload.params[0].chainId);
-                const chainInfo = chains.getEVMChainInfoById(chainId);
+                const chainInfo = getEVMChainInfoById(chainId);
                 if (!chainInfo) {
                     return Promise.reject({
                         code: 4201,

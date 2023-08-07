@@ -6,7 +6,7 @@ import type { ParticleConnectOptions, RequestArguments } from './types';
 import { notSupportMethods, signerMethods } from './types';
 import { WalletType } from '../Models/WalletType';
 import { HexConverter } from '../NetService/hex-converter';
-import { chains } from '@particle-network/chains';
+import { getEVMChainInfoById } from '../Models/Chains';
 
 class ParticleConnectProvider {
     private events = new EventTarget();
@@ -101,7 +101,7 @@ class ParticleConnectProvider {
             } else if (payload.method === 'wallet_switchEthereumChain' || payload.method === 'wallet_addEthereumChain') {
 
                 const chainId = Number(payload.params[0].chainId);
-                const chainInfo = chains.getEVMChainInfoById(chainId)
+                const chainInfo = getEVMChainInfoById(chainId)
 
                 if (this.options.publicAddress == undefined) {
                     return Promise.reject({

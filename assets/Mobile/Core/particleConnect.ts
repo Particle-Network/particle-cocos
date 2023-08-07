@@ -1,10 +1,10 @@
 import { native, sys, EventTarget } from "cc";
-import type { ChainInfo } from '@particle-network/chains';
 import { Env } from "./Models/LoginInfo";
 import { DappMetaData } from "./Models/DappMetaData";
 import { RpcUrl } from "./Models/RpcUrl";
 import { WalletType } from "./Models/WalletType";
 import { ParticleConnectConfig } from "./Models/ConnectConfig";
+import { ChainInfo } from "./Models/ChainInfo";
 
 const event = new EventTarget();
 

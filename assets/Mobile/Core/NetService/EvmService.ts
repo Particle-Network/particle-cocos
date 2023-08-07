@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js';
 import { HexConverter } from './hex-converter';
 import { getChainId, getChainInfo } from '../particleAuth';
 import { GasFeeLevel } from '../Models/GasFeeLevel';
-import { chains } from '@particle-network/chains';
+import { isChainSupportEIP1559 } from '../Models/Chains';
 
 
 export class EvmService {
@@ -290,7 +290,7 @@ export class EvmService {
 
         const chainInfo = await getChainInfo();
         const chainId = chainInfo.id;
-        const isSupportEIP1559 = chains.isChainSupportEIP1559({ id: chainInfo.id, name: chainInfo.name });
+        const isSupportEIP1559 = isChainSupportEIP1559(chainInfo);
 
         let transaction;
 
