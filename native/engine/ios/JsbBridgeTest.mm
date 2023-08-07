@@ -130,23 +130,16 @@
         }];
     };
     
-    OnScriptEventListener setUserInfo = ^void(NSString* arg){
-        [[ParticleAuthPlugin shared] setUserInfo:arg callback:^(NSArray * _Nonnull response) {
-            JsbBridgeWrapper* m = [JsbBridgeWrapper sharedInstance];
-            [m dispatchEventToScript:@"setUserInfoCallback" arg:response[0]];
-        }];
-    };
-    
     OnScriptEventListener setLanguage = ^void(NSString* arg){
         [[ParticleAuthPlugin shared] setLanguage:arg];
     };
     
-    OnScriptEventListener setDisplayWallet = ^void(NSString* arg){
-        [[ParticleAuthPlugin shared] setDisplayWallet:arg];
+    OnScriptEventListener setWebAuthConfig = ^void(NSString* arg){
+        [[ParticleAuthPlugin shared] setWebAuthConfig:arg];
     };
     
     OnScriptEventListener openWebWallet = ^void(NSString* arg){
-        [[ParticleAuthPlugin shared] openWebWallet];
+        [[ParticleAuthPlugin shared] openWebWallet: arg];
     };
     
     OnScriptEventListener setSecurityAccountConfig = ^void(NSString* arg){
@@ -168,8 +161,12 @@
         [[ParticleAuthPlugin shared] setModalPresentStyle:arg];
     };
     
-    OnScriptEventListener setInterfaceStyle = ^void(NSString* arg){
-        [[ParticleAuthPlugin shared] setInterfaceStyle:arg];
+    OnScriptEventListener setAppearance = ^void(NSString* arg){
+        [[ParticleAuthPlugin shared] setAppearance:arg];
+    };
+    
+    OnScriptEventListener setFiatCoin = ^void(NSString* arg){
+        [[ParticleAuthPlugin shared] setFiatCoin:arg];
     };
     
     OnScriptEventListener getChainInfo = ^void(NSString* arg){
@@ -196,7 +193,7 @@
     [m addScriptEventListener:@"setChainInfo" listener:setChainInfo];
     [m addScriptEventListener:@"setChainInfoAsync" listener:setChainInfoAsync];
     [m addScriptEventListener:@"getChainInfo" listener:getChainInfo];
-    [m addScriptEventListener:@"setUserInfo" listener:setUserInfo];
+    
     
     [m addScriptEventListener:@"setLanguage" listener:setLanguage];
     [m addScriptEventListener:@"setModalPresentStyle" listener:setModalPresentStyle];
@@ -204,8 +201,9 @@
     [m addScriptEventListener:@"openWebWallet" listener:openWebWallet];
     [m addScriptEventListener:@"openAccountAndSecurity" listener:openAccountAndSecurity];
     [m addScriptEventListener:@"setSecurityAccountConfig" listener:setSecurityAccountConfig];
-    [m addScriptEventListener:@"setDisplayWallet" listener:setDisplayWallet];
-    [m addScriptEventListener:@"setInterfaceStyle" listener:setInterfaceStyle];
+    [m addScriptEventListener:@"setWebAuthConfig" listener:setWebAuthConfig];
+    [m addScriptEventListener:@"setAppearance" listener:setAppearance];
+    [m addScriptEventListener:@"setFiatCoin" listener:setFiatCoin];
 }
 
 - (void) setupConnectBirdge {
@@ -372,6 +370,10 @@
 - (void) setupWalletBirdge {
     JsbBridgeWrapper* m = [JsbBridgeWrapper sharedInstance];
     
+    OnScriptEventListener initializeWalletMetaData = ^void(NSString* arg){
+        [[ParticleWalletPlugin shared] initializeWalletMetaData:arg];
+    };
+    
     OnScriptEventListener navigatorWallet = ^void(NSString* arg){
         [[ParticleWalletPlugin shared] navigatorWallet:arg];
     };
@@ -412,37 +414,37 @@
     };
     
     
-    OnScriptEventListener showTestNetwork = ^void(NSString* arg){
-        [[ParticleWalletPlugin shared] showTestNetwork:arg];
+    OnScriptEventListener setShowTestNetwork = ^void(NSString* arg){
+        [[ParticleWalletPlugin shared] setShowTestNetwork:arg];
     };
     
-    OnScriptEventListener showManageWallet = ^void(NSString* arg){
-        [[ParticleWalletPlugin shared] showManageWallet:arg];
+    OnScriptEventListener setShowManageWallet = ^void(NSString* arg){
+        [[ParticleWalletPlugin shared] setShowManageWallet:arg];
     };
     
-    OnScriptEventListener supportChain = ^void(NSString* arg){
-        [[ParticleWalletPlugin shared] supportChain:arg];
+    OnScriptEventListener setSupportChain = ^void(NSString* arg){
+        [[ParticleWalletPlugin shared] setSupportChain:arg];
     };
     
-    OnScriptEventListener enableSwap = ^void(NSString* arg){
-        [[ParticleWalletPlugin shared] enableSwap:arg];
+    OnScriptEventListener setSwapDisabled = ^void(NSString* arg){
+        [[ParticleWalletPlugin shared] setSwapDisabled:arg];
     };
     
-    OnScriptEventListener getEnableSwap = ^void(NSString* arg){
-        [[ParticleWalletPlugin shared] getEnableSwap:^(NSArray<NSString *> * _Nonnull response) {
+    OnScriptEventListener getSwapDisabled = ^void(NSString* arg){
+        [[ParticleWalletPlugin shared] getSwapDisabled:^(NSArray<NSString *> * _Nonnull response) {
             JsbBridgeWrapper* m = [JsbBridgeWrapper sharedInstance];
-            [m dispatchEventToScript:@"getEnableSwapCallback" arg:response[0]];
+            [m dispatchEventToScript:@"getSwapDisabledCallback" arg:response[0]];
         }];
     };
     
-    OnScriptEventListener enablePay = ^void(NSString* arg){
-        [[ParticleWalletPlugin shared] enablePay:arg];
+    OnScriptEventListener setPayDisabled = ^void(NSString* arg){
+        [[ParticleWalletPlugin shared] setPayDisabled:arg];
     };
     
-    OnScriptEventListener getEnablePay = ^void(NSString* arg){
-        [[ParticleWalletPlugin shared] getEnablePay:^(NSArray<NSString *> * _Nonnull response) {
+    OnScriptEventListener getPayDisabled = ^void(NSString* arg){
+        [[ParticleWalletPlugin shared] getPayDisabled:^(NSArray<NSString *> * _Nonnull response) {
             JsbBridgeWrapper* m = [JsbBridgeWrapper sharedInstance];
-            [m dispatchEventToScript:@"getEnablePayCallback" arg:response[0]];
+            [m dispatchEventToScript:@"getPayDisabledCallback" arg:response[0]];
         }];
     };
     
@@ -454,17 +456,8 @@
     };
     
     
-    OnScriptEventListener walletSetLanguage = ^void(NSString* arg){
-        [[ParticleWalletPlugin shared] setLanguage:arg];
-    };
-    
-    
-    OnScriptEventListener supportWalletConnect = ^void(NSString* arg){
-        [[ParticleWalletPlugin shared] supportWalletConnect:arg];
-    };
-    
-    OnScriptEventListener setFiatCoin = ^void(NSString* arg){
-        [[ParticleWalletPlugin shared] setFiatCoin:arg];
+    OnScriptEventListener setSupportWalletConnect = ^void(NSString* arg){
+        [[ParticleWalletPlugin shared] setSupportWalletConnect:arg];
     };
     
     OnScriptEventListener setDisplayTokenAddresses = ^void(NSString* arg){
@@ -483,12 +476,12 @@
         [[ParticleWalletPlugin shared] setPriorityNFTContractAddresses:arg];
     };
     
-    OnScriptEventListener showLanguageSetting = ^void(NSString* arg){
-        [[ParticleWalletPlugin shared] showLanguageSetting:arg];
+    OnScriptEventListener setShowLanguageSetting = ^void(NSString* arg){
+        [[ParticleWalletPlugin shared] setShowLanguageSetting:arg];
     };
     
-    OnScriptEventListener showAppearanceSetting = ^void(NSString* arg){
-        [[ParticleWalletPlugin shared] showAppearanceSetting:arg];
+    OnScriptEventListener setShowAppearanceSetting = ^void(NSString* arg){
+        [[ParticleWalletPlugin shared] setShowAppearanceSetting:arg];
     };
     
     OnScriptEventListener setSupportAddToken = ^void(NSString* arg){
@@ -506,25 +499,22 @@
     
     [m addScriptEventListener:@"navigatorSwap" listener:navigatorSwap];
     
-    [m addScriptEventListener:@"showTestNetwork" listener:showTestNetwork];
+    [m addScriptEventListener:@"setShowTestNetwork" listener:setShowTestNetwork];
     
-    [m addScriptEventListener:@"showManageWallet" listener:showManageWallet];
-    [m addScriptEventListener:@"supportChain" listener:supportChain];
-    [m addScriptEventListener:@"enableSwap" listener:enableSwap];
-    [m addScriptEventListener:@"getEnableSwap" listener:getEnableSwap];
-    [m addScriptEventListener:@"enablePay" listener:enablePay];
-    [m addScriptEventListener:@"getEnablePay" listener:getEnablePay];
+    [m addScriptEventListener:@"setShowManageWallet" listener:setShowManageWallet];
+    [m addScriptEventListener:@"setSupportChain" listener:setSupportChain];
+    [m addScriptEventListener:@"setSwapDisabled" listener:setSwapDisabled];
+    [m addScriptEventListener:@"getSwapDisabled" listener:getSwapDisabled];
+    [m addScriptEventListener:@"setPayDisabled" listener:setPayDisabled];
+    [m addScriptEventListener:@"getPayDisabled" listener:getPayDisabled];
     [m addScriptEventListener:@"switchWallet" listener:switchWallet];
-    [m addScriptEventListener:@"walletSetLanguage" listener:walletSetLanguage];
-    [m addScriptEventListener:@"supportWalletConnect" listener:supportWalletConnect];
-    [m addScriptEventListener:@"setFiatCoin" listener:setFiatCoin];
+    [m addScriptEventListener:@"setSupportWalletConnect" listener:setSupportWalletConnect];
     [m addScriptEventListener:@"setDisplayTokenAddresses" listener:setDisplayTokenAddresses];
     [m addScriptEventListener:@"setDisplayNFTContractAddresses" listener:setDisplayNFTContractAddresses];
     [m addScriptEventListener:@"setPriorityTokenAddresses" listener:setPriorityTokenAddresses];
     [m addScriptEventListener:@"setPriorityNFTContractAddresses" listener:setPriorityNFTContractAddresses];
-    [m addScriptEventListener:@"showLanguageSetting" listener:showLanguageSetting];
-    [m addScriptEventListener:@"showAppearanceSetting" listener:showAppearanceSetting];
-    
+    [m addScriptEventListener:@"setShowLanguageSetting" listener:setShowLanguageSetting];
+    [m addScriptEventListener:@"setShowAppearanceSetting" listener:setShowAppearanceSetting];
     [m addScriptEventListener:@"setSupportAddToken" listener:setSupportAddToken];
 }
 @end

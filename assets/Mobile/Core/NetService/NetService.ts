@@ -27,13 +27,12 @@ export async function JsonRpcRequest(
     if (ParticleInfo.projectId == "" || ParticleInfo.clientKey == "") {
         throw new Error('You need set project info');
     }
-    
+
     // URLs containing username and password needs special processing
     const username = ParticleInfo.projectId;
     const password = ParticleInfo.clientKey;
 
     if (username && password) {
-
         const encodedAuth = btoa(`${username}:${password}`);
         headers.Authorization = `Basic ${encodedAuth}`;
 
@@ -62,6 +61,8 @@ export async function JsonRpcRequest(
         throw new Error(`RPC endpoint ${rpcUrl} returned non-object response.`);
     }
     const { error, result } = jsonRpcResponseJson;
+
+    console.log(`response result = ${JSON.stringify(result)}`);
 
     if (error) {
         throw new Error(error?.message || error);

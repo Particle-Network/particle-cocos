@@ -7,6 +7,7 @@
 
 import Foundation
 import ParticleNetworkBase
+import ParticleWalletConnect
 import ParticleWalletGUI
 import RxSwift
 import SwiftyJSON
@@ -18,18 +19,27 @@ public class ParticleWalletPlugin: NSObject {
     @objc static let shared = ParticleWalletPlugin()
     
     @objc
-    public func enablePay(_ enable: String) {
-        ParticleWalletGUI.enablePay(enable == "1")
-    }
-    
-    @objc
-    public func getEnablePay(_ callback: @escaping CocosResponseCallbackBlock) {
-        callback([ParticleWalletGUI.getEnablePay() == true ? "1" : "0"])
+    public func initializeWalletMetaData(_ json: String) {
+        let data = JSON(parseJSON: json)
+
+        let walletName = data["name"].stringValue
+        let walletIconString = data["icon"].stringValue
+        let walletUrlString = data["url"].stringValue
+        let walletDescription = data["description"].stringValue
+        
+        let walletConnectV2ProjectId = data["walletConnectProjectId"].stringValue
+
+        let walletIconUrl = URL(string: walletIconString) != nil ? URL(string: walletIconString)! : URL(string: "https://connect.particle.network/icons/512.png")!
+
+        let walletUrl = URL(string: walletUrlString) != nil ? URL(string: walletUrlString)! : URL(string: "https://connect.particle.network")!
+
+        ParticleWalletConnect.initialize(.init(name: walletName, icon: walletIconUrl, url: walletUrl, description: walletDescription))
+        
+        ParticleWalletConnect.setWalletConnectV2ProjectId(walletConnectV2ProjectId)
     }
     
     @objc
     public func navigatorWallet(_ display: String) {
-        
         if display == "0" {
             PNRouter.navigatorWallet(display: .token)
         } else {
@@ -111,9 +121,48 @@ public class ParticleWalletPlugin: NSObject {
                 network = .tron
             } else if networkString == "arbitrumOne" {
                 network = .arbitrumOne
+            } else if networkString == "avalanche" {
+                network = .avalanche
+            } else if networkString == "celo" {
+                network = .celo
+            } else if networkString == "zksync" {
+                network = .zkSync
             } else {
                 network = nil
             }
+            
+            if network == nil {
+                let chainInfo = ParticleNetwork.getChainInfo()
+                switch chainInfo.chain {
+                case .solana:
+                    network = OpenBuyNetwork.solana
+                case .ethereum:
+                    network = OpenBuyNetwork.ethereum
+                case .bsc:
+                    network = OpenBuyNetwork.binanceSmartChain
+                case .optimism:
+                    network = OpenBuyNetwork.optimism
+                case .polygon:
+                    network = OpenBuyNetwork.polygon
+                case .tron:
+                    network = OpenBuyNetwork.tron
+                case .arbitrum:
+                    if chainInfo == .arbitrum(.one) {
+                        network = OpenBuyNetwork.arbitrumOne
+                    } else {
+                        network = nil
+                    }
+                case .avalanche:
+                    network = OpenBuyNetwork.avalanche
+                case .celo:
+                    network = OpenBuyNetwork.celo
+                case .zkSync:
+                    network = OpenBuyNetwork.zkSync
+                default:
+                    network = nil
+                }
+            }
+            
             let fiatCoin = data["fiat_coin"].string
             let fiatAmt = data["fiat_amt"].int
             let cryptoCoin = data["crypto_coin"].string
@@ -121,7 +170,7 @@ public class ParticleWalletPlugin: NSObject {
             let fixFiatAmt = data["fix_fiat_amt"].boolValue
             let fixFiatCoin = data["fix_fiat_coin"].boolValue
             let theme = data["theme"].stringValue.lowercased()
-            let language = self.getLanguage(from: data["language"].stringValue.lowercased())
+            let language = getLanguage(from: data["language"].stringValue.lowercased())
 
             var buyConfig = BuyCryptoConfig()
             buyConfig.network = network
@@ -157,33 +206,43 @@ public class ParticleWalletPlugin: NSObject {
     }
     
     @objc
-    public func showTestNetwork(_ isShow: String) {
-        ParticleWalletGUI.showTestNetwork(isShow == "1")
+    public func setShowTestNetwork(_ isShow: String) {
+        ParticleWalletGUI.setShowTestNetwork(isShow == "1")
     }
     
     @objc
-    public func showManageWallet(_ isShow: String) {
-        ParticleWalletGUI.showManageWallet(isShow == "1")
+    public func setShowManageWallet(_ isShow: String) {
+        ParticleWalletGUI.setShowManageWallet(isShow == "1")
     }
     
     @objc
-    public func supportChain(_ json: String) {
+    public func setSupportChain(_ json: String) {
         let chains = JSON(parseJSON: json).arrayValue.map {
             $0["chain_id"].intValue
         }.compactMap {
             ParticleNetwork.searchChainInfo(by: $0)?.chain
         }
-        ParticleWalletGUI.supportChain(chains)
+        ParticleWalletGUI.setSupportChain(chains)
     }
     
     @objc
-    public func enableSwap(_ enable: String) {
-        ParticleWalletGUI.enableSwap(enable == "1")
+    public func setPayDisabled(_ disabled: String) {
+        ParticleWalletGUI.setPayDisabled(disabled == "1")
     }
     
     @objc
-    public func getEnableSwap(_ callback: @escaping CocosResponseCallbackBlock) {
-        callback([ParticleWalletGUI.getEnableSwap() == true ? "1" : "0"])
+    public func getPayDisabled(_ callback: @escaping CocosResponseCallbackBlock) {
+        callback([ParticleWalletGUI.getPayDisabled() == true ? "1" : "0"])
+    }
+    
+    @objc
+    public func setSwapDisabled(_ disabled: String) {
+        ParticleWalletGUI.setSwapDisabled(disabled == "1")
+    }
+    
+    @objc
+    public func getSwapDisabled(_ callback: @escaping CocosResponseCallbackBlock) {
+        callback([ParticleWalletGUI.getSwapDisabled() == true ? "1" : "0"])
     }
     
     @objc
@@ -233,12 +292,6 @@ public class ParticleWalletPlugin: NSObject {
         }
     }
     
-    @objc
-    public func setLanguage(_ json: String) {
-        let language = self.getLanguage(from: json)
-        ParticleWalletGUI.setLanguage(language)
-    }
-    
     private func getLanguage(from json: String) -> Language {
         /*
          en,
@@ -263,8 +316,8 @@ public class ParticleWalletPlugin: NSObject {
     }
     
     @objc
-    public func supportWalletConnect(_ enable: String) {
-        ParticleWalletGUI.supportWalletConnect(enable == "1")
+    public func setSupportWalletConnect(_ enable: String) {
+        ParticleWalletGUI.setSupportWalletConnect(enable == "1")
     }
     
     @objc
@@ -304,31 +357,17 @@ public class ParticleWalletPlugin: NSObject {
     }
     
     @objc
-    public func showLanguageSetting(_ isShow: String) {
-        ParticleWalletGUI.showLanguageSetting(isShow == "1")
+    public func setShowLanguageSetting(_ isShow: String) {
+        ParticleWalletGUI.setShowLanguageSetting(isShow == "1")
     }
     
     @objc
-    public func showAppearanceSetting(_ isShow: String) {
-        ParticleWalletGUI.showAppearanceSetting(isShow == "1")
+    public func setShowAppearanceSetting(_ isShow: String) {
+        ParticleWalletGUI.setShowAppearanceSetting(isShow == "1")
     }
     
     @objc
     public func setSupportAddToken(_ isShow: String) {
         ParticleWalletGUI.setSupportAddToken(isShow == "1")
     }
-    
-    @objc
-    public func setFiatCoin(_ json: String) {
-        /*
-         USD,
-         CNY,
-         JPY,
-         HKD,
-         INR,
-         KRW
-         */
-        ParticleNetwork.setFiatCoin(.init(rawValue: json) ?? .usd)
-    }
-    
 }

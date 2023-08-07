@@ -4,6 +4,7 @@
 //  Created by link on 2022/9/28.
 //
 
+import Base58_swift
 import Foundation
 import ParticleAuthService
 import ParticleNetworkBase
@@ -75,7 +76,7 @@ public class ParticleAuthPlugin: NSObject {
             return
         }
         
-        ParticleAuthService.setChainInfo(chainInfo).subscribe { [weak self] result in
+        ParticleAuthService.switchChain(chainInfo).subscribe { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .failure(let error):
@@ -109,7 +110,18 @@ public class ParticleAuthPlugin: NSObject {
         let type = data["login_type"].stringValue.lowercased()
         let account = data["account"].string
         let supportAuthType = data["support_auth_type_values"].arrayValue
-        let loginFormMode = data["login_form_mode"].bool ?? false
+        
+        let socialLoginPromptString = data["social_login_prompt"].stringValue.lowercased()
+        let socialLoginPrompt: SocialLoginPrompt? = SocialLoginPrompt(rawValue: socialLoginPromptString)
+        
+        let message: String? = data["authorization"]["message"].string
+        let isUnique: Bool = data["authorization"]["uniq"].bool ?? false
+        
+        var loginAuthorization: LoginAuthorization?
+        
+        if message != nil {
+            loginAuthorization = .init(message: message!, isUnique: isUnique)
+        }
         
         let loginType = LoginType(rawValue: type) ?? .email
         var supportAuthTypeArray: [SupportAuthType] = []
@@ -153,7 +165,7 @@ public class ParticleAuthPlugin: NSObject {
             acc = nil
         }
         
-        ParticleAuthService.login(type: loginType, account: acc, supportAuthType: supportAuthTypeArray, loginFormMode: loginFormMode).subscribe { [weak self] result in
+        ParticleAuthService.login(type: loginType, account: acc, supportAuthType: supportAuthTypeArray, socialLoginPrompt: socialLoginPrompt, authorization: loginAuthorization).subscribe { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .failure(let error):
@@ -164,31 +176,12 @@ public class ParticleAuthPlugin: NSObject {
                 callback([json])
             case .success(let userInfo):
                 guard let userInfo = userInfo else { return }
-                let statusModel = CocosStatusModel(status: true, data: userInfo)
+                let userInfoJsonString = userInfo.jsonStringFullSnake()
+                let newUserInfo = JSON(parseJSON: userInfoJsonString)
+                let statusModel = CocosStatusModel(status: true, data: newUserInfo)
                 let data = try! JSONEncoder().encode(statusModel)
                 guard let json = String(data: data, encoding: .utf8) else { return }
                 callback([json])
-            }
-        }.disposed(by: bag)
-    }
-    
-    @objc
-    public func setUserInfo(_ json: String, callback: @escaping CocosResponseCallbackBlock) {
-        ParticleAuthService.setUserInfo(json: json).subscribe { [weak self] result in
-            guard let self = self else { return }
-            switch result {
-            case .failure:
-                callback(["0"])
-            case .success(let userInfo):
-                guard let userInfo = userInfo else {
-                    callback(["0"])
-                    return
-                }
-                if !userInfo.token.isEmpty, !userInfo.uuid.isEmpty {
-                    callback(["1"])
-                } else {
-                    callback(["0"])
-                }
             }
         }.disposed(by: bag)
     }
@@ -384,7 +377,11 @@ public class ParticleAuthPlugin: NSObject {
             callback([""])
             return
         }
-        let data = try! JSONEncoder().encode(userInfo)
+        let userInfoJsonString = userInfo.jsonStringFullSnake()
+        let newUserInfo = JSON(parseJSON: userInfoJsonString)
+        
+        let data = try! JSONEncoder().encode(newUserInfo)
+        
         let json = String(data: data, encoding: .utf8)
         callback([json ?? ""])
     }
@@ -399,21 +396,34 @@ public class ParticleAuthPlugin: NSObject {
     }
     
     @objc
-    public func setInterfaceStyle(_ json: String) {
+    public func setAppearance(_ json: String) {
         /**
          SYSTEM,
          LIGHT,
          DARK,
          */
         if json.lowercased() == "system" {
-            ParticleNetwork.setInterfaceStyle(UIUserInterfaceStyle.unspecified)
+            ParticleNetwork.setAppearance(UIUserInterfaceStyle.unspecified)
         } else if json.lowercased() == "light" {
-            ParticleNetwork.setInterfaceStyle(UIUserInterfaceStyle.light)
+            ParticleNetwork.setAppearance(UIUserInterfaceStyle.light)
         } else if json.lowercased() == "dark" {
-            ParticleNetwork.setInterfaceStyle(UIUserInterfaceStyle.dark)
+            ParticleNetwork.setAppearance(UIUserInterfaceStyle.dark)
         }
     }
-
+    
+    @objc
+    public func setFiatCoin(_ json: String) {
+        /*
+         USD,
+         CNY,
+         JPY,
+         HKD,
+         INR,
+         KRW
+         */
+        ParticleNetwork.setFiatCoin(.init(rawValue: json) ?? .usd)
+    }
+    
     @objc
     public func setLanguage(_ json: String) {
         /*
@@ -437,8 +447,21 @@ public class ParticleAuthPlugin: NSObject {
     }
     
     @objc
-    public func setDisplayWallet(_ displayWallet: String) {
-        ParticleAuthService.setDisplayWallet(displayWallet == "1")
+    public func setWebAuthConfig(_ json: String) {
+        let data = JSON(parseJSON: json)
+        let isDisplayWallet = data["display_wallet"].boolValue
+        let appearance = data["appearance"].stringValue.lowercased()
+                
+        var style: UIUserInterfaceStyle = .unspecified
+        if appearance == "system" {
+            style = UIUserInterfaceStyle.unspecified
+        } else if appearance == "light" {
+            style = UIUserInterfaceStyle.light
+        } else if appearance == "dark" {
+            style = UIUserInterfaceStyle.dark
+        }
+        
+        ParticleAuthService.setWebAuthConfig(options: .init(isDisplayWallet: isDisplayWallet, appearance: style))
     }
     
     @objc
@@ -468,8 +491,8 @@ public class ParticleAuthPlugin: NSObject {
     }
     
     @objc
-    public func openWebWallet() {
-        ParticleAuthService.openWebWallet()
+    public func openWebWallet(_ json: String?) {
+        ParticleAuthService.openWebWallet(styleJsonString: json)
     }
     
     @objc
@@ -477,7 +500,7 @@ public class ParticleAuthPlugin: NSObject {
         let data = JSON(parseJSON: json)
         let promptSettingWhenSign = data["prompt_setting_when_sign"].intValue
         let promptMasterPasswordSettingWhenLogin = data["prompt_master_password_setting_when_login"].intValue
-        ParticleAuthService.setSecurityAccountConfig(config: .init(promptSettingWhenSign: promptSettingWhenSign, promptMasterPasswordSettingWhenLogin: promptMasterPasswordSettingWhenLogin))
+        ParticleNetwork.setSecurityAccountConfig(config: .init(promptSettingWhenSign: promptSettingWhenSign, promptMasterPasswordSettingWhenLogin: promptMasterPasswordSettingWhenLogin))
     }
 }
 

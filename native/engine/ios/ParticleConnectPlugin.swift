@@ -5,6 +5,7 @@
 //
 
 import Foundation
+import ParticleAuthAdapter
 import ParticleConnect
 import ParticleNetworkBase
 #if canImport(ConnectEVMAdapter)
@@ -26,6 +27,7 @@ import ConnectCommon
 import ParticleAuthService
 import RxSwift
 import SwiftyJSON
+import Base58_swift
 
 @objc(ParticleConnectSchemeManager)
 public class ParticleConnectSchemeManager: NSObject {
@@ -70,7 +72,7 @@ class ParticleConnectPlugin: NSObject {
         
         let dAppData = DAppMetaData(name: dAppName, icon: dAppIconUrl, url: dAppUrl, description: dAppDescription)
         
-        var adapters: [ConnectAdapter] = [ParticleConnectAdapter()]
+        var adapters: [ConnectAdapter] = [ParticleAuthAdapter()]
 #if canImport(ConnectEVMAdapter)
         let evmRpcUrl = data["rpc_url"]["evm_url"].stringValue
         if evmRpcUrl.isEmpty {
@@ -150,7 +152,7 @@ class ParticleConnectPlugin: NSObject {
         let data = JSON(parseJSON: json)
         let walletTypeString = data["wallet_type"].stringValue
         
-        var connectConfig: ParticleConnectConfig?
+        var connectConfig: ParticleAuthConfig?
         
         let configJson = data["config"]
         let loginType = LoginType(rawValue: configJson["login_type"].stringValue.lowercased()) ?? .email
@@ -195,8 +197,19 @@ class ParticleConnectPlugin: NSObject {
             account = nil
         }
             
-        let loginFormMode = configJson["login_form_mode"].boolValue
-        connectConfig = ParticleConnectConfig(loginType: loginType, supportAuthType: supportAuthTypeArray, loginFormMode: loginFormMode, phoneOrEmailAccount: account)
+        let socialLoginPromptString = configJson["social_login_prompt"].stringValue.lowercased()
+        let socialLoginPrompt: SocialLoginPrompt? = SocialLoginPrompt(rawValue: socialLoginPromptString)
+        
+        let message: String? = data["authorization"]["message"].string
+        let isUnique: Bool = data["authorization"]["uniq"].bool ?? false
+
+        var loginAuthorization: LoginAuthorization?
+    
+        if message != nil {
+            loginAuthorization = .init(message: message!, isUnique: isUnique)
+        }
+        
+        connectConfig = ParticleAuthConfig(loginType: loginType, supportAuthType: supportAuthTypeArray, phoneOrEmailAccount: account, socialLoginPrompt: socialLoginPrompt, authorization: loginAuthorization)
         
         guard let walletType = map2WalletType(from: walletTypeString) else {
             print("walletType \(walletTypeString) is not existed")

@@ -1,5 +1,4 @@
 import { _decorator, Component, find, Label } from 'cc';
-import { EvmService } from '../Core/NetService/EvmService';
 import { MainUIDemo } from './MainUIDemo';
 import { ToastManager } from './Toast/ToastManager';
 import { WalletType } from '../Core/Models/WalletType';

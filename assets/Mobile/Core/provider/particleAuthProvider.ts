@@ -3,9 +3,9 @@ import * as particleAuth from '../particleAuth';
 import { sendEVMRpc } from './connection';
 import type { RequestArguments } from './types';
 import { notSupportMethods, signerMethods } from './types';
-import { ChainInfo } from '../Models/ChainInfo';
 import { SupportAuthType } from '../Models/LoginInfo';
 import { HexConverter } from '../NetService/hex-converter';
+import { chains, ChainInfo } from '@particle-network/chains';
 
 class ParticleAuthProvider {
     private events = new EventTarget();
@@ -56,7 +56,7 @@ class ParticleAuthProvider {
         if (signerMethods.includes(payload.method)) {
             if (payload.method === 'eth_chainId') {
                 const chainInfo = await particleAuth.getChainInfo();
-                return Promise.resolve(`0x${chainInfo.chain_id.toString(16)}`);
+                return Promise.resolve(`0x${chainInfo.id.toString(16)}`);
             } else if (payload.method === 'eth_accounts' || payload.method === 'eth_requestAccounts') {
                 const isLogin = await particleAuth.isLogin();
                 if (!isLogin) {
@@ -71,7 +71,7 @@ class ParticleAuthProvider {
                 const txData = payload.params[0];
                 if (!txData.chainId) {
                     const chainInfo = await particleAuth.getChainInfo();
-                    txData.chainId = `0x${chainInfo.chain_id.toString(16)}`;
+                    txData.chainId = `0x${chainInfo.id.toString(16)}`;
                 }
 
                 const tx = HexConverter.jsonToHexString(txData);
@@ -90,7 +90,7 @@ class ParticleAuthProvider {
                 }
             } else if (payload.method === 'wallet_switchEthereumChain') {
                 const chainId = Number(payload.params[0].chainId);
-                const chainInfo = Object.values(ChainInfo).find((chain: any) => chain.chain_id === chainId);
+                const chainInfo = chains.getEVMChainInfoById(chainId);
                 if (!chainInfo) {
                     return Promise.reject({
                         code: 4201,

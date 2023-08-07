@@ -9823,7 +9823,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "Set Interface Style",
+    "_name": "Set appearance",
     "_objFlags": 0,
     "_parent": {
       "__id__": 36
@@ -9962,7 +9962,7 @@
       "b": 0,
       "a": 255
     },
-    "_string": "Set Interface Style",
+    "_string": "Set appearance",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 40,
@@ -10114,7 +10114,7 @@
     },
     "component": "",
     "_componentId": "71100YFVCZLnqUv/v7ScfvI",
-    "handler": "setInterfaceStyle",
+    "handler": "setAppearance",
     "customEventData": ""
   },
   {
@@ -11007,7 +11007,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "Set display wallet",
+    "_name": "Set web auth config",
     "_objFlags": 0,
     "_parent": {
       "__id__": 36
@@ -11146,7 +11146,7 @@
       "b": 0,
       "a": 255
     },
-    "_string": "Set display wallet",
+    "_string": "Set web auth config",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 40,
@@ -11298,7 +11298,7 @@
     },
     "component": "",
     "_componentId": "71100YFVCZLnqUv/v7ScfvI",
-    "handler": "setDisplayWallet",
+    "handler": "setWebAuthConfig",
     "customEventData": ""
   },
   {
@@ -11599,7 +11599,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "Set user info",
+    "_name": "Set fiat coin",
     "_objFlags": 0,
     "_parent": {
       "__id__": 36
@@ -11625,7 +11625,7 @@
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": -1640,
+      "y": -1340,
       "z": 0
     },
     "_lrot": {
@@ -11649,7 +11649,7 @@
       "y": 0,
       "z": 0
     },
-    "_id": "3aj4B8CfJG8IO00RxGQzJ8"
+    "_id": "71k7iVEzdGsar3FZ2wqOEZ"
   },
   {
     "__type__": "cc.Node",
@@ -11696,7 +11696,7 @@
       "y": 0,
       "z": 0
     },
-    "_id": "3cdoVhZulH8rqpqbo9FMGZ"
+    "_id": "93lVKHR6tM0r0nukH8Tzxl"
   },
   {
     "__type__": "cc.UITransform",
@@ -11717,7 +11717,7 @@
       "x": 0.5,
       "y": 0.5
     },
-    "_id": "0cm9uwTYlFDpoT7Gn6iZU5"
+    "_id": "b5e4/wxrlJs5G+jNJqKyXB"
   },
   {
     "__type__": "cc.Label",
@@ -11738,7 +11738,7 @@
       "b": 0,
       "a": 255
     },
-    "_string": "Set user info",
+    "_string": "Set fiat coin",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 40,
@@ -11755,7 +11755,7 @@
     "_isUnderline": false,
     "_underlineHeight": 2,
     "_cacheMode": 0,
-    "_id": "faLXC5yZRPYYGx0yywwpLS"
+    "_id": "11WDzzmL9AK4SmYNDyqJEE"
   },
   {
     "__type__": "cc.UITransform",
@@ -11776,7 +11776,7 @@
       "x": 0.5,
       "y": 0.5
     },
-    "_id": "e3r/22rchPDpYgSFf5DR6b"
+    "_id": "d9sqaHCL5AMad3y6oOaTDW"
   },
   {
     "__type__": "cc.Sprite",
@@ -11814,7 +11814,7 @@
     "_isTrimmedMode": true,
     "_useGrayscale": false,
     "_atlas": null,
-    "_id": "03s79Uk4pAPZR2PJFfMXDZ"
+    "_id": "30mQjHPepMuKKwpqelOPr8"
   },
   {
     "__type__": "cc.Button",
@@ -11881,7 +11881,7 @@
     "_target": {
       "__id__": 309
     },
-    "_id": "e5QjTgVvhA8a8/V54D59ZX"
+    "_id": "ead8rgGSpCLr98Hd7hL5G2"
   },
   {
     "__type__": "cc.ClickEvent",
@@ -11890,7 +11890,7 @@
     },
     "component": "",
     "_componentId": "71100YFVCZLnqUv/v7ScfvI",
-    "handler": "setUserInfo",
+    "handler": "setFiatCoin",
     "customEventData": ""
   },
   {

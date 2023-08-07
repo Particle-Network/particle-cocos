@@ -2,14 +2,15 @@ import { _decorator, Component, find, sys } from 'cc';
 import { Env, iOSModalPresentStyle, LoginType, SupportAuthType } from '../../Core/Models/LoginInfo';
 import { Language } from '../../Core/Models/Language';
 import * as Helper from './Helper';
-import { UserInterfaceStyle } from '../../Core/Models/UserInterfaceStyle';
-import { EvmService } from '../../Core/NetService/EvmService';
+import { Appearance } from '../../Core/Models/Appearance';
 import * as particleAuth from '../../Core/particleAuth';
 import { SecurityAccountConfig } from '../../Core/Models/SecurityAccountConfig';
 import { MainUIDemo } from '../MainUIDemo';
 import { createWeb3FromParticleAuth } from '../../Core/web3Demo';
 import { ToastManager } from '../Toast/ToastManager';
 import { ParticleInfo } from '../../Core/NetService/ParticleInfo';
+import { Polygon, PolygonMumbai } from '@particle-network/chains';
+import { FiatCoin } from '../../Core/Models/FiatCoin';
 
 
 const { ccclass } = _decorator;
@@ -252,7 +253,7 @@ export class AuthDemo extends Component {
     };
 
     async web3_wallet_switchEthereumChain() {
-        const chainId = EvmService.currentChainInfo.chain_id;
+        const chainId = Polygon.id;
         try {
             const result = await this.web3.currentProvider.request({
                 method: 'wallet_switchEthereumChain',
@@ -275,7 +276,7 @@ export class AuthDemo extends Component {
         if (ParticleInfo.projectId == "" || ParticleInfo.clientKey == "") {
             throw new Error('You need set project info');
         }
-        const chainInfo = EvmService.currentChainInfo;
+        const chainInfo = PolygonMumbai;
         const env = Env.Dev;
         particleAuth.init(chainInfo, env);
     }
@@ -283,7 +284,7 @@ export class AuthDemo extends Component {
     async login() {
         const type = LoginType.Phone;
         const supportAuthType = [SupportAuthType.Email, SupportAuthType.Google, SupportAuthType.Apple, SupportAuthType.Discord];
-        const result = await particleAuth.login(type, '', supportAuthType, undefined);
+        const result = await particleAuth.login(type, '', supportAuthType);
         if (result.status) {
             const userInfo = result.data;
             toastAndLog(userInfo);
@@ -330,7 +331,7 @@ export class AuthDemo extends Component {
     async signAndSendTransaction() {
         try {
             const sender = await particleAuth.getAddress();
-            const chainInfo = EvmService.currentChainInfo;
+            const chainInfo = await particleAuth.getChainInfo();
             let transaction = '';
             // There are four test cases
             // Before test, make sure your public address have some native token for fee.
@@ -340,7 +341,7 @@ export class AuthDemo extends Component {
             // 4. send evm token in BSC testnet, the transacion is type 0x0, for blockchians don't supoort EIP1559
             let testCase = 1;
 
-            if (chainInfo.chain_name.toLowerCase() == 'solana') {
+            if (chainInfo.name.toLowerCase() == 'solana') {
                 transaction = await Helper.getSolanaTransaction(sender, '9LR6zGAFB3UJcLg9tWBQJxEJCbZh2UTnSU14RBxsK1ZN', 1000);
             } else {
                 if (testCase == 1) {
@@ -393,7 +394,7 @@ export class AuthDemo extends Component {
     async signTransaction() {
         // only support solana, not support evm
         const chainInfo = await particleAuth.getChainInfo();
-        if (chainInfo.chain_name.toLowerCase() != 'solana') {
+        if (chainInfo.name.toLowerCase() != 'solana') {
             toastAndLog('signTransaction only supports solana');
             return;
         }
@@ -416,7 +417,7 @@ export class AuthDemo extends Component {
     async signAllTransactions() {
         // only support solana, not support evm
         const chainInfo = await particleAuth.getChainInfo();
-        if (chainInfo.chain_name.toLowerCase() != 'solana') {
+        if (chainInfo.name.toLowerCase() != 'solana') {
             toastAndLog('signAllTransactions only supports solana');
             return;
         }
@@ -438,20 +439,14 @@ export class AuthDemo extends Component {
     }
 
     async setChaininfo() {
-        const chainInfo = EvmService.currentChainInfo;
+        const chainInfo = PolygonMumbai;
         const result = await particleAuth.setChainInfo(chainInfo);
         toastAndLog(result);
     }
 
     async setChainInfoAsync() {
-        const chainInfo = EvmService.currentChainInfo;
+        const chainInfo = PolygonMumbai;
         const result = await particleAuth.setChainInfoAsync(chainInfo);
-        toastAndLog(result);
-    }
-
-    async setUserInfo() {
-        const json = '';
-        const result = await particleAuth.setUserInfo(json);
         toastAndLog(result);
     }
 
@@ -511,14 +506,19 @@ export class AuthDemo extends Component {
         particleAuth.setLanguage(language);
     }
 
-    setDisplayWallet() {
-        let isDisplayWallet = true;
-        particleAuth.setDisplayWallet(isDisplayWallet);
+    setFiatCoin() {
+        const fiatCoin = FiatCoin.HKD;
+        particleAuth.setFiatCoin(fiatCoin);
     }
 
-    setInterfaceStyle() {
-        let style = UserInterfaceStyle.Light;
-        particleAuth.setInterfaceStyle(style);
+    setWebAuthConfig() {
+        let isDisplayWallet = true;
+        particleAuth.setWebAuthConfig(isDisplayWallet, Appearance.Dark);
+    }
+
+    setAppearance() {
+        let style = Appearance.Light;
+        particleAuth.setAppearance(style);
     }
 
     openWebWallet() {

@@ -11,6 +11,7 @@ import { ParticleInfo } from '../../Core/NetService/ParticleInfo';
 import { WalletType } from '../../Core/Models/WalletType';
 import { DappMetaData } from '../../Core/Models/DappMetaData';
 import { ParticleConnectConfig } from '../../Core/Models/ConnectConfig';
+import { Polygon, PolygonMumbai } from '@particle-network/chains';
 
 
 const { ccclass, property } = _decorator;
@@ -72,7 +73,7 @@ export class ConnectDemo extends Component {
             throw new Error('You need set project info');
         }
 
-        const chainInfo = EvmService.currentChainInfo;
+        const chainInfo = PolygonMumbai;
 
         const dappMetaData = new DappMetaData('https://connect.particle.network', 'https://connect.particle.network/icons/512.png', 'Particle Connect', "Particle Connect", "75ac08814504606fc06126541ace9df6");
         particleConnect.particleConnectInitialize(chainInfo, Env.Dev, dappMetaData);
@@ -174,10 +175,10 @@ export class ConnectDemo extends Component {
 
     async web3_wallet_switchEthereumChain() {
         try {
-            const chainId = "0x" + EvmService.currentChainInfo.chain_id.toString(16);
+            const chainId = PolygonMumbai.id;
             const result = await this.web3.currentProvider.request({
                 method: 'wallet_switchEthereumChain',
-                params: [{ chainId: chainId }]
+                params: [{ chainId: "0x" + chainId.toString(16) }]
             })
             toastAndLog('web3 wallet_switchEthereumChain', result);
         } catch (error) {
@@ -188,10 +189,10 @@ export class ConnectDemo extends Component {
 
     async web3_wallet_addEthereumChain() {
         try {
-            const chainId = "0x" + EvmService.currentChainInfo.chain_id.toString(16);
+            const chainId = PolygonMumbai.id;
             const result = await this.web3.currentProvider.request({
                 method: 'wallet_addEthereumChain',
-                params: [{ chainId: chainId }]
+                params: [{ chainId: "0x" + chainId.toString(16) }]
             })
             toastAndLog('web3 wallet_addEthereumChain', result);
         } catch (error) {
@@ -294,7 +295,7 @@ export class ConnectDemo extends Component {
         try {
             const walletType = ConnectDemo.walletType;
             const sender = this._publicAddress;
-            const chainInfo = EvmService.currentChainInfo;
+            const chainInfo = await particleAuth.getChainInfo();
             let transaction = '';
             // There are four test cases
             // Before test, make sure your public address have some native token for fee.
@@ -304,7 +305,7 @@ export class ConnectDemo extends Component {
             // 4. send evm token in BSC testnet, the transacion is type 0x0, for blockchians don't supoort EIP1559
             let testCase = 1;
 
-            if (chainInfo.chain_name.toLowerCase() == 'solana') {
+            if (chainInfo.name.toLowerCase() == 'solana') {
                 transaction = await Helper.getSolanaTransaction(sender, '9LR6zGAFB3UJcLg9tWBQJxEJCbZh2UTnSU14RBxsK1ZN', 1000);
             } else {
                 if (testCase == 1) {
@@ -482,7 +483,7 @@ export class ConnectDemo extends Component {
     async adapterSwitchEthereumChain() {
         const walletType = ConnectDemo.walletType;
         const publicAddress = "";
-        const chainInfo = EvmService.currentChainInfo;
+        const chainInfo = PolygonMumbai;
 
         const result = await particleConnect.adapterSwitchEthereumChain(walletType, publicAddress, chainInfo);
         if (result.status) {
@@ -497,7 +498,7 @@ export class ConnectDemo extends Component {
     async adapterAddEthereumChain() {
         const walletType = ConnectDemo.walletType;
         const publicAddress = "";
-        const chainInfo = EvmService.currentChainInfo;
+        const chainInfo = PolygonMumbai;
 
         const result = await particleConnect.adapterAddEthereumChain(walletType, publicAddress, chainInfo);
         if (result.status) {

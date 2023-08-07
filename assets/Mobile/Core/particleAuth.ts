@@ -1,9 +1,10 @@
 import { native, sys, EventTarget } from "cc";
-import { ChainInfo } from "./Models/ChainInfo";
-import { Env, LoginType, SupportAuthType, iOSModalPresentStyle } from "./Models/LoginInfo";
+import type { ChainInfo } from '@particle-network/chains';
+import { Env, LoginAuthorization, LoginType, SocialLoginPrompt, SupportAuthType, iOSModalPresentStyle } from "./Models/LoginInfo";
 import { Language } from "./Models/Language";
-import { UserInterfaceStyle } from "./Models/UserInterfaceStyle";
+import { Appearance } from "./Models/Appearance";
 import { SecurityAccountConfig } from "./Models/SecurityAccountConfig";
+import { FiatCoin } from "./Models/FiatCoin";
 
 const event = new EventTarget();
 
@@ -152,6 +153,7 @@ function _setUserInfoCallback(json: string): void {
     console.log("setUserInfoCallback: " + json);
 }
 
+
 /**
  * Init Particle Auth SDK
  * @param chainInfo ChainInfo
@@ -160,9 +162,9 @@ function _setUserInfoCallback(json: string): void {
 export function init(chainInfo: ChainInfo, env: Env) {
 
     const obj = {
-        chain_name: chainInfo.chain_name,
-        chain_id: chainInfo.chain_id,
-        chain_id_name: chainInfo.chain_id_name,
+        chain_name: chainInfo.name,
+        chain_id: chainInfo.id,
+        chain_id_name: chainInfo.network,
         env: env,
     };
     const json = JSON.stringify(obj);
@@ -175,15 +177,18 @@ export function init(chainInfo: ChainInfo, env: Env) {
  * @param type Login type, support phone, email, json web token, google, apple and more.
  * @param account When login type is email, phone or jwt, you could pass email address, phone number or jwt.
  * @param supportAuthType Controls whether third-party login buttons are displayed. default will show all third-party login buttons.
- * @param loginFormMode Controls whether show light UI in web, default is false.
+ * @param socialLoginPrompt Social login prompt, optional.
+ * @param authorization message:evm->hex sign message . solana is base58, uniq:unique sign,only support evm
  * @returns Result, userinfo or error
  */
-export function login(type?: LoginType, account?: string, supportAuthTypes: SupportAuthType[] = [SupportAuthType.All], loginFormMode: boolean = false): Promise<any> {
+export function login(type?: LoginType, account?: string, supportAuthTypes: SupportAuthType[] = [SupportAuthType.All], socialLoginPrompt?: SocialLoginPrompt,
+    authorization?: LoginAuthorization): Promise<any> {
     const obj = {
         login_type: type,
         account: account,
         support_auth_type_values: supportAuthTypes,
-        login_form_mode: loginFormMode,
+        social_login_prompt: socialLoginPrompt,
+        authorization: authorization,
     };
     const json = JSON.stringify(obj);
 
@@ -314,9 +319,9 @@ export function signAllTransactions(transactions: string[]): Promise<any> {
  */
 export function setChainInfo(chainInfo: ChainInfo): Promise<any> {
     const obj = {
-        chain_name: chainInfo.chain_name,
-        chain_id: chainInfo.chain_id,
-        chain_id_name: chainInfo.chain_id_name,
+        chain_name: chainInfo.name,
+        chain_id: chainInfo.id,
+        chain_id_name: chainInfo.network,
     };
     const json = JSON.stringify(obj);
 
@@ -336,9 +341,9 @@ export function setChainInfo(chainInfo: ChainInfo): Promise<any> {
  */
 export function setChainInfoAsync(chainInfo: ChainInfo): Promise<any> {
     const obj = {
-        chain_name: chainInfo.chain_name,
-        chain_id: chainInfo.chain_id,
-        chain_id_name: chainInfo.chain_id_name,
+        chain_name: chainInfo.name,
+        chain_id: chainInfo.id,
+        chain_id_name: chainInfo.network,
     };
     const json = JSON.stringify(obj);
 
@@ -351,17 +356,6 @@ export function setChainInfoAsync(chainInfo: ChainInfo): Promise<any> {
         native.jsbBridgeWrapper.dispatchEventToNative("setChainInfoAsync", json);
     });
 
-}
-
-export function setUserInfo(jsonString: string): Promise<any> {
-
-    return new Promise((resolve, reject) => {
-        event.off("setUserInfoCallback");
-        event.once("setUserInfoCallback", (result: string) => {
-            resolve(JSON.parse(result));
-        });
-        native.jsbBridgeWrapper.dispatchEventToNative("setUserInfo", jsonString);
-    });
 }
 
 /**
@@ -377,6 +371,15 @@ export function getChainInfo(): Promise<ChainInfo> {
         });
         native.jsbBridgeWrapper.dispatchEventToNative("getChainInfo", "");
     });
+}
+
+/**
+ * Get chainId
+ * @returns ChainId
+ */
+export async function getChainId(): Promise<number> {
+    let chainInfo = await getChainInfo();
+    return chainInfo.id;
 }
 
 /**
@@ -469,7 +472,6 @@ export function setModalPresentStyle(style: iOSModalPresentStyle) {
  * @param isMediumScreen Is medium screen
  */
 export function setMediumScreen(isMediumScreventn: boolean) {
-
     if (sys.OS.IOS === sys.os) {
         native.jsbBridgeWrapper.dispatchEventToNative("setMediumScreen", isMediumScreventn ? "1" : "0");
     }
@@ -484,26 +486,49 @@ export function setLanguage(language: Language) {
 }
 
 /**
- * Set if display wallet in web page.
- * @param isDisplay
+ * Set fiat coin
+ * @param fiatCoin FiatCoin
  */
-export function setDisplayWallet(isDisplayWallet: boolean) {
-    native.jsbBridgeWrapper.dispatchEventToNative("setDisplayWallet", isDisplayWallet ? "1" : "0");
+export function setFiatCoin(fiatCoin: FiatCoin) {
+    if (sys.OS.IOS === sys.os) {
+        native.jsbBridgeWrapper.dispatchEventToNative("setFiatCoin", fiatCoin);
+    }
+}
+
+/**
+ * Set web auth config
+ * @param displayWallet
+ * @param appearance
+ */
+export function setWebAuthConfig(displayWallet: boolean, appearance: Appearance) {
+    const obj = {
+        display_wallet: displayWallet,
+        appearance: appearance,
+    };
+    const json = JSON.stringify(obj);
+    if (sys.OS.IOS === sys.os) {
+        native.jsbBridgeWrapper.dispatchEventToNative("setWebAuthConfig", json);
+    } else [
+        // todo
+    ]
+    
 }
 
 /**
  * Set user interface style
  * @param style 
  */
-export function setInterfaceStyle(style: UserInterfaceStyle) {
-    native.jsbBridgeWrapper.dispatchEventToNative("setInterfaceStyle", style);
+export function setAppearance(style: Appearance) {
+    native.jsbBridgeWrapper.dispatchEventToNative("setAppearance", style);
+    // todo
 }
 
 /**
  * Open web wallet
  */
-export function openWebWallet() {
-    native.jsbBridgeWrapper.dispatchEventToNative("openWebWallet", "");
+export function openWebWallet(webStyle?: string) {
+    var json = webStyle ?? "";
+    native.jsbBridgeWrapper.dispatchEventToNative("openWebWallet", json);
 }
 
 /**

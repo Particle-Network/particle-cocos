@@ -2,11 +2,12 @@ import { AbiEncodeFunction, EVMReqBodyMethod } from './NetParams';
 import JsonRpcRequest from './NetService';
 import BigNumber from 'bignumber.js';
 import { HexConverter } from './hex-converter';
-import { ChainInfo } from '../Models/ChainInfo';
+import { getChainId, getChainInfo } from '../particleAuth';
+import { GasFeeLevel } from '../Models/GasFeeLevel';
+import { chains } from '@particle-network/chains';
+
 
 export class EvmService {
-    /// current chain info
-    static currentChainInfo: ChainInfo = ChainInfo.EthereumGoerli;
 
     /**
      * Support evm standard rpc methpd
@@ -17,7 +18,7 @@ export class EvmService {
     static async rpc(method: string, params: any) {
         const rpcUrl = 'https://rpc.particle.network/';
         const path = 'evm-chain';
-        const chainId = EvmService.currentChainInfo.chain_id;
+        const chainId = await getChainId();
         const result = await JsonRpcRequest(rpcUrl, path, method, params, chainId);
         return result;
     }
@@ -190,7 +191,7 @@ export class EvmService {
     static async abiEncodeFunctionCall(
         contractAddress: string,
         methodName: string,
-        params: string,
+        params: string[],
         abiJsonString: string
     ) {
         return await this.rpc(EVMReqBodyMethod.particleAbiEncodeFunctionCall, [
@@ -219,7 +220,7 @@ export class EvmService {
      * @param abiJsonString ABI json string
      * @returns Json string
      */
-    static async readContract(contractAddress: string, methodName: string, params: string, abiJsonString: string) {
+    static async readContract(contractAddress: string, methodName: string, params: string[], abiJsonString: string) {
         const data = await this.abiEncodeFunctionCall(contractAddress, methodName, params, abiJsonString);
         const callParams = { data: data, to: contractAddress };
         const result = this.rpc('eth_call', [callParams, 'latest']);
@@ -227,90 +228,100 @@ export class EvmService {
     }
 
     /**
-     * Write contract, it works for blockchain which support EIP1559.
-     * @param from From address
-     * @param contractAddress Contract address
-     * @param methodName Method name, like `mint`, `balanceOf` or other methods that are defined in your contract
-     * @param params Parameters request by method
-     * @param abiJsonString ABI json string
-     * @returns Serialized transacion
-     */
+      * Write contract, it works for blockchain which support EIP1559.
+      * @param from From address
+      * @param contractAddress Contract address
+      * @param methodName Method name, like `mint`, `balanceOf` or other methods that are defined in your contract
+      * @param params Parameters request by method
+      * @param abiJsonString ABI json string
+      * @param gasFeeLevel Gas fee level, default is high.
+      * @returns Serialized transacion
+      */
     static async writeContract(
         from: string,
         contractAddress: string,
         methodName: string,
-        params: string,
-        abiJsonString: string
-    ) {
+        params: string[],
+        abiJsonString: string,
+        gasFeeLevel: GasFeeLevel = GasFeeLevel.high
+
+    ): Promise<any> {
         const data = await this.abiEncodeFunctionCall(contractAddress, methodName, params, abiJsonString);
-
-        const gasLimit = await this.estimateGas(from, contractAddress, '0x0', data);
-        const gasFeesResult = await this.suggeseGasFee();
-
-        const maxFeePerGas = gasFeesResult.high.maxFeePerGas;
-        const maxFeePerGasHex = '0x' + BigNumber(maxFeePerGas * Math.pow(10, 9)).toString(16);
-
-        const maxPriorityFeePerGas = gasFeesResult.high.maxPriorityFeePerGas;
-        const maxPriorityFeePerGasHex = '0x' + BigNumber(maxPriorityFeePerGas * Math.pow(10, 9)).toString(16);
-        const chainId = EvmService.currentChainInfo.chain_id;
-
-        const transaction = {
-            from: from,
-            to: contractAddress,
-            data: data,
-            gasLimit: gasLimit,
-            value: '0x0',
-            type: '0x2',
-            chainId: '0x' + chainId.toString(16),
-            maxPriorityFeePerGas: maxPriorityFeePerGasHex,
-            maxFeePerGas: maxFeePerGasHex,
-        };
-
-        console.log(transaction);
-        const serialized = HexConverter.jsonToHexString(transaction);
-        return '0x' + serialized;
+        return await this.createTransaction(from, data, BigNumber(0), contractAddress, gasFeeLevel);
     }
+
 
     /**
-     * Write contract, it works for blockchain which doesn't support EIP1559.
+     * Create transaction
      * @param from From address
-     * @param contractAddress Contract address
-     * @param methodName Method name, like `mint`, `balanceOf` or other methods that are defined in your contract
-     * @param params Parameters request by method
-     * @param abiJsonString ABI json string
-     * @returns Serialized transacion
+     * @param data Contract transaction parameter, if you want to send native, pass 0x
+     * @param value Native amount
+     * @param to If it is a contract transaction, to is contract address, if it is a native transaciton, to is receiver address.
+     * @param gasFeeLevel Gas fee level, default is high.
+     * @returns 
      */
-    static async writeContractLegacy(
-        from: string,
-        contractAddress: string,
-        methodName: string,
-        params: string,
-        abiJsonString: string
-    ) {
-        const data = await this.abiEncodeFunctionCall(contractAddress, methodName, params, abiJsonString);
+    static async createTransaction(from: string, data: string, value: BigNumber, to: string, gasFeeLevel: GasFeeLevel = GasFeeLevel.high): Promise<any> {
 
-        const gasLimit = await this.estimateGas(from, contractAddress, '0x0', data);
+        const valueHex = '0x' + value.toString(16);
+        const gasLimit = await this.estimateGas(from, to, valueHex, data);
         const gasFeesResult = await this.suggeseGasFee();
 
-        const maxFeePerGas = gasFeesResult.high.maxFeePerGas;
-        const maxFeePerGasHex = '0x' + BigNumber(maxFeePerGas * Math.pow(10, 9)).toString(16);
+        let gasFee;
+        switch (gasFeeLevel) {
+            case GasFeeLevel.high:
+                gasFee = gasFeesResult.high;
+                break;
+            case GasFeeLevel.medium:
+                gasFee = gasFeesResult.medium;
+                break;
 
-        const chainId = EvmService.currentChainInfo.chain_id;
+            case GasFeeLevel.low:
+                gasFee = gasFeesResult.low;
+                break;
+        }
 
-        const transaction = {
-            from: from,
-            to: contractAddress,
-            data: data,
-            gasLimit: gasLimit,
-            value: '0x0',
-            type: '0x0',
-            chainId: '0x' + chainId.toString(16),
-            gasPrice: maxFeePerGasHex,
-        };
+        const maxFeePerGas = gasFee.maxFeePerGas;
+        console.log('maxFeePerGas', maxFeePerGas);
+        const maxFeePerGasHex = '0x' + BigNumber(Math.floor(maxFeePerGas * Math.pow(10, 9))).toString(16);
 
+        console.log('maxFeePerGasHex', maxFeePerGasHex);
+        const maxPriorityFeePerGas = gasFee.maxPriorityFeePerGas;
+        const maxPriorityFeePerGasHex = '0x' + BigNumber(Math.floor(maxPriorityFeePerGas * Math.pow(10, 9))).toString(16);
+
+        const chainInfo = await getChainInfo();
+        const chainId = chainInfo.id;
+        const isSupportEIP1559 = chains.isChainSupportEIP1559({ id: chainInfo.id, name: chainInfo.name });
+
+        let transaction;
+
+        if (isSupportEIP1559) {
+            transaction = {
+                from: from,
+                to: to,
+                data: data,
+                gasLimit: gasLimit,
+                value: valueHex,
+                type: '0x2',
+                chainId: '0x' + chainId.toString(16),
+                maxPriorityFeePerGas: maxPriorityFeePerGasHex,
+                maxFeePerGas: maxFeePerGasHex,
+            };
+        } else {
+            transaction = {
+                from: from,
+                to: to,
+                data: data,
+                gasLimit: gasLimit,
+                value: valueHex,
+                type: '0x0',
+                chainId: '0x' + chainId.toString(16),
+                gasPrice: maxFeePerGasHex,
+            };
+        }
         console.log(transaction);
         const serialized = HexConverter.jsonToHexString(transaction);
         return '0x' + serialized;
     }
-      
+
+
 }

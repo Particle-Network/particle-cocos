@@ -1,10 +1,11 @@
 import { native, sys, EventTarget } from "cc";
-import { ChainInfo } from "./Models/ChainInfo";
-import { Language } from "./Models/Language";
+import type { ChainInfo } from '@particle-network/chains';
+import { chains } from '@particle-network/chains';
+
 import { WalletDisplay } from "./Models/WalletDisplay";
 import { WalletType } from "./Models/WalletType";
 import { BuyCryptoConfig } from "./Models/BuyCryptoConfig";
-import { FiatCoin } from "./Models/FiatCoin";
+
 
 const event = new EventTarget();
 
@@ -139,14 +140,14 @@ export function navigatorBuyCrypto(config?: BuyCryptoConfig) {
     } else {
         native.jsbBridgeWrapper.dispatchEventToNative("navigatorBuyCrypto", "");
     }
-
+    // todo
 }
 
 /**
  * Navigator login list page
  * @returns  Result, account or eror
  */
-export function navigatorLoginList(): Promise<any> {
+export async function navigatorLoginList(): Promise<any> {
     return callEventOnce("navigatorLoginList", "").then(result => {
         return JSON.parse(result);
     })
@@ -168,57 +169,69 @@ export function navigatorSwap(fromTokenAddress?: string, toTokenAddress?: string
  * Show test network, default is false
  * @param isShow 
  */
-export function showTestNetwork(isShow: boolean) {
-    native.jsbBridgeWrapper.dispatchEventToNative("showTestNetwork", isShow ? "1" : "0");
+export function setShowTestNetwork(isShow: boolean) {
+    native.jsbBridgeWrapper.dispatchEventToNative("setShowTestNetwork", isShow ? "1" : "0");
+    // todo
 }
 
 /**
  * Show manage wallet page, default is true
  * @param isShow 
  */
-export function showManageWallet(isShow: boolean) {
-    native.jsbBridgeWrapper.dispatchEventToNative("showManageWallet", isShow ? "1" : "0");
+export function setShowManageWallet(isShow: boolean) {
+    native.jsbBridgeWrapper.dispatchEventToNative("setShowManageWallet", isShow ? "1" : "0");
+    // todo
 }
 
 /**
  * Support chainInfos
  * @param chainInfos ChainInfos
  */
-export function supportChain(chainInfos: ChainInfo[]) {
-    const json = JSON.stringify(chainInfos);
-    native.jsbBridgeWrapper.dispatchEventToNative("supportChain", json);
+export function setSupportChain(chainInfos: ChainInfo[]) {
+    const chainInfoObjects = chainInfos.map(info => ({
+        chain_name: info.name,
+        chain_id_name: info.network,
+        chain_id: info.id,
+    }));
+    const json = JSON.stringify(chainInfoObjects);
+    native.jsbBridgeWrapper.dispatchEventToNative("setSupportChain", json);
+    // todo
 }
 
 /**
- * Enable pay feature, pay feature is default enable.
+ * Set pay disabled, default value is false.
  * @param isEnable 
  */
-export function enablePay(isEnable: boolean) {
-    native.jsbBridgeWrapper.dispatchEventToNative("enablePay", isEnable ? "1" : "0");
+export function setPayDisabled(disabled: boolean) {
+    native.jsbBridgeWrapper.dispatchEventToNative("setPayDisabled", disabled ? "1" : "0");
+    // todo
 }
 
 /**
- * Get pay feature state
+ * Get pay disabled
  * @returns Trus if enable, otherwise false
  */
-export function getEnablePay() {
-    return callEventOnce("getEnablePay", "");
+export function getPayDisabled() {
+    return callEventOnce("getPayDisabled", "");
+    // todo
 }
 
 /**
- * Enable swap feature, swap feature is default enable.
+ * Set swap disabled, default value is false.
  * @param isEnable 
  */
-export function enableSwap(isEnable: boolean) {
-    native.jsbBridgeWrapper.dispatchEventToNative("enableSwap", isEnable ? "1" : "0");
+export function setSwapDisabled(disabled: boolean) {
+    native.jsbBridgeWrapper.dispatchEventToNative("setSwapDisabled", disabled ? "1" : "0");
+    // todo
 }
 
 /**
- * Get swap feature state
+ * Get swap disabled
  * @returns Trus if enable, otherwise false
  */
-export function getEnableSwap() {
-    return callEventOnce("getEnableSwap", "");
+export function getSwapDisabled() {
+    return callEventOnce("getSwapDisabled", "");
+    // todo
 }
 
 /**
@@ -227,21 +240,12 @@ export function getEnableSwap() {
  * @param publicAddress Public address
  * @returns Result
  */
-export function switchWallet(walletType: string, publicAddress: string): Promise<boolean> {
+export async function switchWallet(walletType: string, publicAddress: string): Promise<boolean> {
     const obj = { wallet_type: walletType, public_address: publicAddress };
     const json = JSON.stringify(obj);
 
-    return callEventOnce("switchWallet", json).then(result => {
-        return JSON.parse(result);
-    })
-}
-
-/**
- * Set wallet page language
- * @param language Language
- */
-export function setLanguage(language: Language) {
-    native.jsbBridgeWrapper.dispatchEventToNative("walletSetLanguage", language);
+    const result = await callEventOnce("switchWallet", json);
+    return JSON.parse(result);
 }
 
 /**
@@ -249,19 +253,11 @@ export function setLanguage(language: Language) {
  * not support for now, coming soon.
  * @param isEnable 
  */
-export function supportWalletConnect(isEnable: boolean) {
-    native.jsbBridgeWrapper.dispatchEventToNative("supportWalletConnect", isEnable ? "1" : "0");
+export function setSupportWalletConnect(isEnable: boolean) {
+    native.jsbBridgeWrapper.dispatchEventToNative("setSupportWalletConnect", isEnable ? "1" : "0");
+    // todo
 }
 
-/**
- * Set fait coin
- * @param fiatCoin FiatCoin
- */
-export function setFiatCoin(fiatCoin: FiatCoin) {
-    if (sys.OS.IOS === sys.os) {
-        native.jsbBridgeWrapper.dispatchEventToNative("setFiatCoin", fiatCoin);
-    }
-}
 
 /**
  * Set display token addresses
@@ -311,16 +307,18 @@ export function setPriorityNFTContractAddresses(nftContractAddresses: string[]) 
  * Set show language setting button in setting page
  * @param isShow default value is false
  */
-export function showLanguageSetting(isShow: boolean) {
-    native.jsbBridgeWrapper.dispatchEventToNative("showLanguageSetting", isShow ? "1" : "0");
+export function setShowLanguageSetting(isShow: boolean) {
+    native.jsbBridgeWrapper.dispatchEventToNative("setShowLanguageSetting", isShow ? "1" : "0");
+    // todo
 }
 
 /**
  * Set show appearance setting button in setting page
  * @param isShow default value is false
  */
-export function showAppearanceSetting(isShow: boolean) {
-    native.jsbBridgeWrapper.dispatchEventToNative("showAppearanceSetting", isShow ? "1" : "0");
+export function setShowAppearanceSetting(isShow: boolean) {
+    native.jsbBridgeWrapper.dispatchEventToNative("setShowAppearanceSetting", isShow ? "1" : "0");
+    // todo
 }
 
 /**
@@ -329,6 +327,7 @@ export function showAppearanceSetting(isShow: boolean) {
  */
 export function setSupportAddToken(isShow: boolean) {
     native.jsbBridgeWrapper.dispatchEventToNative("setSupportAddToken", isShow ? "1" : "0");
+    // todo
 }
 
 function callEventOnce(eventName: string, json: string): Promise<any> {

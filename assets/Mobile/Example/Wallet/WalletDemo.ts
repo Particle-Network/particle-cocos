@@ -3,10 +3,9 @@ import * as particleWallet from '../../Core/particleWallet';
 import { ToastManager } from '../Toast/ToastManager';
 import { WalletType } from '../../Core/Models/WalletType';
 import { BuyCryptoConfig, OpenBuyNetwork } from '../../Core/Models/BuyCryptoConfig';
-import { ChainInfo } from '../../Core/Models/ChainInfo';
 import { Language } from '../../Core/Models/Language';
-import { FiatCoin } from '../../Core/Models/FiatCoin';
 import { WalletDisplay } from '../../Core/Models/WalletDisplay';
+import { BNBChain, Ethereum, Polygon } from '@particle-network/chains';
 
 
 const { ccclass } = _decorator;
@@ -84,38 +83,38 @@ export class WalletDemo extends Component {
         particleWallet.navigatorSwap(fromTokenAddress, toTokenAddress, amount);
     }
 
-    showTestNetwork() {
+    setShowTestNetwork() {
         const isShow = true;
-        particleWallet.showTestNetwork(isShow);
+        particleWallet.setShowTestNetwork(isShow);
     }
 
-    showManageWallet() {
+    setShowManageWallet() {
         const isShow = false;
-        particleWallet.showManageWallet(isShow);
+        particleWallet.setShowManageWallet(isShow);
     }
 
-    supportChain() {
-        const chainInfos = [ChainInfo.EthereumMainnet, ChainInfo.BSCMainnet, ChainInfo.PolygonMainnet];
-        particleWallet.supportChain(chainInfos);
+    setSupportChain() {
+        const chainInfos = [Ethereum, BNBChain, Polygon];
+        particleWallet.setSupportChain(chainInfos);
     }
 
-    enablePay() {
-        const isEnable = false;
-        particleWallet.enablePay(isEnable);
+    setPayDisabled() {
+        const disabled = true;
+        particleWallet.setPayDisabled(disabled);
     }
 
-    async getEnablePay() {
-        const result = await particleWallet.getEnablePay();
+    async getPayDisabled() {
+        const result = await particleWallet.getPayDisabled();
         toastAndLog(result);
     }
 
-    enableSwap() {
-        const isEnable = true;
-        particleWallet.enableSwap(isEnable);
+    setSwapDisabled() {
+        const disabled = true;
+        particleWallet.setSwapDisabled(disabled);
     }
 
-    async getEnableSwap() {
-        const result = await particleWallet.getEnableSwap();
+    async getSwapDisabled() {
+        const result = await particleWallet.getSwapDisabled();
         toastAndLog(result);
     }
 
@@ -128,19 +127,10 @@ export class WalletDemo extends Component {
 
     }
 
-    setLanguage() {
-        const language = Language.ZH_HANS;
-        particleWallet.setLanguage(language);
+    setSupportWalleConnect() {
+        particleWallet.setSupportWalletConnect(false);
     }
 
-    supportWalleConnect() {
-        particleWallet.supportWalletConnect(false);
-    }
-
-    setFiatCoin() {
-        const fiatCoin = FiatCoin.HKD;
-        particleWallet.setFiatCoin(fiatCoin);
-    }
 
     setDisplayTokenAddresses() {
         const tokenAddresses = ["", ""];
@@ -162,18 +152,17 @@ export class WalletDemo extends Component {
         particleWallet.setPriorityNFTContractAddresses(nftContractAddresses);
     }
 
-    showLanguageSetting() {
-        particleWallet.showLanguageSetting(false);
+    setShowLanguageSetting() {
+        particleWallet.setShowLanguageSetting(false);
     }
 
-    showAppearanceSetting() {
-        particleWallet.showAppearanceSetting(false);
+    setShowAppearanceSetting() {
+        particleWallet.setShowAppearanceSetting(false);
     }
 
     setSupportAddToken() {
         particleWallet.setSupportAddToken(false);
     }
-
 
     update(deltaTime: number) { }
 
