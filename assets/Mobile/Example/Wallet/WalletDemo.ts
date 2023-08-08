@@ -19,6 +19,23 @@ export class WalletDemo extends Component {
         }
     }
 
+    initWallet() {
+        const walletMetaData = {
+            walletConnectProjectId: '75ac08814504606fc06126541ace9df6',
+            name: 'Particle Connect',
+            icon: 'https://connect.particle.network/icons/512.png',
+            url: 'https://connect.particle.network',
+            description: 'Particle Wallet',
+        };
+        particleWallet.initWallet(walletMetaData);
+    }
+
+    createSelectedWallet() {
+        const publicAddress = "";
+        const walletType = WalletType.MetaMask;
+        particleWallet.createSelectedWallet(publicAddress, walletType);
+    }
+
     navigatorWallet() {
         const display = WalletDisplay.Token;
         particleWallet.navigatorWallet(display);

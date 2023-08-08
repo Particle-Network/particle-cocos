@@ -516,6 +516,7 @@
     [m addScriptEventListener:@"setShowLanguageSetting" listener:setShowLanguageSetting];
     [m addScriptEventListener:@"setShowAppearanceSetting" listener:setShowAppearanceSetting];
     [m addScriptEventListener:@"setSupportAddToken" listener:setSupportAddToken];
+    [m addScriptEventListener:@"initializeWalletMetaData" listener:initializeWalletMetaData];
 }
 @end
 

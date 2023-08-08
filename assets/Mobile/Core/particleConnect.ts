@@ -5,6 +5,8 @@ import { RpcUrl } from "./Models/RpcUrl";
 import { WalletType } from "./Models/WalletType";
 import { ParticleConnectConfig } from "./Models/ConnectConfig";
 import { ChainInfo } from "./Models/ChainInfo";
+import { getChainInfo, isHexString } from "./particleAuth";
+import { HexConverter } from "./NetService/hex-converter";
 
 const event = new EventTarget();
 
@@ -296,6 +298,19 @@ export async function adapterIsConnected(walletType: WalletType, publicAddress: 
 * @returns Result, signed message or error
 */
 export async function adapterSignMessage(walletType: WalletType, publicAddress: string, message: string): Promise<any> {
+    let serializedMessage: string;
+
+    let chainInfo = await getChainInfo();
+    if (chainInfo.name.toLowerCase() == "solana") {
+        serializedMessage = message;
+    } else {
+        if (isHexString(message)) {
+            serializedMessage = message;
+        } else {
+            serializedMessage = '0x' + HexConverter.stringToHexString(message);
+        }
+    }
+
     const obj = { wallet_type: walletType, public_address: publicAddress, message: message };
     const json = JSON.stringify(obj);
 
@@ -368,14 +383,20 @@ export async function adapterSignAndSendTransaction(walletType: WalletType, publ
 * @returns Result, signature or error
 */
 export async function adapterSignTypedData(walletType: WalletType, publicAddress: string, typedData: string): Promise<any> {
-    const obj = { wallet_type: walletType, public_address: publicAddress, message: typedData };
+    let serializedMessage: string;
+
+    if (isHexString(typedData)) {
+        serializedMessage = typedData;
+    } else {
+        serializedMessage = '0x' + HexConverter.stringToHexString(typedData);
+    }
+
+    const obj = { wallet_type: walletType, public_address: publicAddress, message: serializedMessage };
     const json = JSON.stringify(obj);
 
     return callEventOnce("adapterSignTypedData", json).then(result => {
         return JSON.parse(result);
     })
-
-
 }
 
 

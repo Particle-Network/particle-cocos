@@ -3,18 +3,19 @@ import { WalletDisplay } from "./Models/WalletDisplay";
 import { WalletType } from "./Models/WalletType";
 import { BuyCryptoConfig } from "./Models/BuyCryptoConfig";
 import { ChainInfo } from "./Models/ChainInfo";
+import { WalletMetaData } from "./Models/WalletMetaData";
 
 
 const event = new EventTarget();
 
 export function registerAllScriptEvent() {
 
-    native.jsbBridgeWrapper.addNativeEventListener("getEnableSwapCallback", (json: string) => {
-        _getEnableSwapCallback(json);
+    native.jsbBridgeWrapper.addNativeEventListener("getSwapDisabledCallback", (json: string) => {
+        _getSwapDisabledCallback(json);
     });
 
-    native.jsbBridgeWrapper.addNativeEventListener("getEnablePayCallback", (json: string) => {
-        _getEnablePayCallback(json);
+    native.jsbBridgeWrapper.addNativeEventListener("getPayDisabledCallback", (json: string) => {
+        _getPayDisabledCallback(json);
     });
 
     native.jsbBridgeWrapper.addNativeEventListener("navigatorLoginListCallback", (json: string) => {
@@ -27,14 +28,14 @@ export function registerAllScriptEvent() {
 }
 
 // Event call back
-function _getEnableSwapCallback(json: string): void {
-    event.emit("getEnableSwapCallback", json);
-    console.log("getEnableSwapCallback: " + json);
+function _getSwapDisabledCallback(json: string): void {
+    event.emit("getSwapDisabledCallback", json);
+    console.log("getSwapDisabledCallback: " + json);
 }
 
-function _getEnablePayCallback(json: string): void {
-    event.emit("getEnablePayCallback", json);
-    console.log("getEnablePayCallback: " + json);
+function _getPayDisabledCallback(json: string): void {
+    event.emit("getPayDisabledCallback", json);
+    console.log("getPayDisabledCallback: " + json);
 }
 
 function _navigatorLoginListCallback(json: string): void {
@@ -45,6 +46,17 @@ function _navigatorLoginListCallback(json: string): void {
 function _switchWalletCallback(json: string): void {
     event.emit("switchWalletCallback", json);
     console.log("switchWalletCallback: " + json);
+}
+
+/**
+ * Init Particle Wallet Service
+ */
+export function initWallet(walletMetaData: WalletMetaData) {
+    if (sys.OS.IOS === sys.os) {
+        const json = JSON.stringify(walletMetaData);
+        native.jsbBridgeWrapper.dispatchEventToNative("initializeWalletMetaData", json);
+    }
+    // todo
 }
 
 /**
