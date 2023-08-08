@@ -10,7 +10,8 @@ import { ParticleInfo } from '../../Core/NetService/ParticleInfo';
 import { WalletType } from '../../Core/Models/WalletType';
 import { DappMetaData } from '../../Core/Models/DappMetaData';
 import { ParticleConnectConfig } from '../../Core/Models/ConnectConfig';
-import { PolygonMumbai } from '../../Core/Models/ChainInfo';
+import BigNumber from 'bignumber.js';
+import { ChainManager } from '../ChainManager';
 
 
 const { ccclass, property } = _decorator;
@@ -72,7 +73,7 @@ export class ConnectDemo extends Component {
             throw new Error('You need set project info');
         }
 
-        const chainInfo = PolygonMumbai;
+        const chainInfo = ChainManager.currentChainInfo;
 
         const dappMetaData = new DappMetaData('https://connect.particle.network', 'https://connect.particle.network/icons/512.png', 'Particle Connect', "Particle Connect", "75ac08814504606fc06126541ace9df6");
         particleConnect.particleConnectInitialize(chainInfo, Env.Dev, dappMetaData);
@@ -174,7 +175,7 @@ export class ConnectDemo extends Component {
 
     async web3_wallet_switchEthereumChain() {
         try {
-            const chainId = PolygonMumbai.id;
+            const chainId = ChainManager.currentChainInfo.id;
             const result = await this.web3.currentProvider.request({
                 method: 'wallet_switchEthereumChain',
                 params: [{ chainId: "0x" + chainId.toString(16) }]
@@ -188,7 +189,7 @@ export class ConnectDemo extends Component {
 
     async web3_wallet_addEthereumChain() {
         try {
-            const chainId = PolygonMumbai.id;
+            const chainId = ChainManager.currentChainInfo.id;
             const result = await this.web3.currentProvider.request({
                 method: 'wallet_addEthereumChain',
                 params: [{ chainId: "0x" + chainId.toString(16) }]
@@ -310,21 +311,21 @@ export class ConnectDemo extends Component {
                 if (testCase == 1) {
                     const receiver = '0x39b2DeB155Ee6a5a23E172bE11744329e95Af6df';
                     const amount = '1000000000000000';
-                    transaction = await Helper.getEthereumTransacion(sender, receiver, amount);
+                    transaction = await Helper.getEthereumTransacion(sender, receiver, BigNumber(amount));
                 } else if (testCase == 2) {
                     const receiver = '0x39b2DeB155Ee6a5a23E172bE11744329e95Af6df';
                     const amount = '1000000000000000';
-                    transaction = await Helper.getEthereumTransacionLegacy(sender, receiver, amount);
+                    transaction = await Helper.getEthereumTransacionLegacy(sender, receiver, BigNumber(amount));
                 } else if (testCase == 3) {
                     const receiver = '0x39b2DeB155Ee6a5a23E172bE11744329e95Af6df';
                     const amount = '1000000000000000';
                     const contractAddress = '0x326C977E6efc84E512bB9C30f76E30c160eD06FB';
-                    transaction = await Helper.getEvmTokenTransaction(sender, receiver, amount, contractAddress);
+                    transaction = await Helper.getEvmTokenTransaction(sender, receiver, BigNumber(amount), contractAddress);
                 } else {
                     const receiver = '0x39b2DeB155Ee6a5a23E172bE11744329e95Af6df';
                     const amount = '1000000000000000';
                     const contractAddress = '0x326C977E6efc84E512bB9C30f76E30c160eD06FB';
-                    transaction = await Helper.getEvmTokenTransactionLegacy(sender, receiver, amount, contractAddress);
+                    transaction = await Helper.getEvmTokenTransactionLegacy(sender, receiver, BigNumber(amount), contractAddress);
                 }
             }
             toastAndLog(transaction);
@@ -482,7 +483,7 @@ export class ConnectDemo extends Component {
     async adapterSwitchEthereumChain() {
         const walletType = ConnectDemo.walletType;
         const publicAddress = "";
-        const chainInfo = PolygonMumbai;
+        const chainInfo = ChainManager.currentChainInfo;
 
         const result = await particleConnect.adapterSwitchEthereumChain(walletType, publicAddress, chainInfo);
         if (result.status) {
@@ -497,7 +498,7 @@ export class ConnectDemo extends Component {
     async adapterAddEthereumChain() {
         const walletType = ConnectDemo.walletType;
         const publicAddress = "";
-        const chainInfo = PolygonMumbai;
+        const chainInfo = ChainManager.currentChainInfo;
 
         const result = await particleConnect.adapterAddEthereumChain(walletType, publicAddress, chainInfo);
         if (result.status) {

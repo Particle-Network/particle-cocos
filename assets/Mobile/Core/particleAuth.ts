@@ -5,6 +5,8 @@ import { Appearance } from "./Models/Appearance";
 import { SecurityAccountConfig } from "./Models/SecurityAccountConfig";
 import { FiatCoin } from "./Models/FiatCoin";
 import { ChainInfo } from "./Models/ChainInfo";
+import { getEVMChainInfoById, getSolanaChainInfoById } from "./Models/Chains";
+import { HexConverter } from "./NetService/hex-converter";
 
 const event = new EventTarget();
 
@@ -181,7 +183,7 @@ export function init(chainInfo: ChainInfo, env: Env) {
  * @param authorization message:evm->hex sign message . solana is base58, uniq:unique sign,only support evm
  * @returns Result, userinfo or error
  */
-export function login(type?: LoginType, account?: string, supportAuthTypes: SupportAuthType[] = [SupportAuthType.All], socialLoginPrompt?: SocialLoginPrompt,
+export async function login(type?: LoginType, account?: string, supportAuthTypes: SupportAuthType[] = [SupportAuthType.All], socialLoginPrompt?: SocialLoginPrompt,
     authorization?: LoginAuthorization): Promise<any> {
     const obj = {
         login_type: type,
@@ -206,7 +208,7 @@ export function login(type?: LoginType, account?: string, supportAuthTypes: Supp
  * Logout
  * @returns Result, success or error
  */
-export function logout(): Promise<any> {
+export async function logout(): Promise<any> {
     return new Promise((resolve, reject) => {
         event.off("logoutCallback");
         event.once("logoutCallback", (result: string) => {
@@ -220,7 +222,7 @@ export function logout(): Promise<any> {
  * Fast logout, silently
  * @returns Result, success or error
  */
-export function fastLogout(): Promise<any> {
+export async function fastLogout(): Promise<any> {
     return new Promise((resolve, reject) => {
         event.off("fastLogoutCallback");
         event.once("fastLogoutCallback", (result: string) => {
@@ -235,13 +237,26 @@ export function fastLogout(): Promise<any> {
  * @param message Message that you want user to sign.
  * @returns Result, signed message or error
  */
-export function signMessage(message: string): Promise<any> {
+export async function signMessage(message: string): Promise<any> {
+    let serializedMessage: string;
+
+    let chainInfo = await getChainInfo();
+    if (chainInfo.name.toLowerCase() == "solana") {
+        serializedMessage = message;
+    } else {
+        if (isHexString(message)) {
+            serializedMessage = message;
+        } else {
+            serializedMessage = '0x' +  HexConverter.stringToHexString(message);
+        }
+    }
+
     return new Promise((resolve, reject) => {
         event.off("signMessageCallback");
         event.once("signMessageCallback", (result: string) => {
             resolve(JSON.parse(result));
         });
-        native.jsbBridgeWrapper.dispatchEventToNative("signMessage", message);
+        native.jsbBridgeWrapper.dispatchEventToNative("signMessage", serializedMessage);
     });
 }
 
@@ -250,7 +265,7 @@ export function signMessage(message: string): Promise<any> {
  * @param transaction Transaction that you want user to sign and send
  * @returns Result, signature or error
  */
-export function signAndSendTransaction(transaction: string): Promise<any> {
+export async function signAndSendTransaction(transaction: string): Promise<any> {
     return new Promise((resolve, reject) => {
         event.off("signAndSendTransactionCallback");
         event.once("signAndSendTransactionCallback", (result: string) => {
@@ -267,8 +282,16 @@ export function signAndSendTransaction(transaction: string): Promise<any> {
  * @param version TypedData version, support v1, v3, v4
  * @returns Result, signature or error
  */
-export function signTypedData(typedData: string, version: string): Promise<any> {
-    const obj = { message: typedData, version: version };
+export async function signTypedData(typedData: string, version: string): Promise<any> {
+    let serializedMessage: string;
+
+    if (isHexString(typedData)) {
+        serializedMessage = typedData;
+    } else {
+        serializedMessage = '0x' + HexConverter.stringToHexString(typedData);
+    }
+
+    const obj = { message: serializedMessage, version: version };
     const json = JSON.stringify(obj);
 
     return new Promise((resolve, reject) => {
@@ -285,7 +308,7 @@ export function signTypedData(typedData: string, version: string): Promise<any> 
  * @param transaction Transaction that you want user to sign.
  * @returns Result, signed transaction or error
  */
-export function signTransaction(transaction: string): Promise<any> {
+export async function signTransaction(transaction: string): Promise<any> {
     return new Promise((resolve, reject) => {
         event.off("signTransactionCallback");
         event.once("signTransactionCallback", (result: string) => {
@@ -300,7 +323,7 @@ export function signTransaction(transaction: string): Promise<any> {
  * @param transactions Transactions that you want user to sign
  * @returns Result, signed transactions or error
  */
-export function signAllTransactions(transactions: string[]): Promise<any> {
+export async function signAllTransactions(transactions: string[]): Promise<any> {
     const json = JSON.stringify(transactions);
 
     return new Promise((resolve, reject) => {
@@ -317,7 +340,7 @@ export function signAllTransactions(transactions: string[]): Promise<any> {
  * @param chainInfo ChainInfo
  * @returns Result
  */
-export function setChainInfo(chainInfo: ChainInfo): Promise<any> {
+export async function setChainInfo(chainInfo: ChainInfo): Promise<any> {
     const obj = {
         chain_name: chainInfo.name,
         chain_id: chainInfo.id,
@@ -339,7 +362,7 @@ export function setChainInfo(chainInfo: ChainInfo): Promise<any> {
  * @param chainInfo
  * @returns Result
  */
-export function setChainInfoAsync(chainInfo: ChainInfo): Promise<any> {
+export async function setChainInfoAsync(chainInfo: ChainInfo): Promise<any> {
     const obj = {
         chain_name: chainInfo.name,
         chain_id: chainInfo.id,
@@ -362,12 +385,19 @@ export function setChainInfoAsync(chainInfo: ChainInfo): Promise<any> {
  * Get chainInfo
  * @returns ChainInfo
  */
-export function getChainInfo(): Promise<ChainInfo> {
+export async function getChainInfo(): Promise<ChainInfo> {
 
     return new Promise((resolve, reject) => {
         event.off("getChainInfoCallback");
         event.once("getChainInfoCallback", (result: string) => {
-            resolve(JSON.parse(result) as ChainInfo);
+            const json = JSON.parse(result);
+
+            let chainInfo = getEVMChainInfoById(json.chain_id)
+            if (chainInfo == undefined) {
+                chainInfo = getSolanaChainInfoById(json.chain_id)
+            }
+            console.log('particle auth chain info', chainInfo);
+            resolve(chainInfo!);
         });
         native.jsbBridgeWrapper.dispatchEventToNative("getChainInfo", "");
     });
@@ -386,7 +416,7 @@ export async function getChainId(): Promise<number> {
  * Is user logged in
  * @returns Result, if user is login return true, otherwise retrun false
  */
-export function isLogin(): Promise<boolean> {
+export async function isLogin(): Promise<boolean> {
 
     return new Promise((resolve, reject) => {
         event.off("isLoginCallback");
@@ -401,7 +431,7 @@ export function isLogin(): Promise<boolean> {
  * Check is user login is valid from server
  * @returns Result, if user is valid, return userinfo, otherwise return error
  */
-export function isLoginAsync(): Promise<any> {
+export async function isLoginAsync(): Promise<any> {
     return new Promise((resolve, reject) => {
         event.off("isLoginAsyncCallback");
         event.once("isLoginAsyncCallback", (result: string) => {
@@ -415,7 +445,7 @@ export function isLoginAsync(): Promise<any> {
  * Get public address
  * @returns Public address
  */
-export function getAddress(): Promise<string> {
+export async function getAddress(): Promise<string> {
     return new Promise((resolve, reject) => {
         event.off("getAddressCallback");
         event.once("getAddressCallback", (result: string) => {
@@ -429,7 +459,7 @@ export function getAddress(): Promise<string> {
  * Get user info
  * @returns User info
  */
-export function getUserInfo(): Promise<any> {
+export async function getUserInfo(): Promise<any> {
     return new Promise((resolve, reject) => {
         event.off("getUserInfoCallback");
         event.once("getUserInfoCallback", (result: string) => {
@@ -441,9 +471,8 @@ export function getUserInfo(): Promise<any> {
 
 /**
  * Open account and security page
- * use DeviceEventEmitter.addListener('securityFailedCallBack', this.securityFailedCallBack) get securityFailedCallBack
  */
-export function openAccountAndSecurity(): Promise<any> {
+export async function openAccountAndSecurity(): Promise<any> {
     return new Promise((resolve, reject) => {
         event.off("openAccountAndSecurityCallback");
         event.once("openAccountAndSecurityCallback", (result: string) => {
@@ -508,10 +537,10 @@ export function setWebAuthConfig(displayWallet: boolean, appearance: Appearance)
     const json = JSON.stringify(obj);
     if (sys.OS.IOS === sys.os) {
         native.jsbBridgeWrapper.dispatchEventToNative("setWebAuthConfig", json);
-    } else [
+    } else[
         // todo
     ]
-    
+
 }
 
 /**
@@ -544,3 +573,8 @@ export function setSecurityAccountConfig(config: SecurityAccountConfig) {
     native.jsbBridgeWrapper.dispatchEventToNative("setSecurityAccountConfig", json);
 }
 
+
+export function isHexString(str: string): boolean {
+    const regex = /^0x[0-9a-fA-F]*$/;
+    return regex.test(str);
+}

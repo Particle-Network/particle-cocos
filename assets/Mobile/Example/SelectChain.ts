@@ -16,6 +16,8 @@ export class SelectChain extends Component {
         return;
       }
 
+      console.log('Select chain start');
+
       const chainInfos = getAllChainInfos();
       console.log("chainInfos", chainInfos);
       chainInfos.forEach((chainInfo: any) => {

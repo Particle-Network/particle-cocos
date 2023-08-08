@@ -1,4 +1,4 @@
-import { ChainInfo } from "./ChainInfo";
+import { ChainInfo, ParticleChains } from "./ChainInfo";
 
 export function isChainSupportEIP1559(chain: ChainInfo): boolean {
 
@@ -6,12 +6,17 @@ export function isChainSupportEIP1559(chain: ChainInfo): boolean {
 }
 
 export function getEVMChainInfoById(id: number): ChainInfo | undefined {
-    return Object.values(ChainInfo).find((it) => it.chainType === 'evm' && it.id === id);
+    return Object.values(ParticleChains).find((it) => it.chainType === 'evm' && it.id === id);
+}
+
+export function getSolanaChainInfoById(id: number): ChainInfo | undefined {
+    return Object.values(ParticleChains).find((it) => it.chainType === 'solana' && it.id === id);
 }
 
 
+
 export function getAllChainInfos(compareFn?: (a: ChainInfo, b: ChainInfo) => number): ChainInfo[] {
-    const chains = Object.values(ChainInfo);
+    const chains = Object.values(ParticleChains);
     if (compareFn) {
         return chains.sort(compareFn);
     }
@@ -63,3 +68,4 @@ export function getAllChainInfos(compareFn?: (a: ChainInfo, b: ChainInfo) => num
     });
     return chains;
 }
+

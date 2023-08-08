@@ -10,7 +10,8 @@ import { createWeb3FromParticleAuth } from '../../Core/web3Demo';
 import { ToastManager } from '../Toast/ToastManager';
 import { ParticleInfo } from '../../Core/NetService/ParticleInfo';
 import { FiatCoin } from '../../Core/Models/FiatCoin';
-import { Polygon, PolygonMumbai } from '../../Core/Models/ChainInfo';
+import BigNumber from 'bignumber.js';
+import { ChainManager } from '../ChainManager';
 
 
 const { ccclass } = _decorator;
@@ -52,6 +53,7 @@ export class AuthDemo extends Component {
 
     async web3_getChainId() {
         try {
+            
             const chainId = await this.web3.eth.getChainId();
             toastAndLog('web3.eth.getChainId', chainId);
         } catch (error) {
@@ -253,7 +255,7 @@ export class AuthDemo extends Component {
     };
 
     async web3_wallet_switchEthereumChain() {
-        const chainId = Polygon.id;
+        const chainId = ChainManager.currentChainInfo.id;
         try {
             const result = await this.web3.currentProvider.request({
                 method: 'wallet_switchEthereumChain',
@@ -276,7 +278,7 @@ export class AuthDemo extends Component {
         if (ParticleInfo.projectId == "" || ParticleInfo.clientKey == "") {
             throw new Error('You need set project info');
         }
-        const chainInfo = PolygonMumbai;
+        const chainInfo = ChainManager.currentChainInfo;
         const env = Env.Dev;
         particleAuth.init(chainInfo, env);
     }
@@ -347,21 +349,21 @@ export class AuthDemo extends Component {
                 if (testCase == 1) {
                     const receiver = '0x39b2DeB155Ee6a5a23E172bE11744329e95Af6df';
                     const amount = '1000000000000000';
-                    transaction = await Helper.getEthereumTransacion(sender, receiver, amount);
+                    transaction = await Helper.getEthereumTransacion(sender, receiver, BigNumber(amount));
                 } else if (testCase == 2) {
                     const receiver = '0x39b2DeB155Ee6a5a23E172bE11744329e95Af6df';
                     const amount = '1000000000000000';
-                    transaction = await Helper.getEthereumTransacionLegacy(sender, receiver, amount);
+                    transaction = await Helper.getEthereumTransacionLegacy(sender, receiver, BigNumber(amount));
                 } else if (testCase == 3) {
                     const receiver = '0x39b2DeB155Ee6a5a23E172bE11744329e95Af6df';
                     const amount = '1000000000000000';
                     const contractAddress = '0x326C977E6efc84E512bB9C30f76E30c160eD06FB';
-                    transaction = await Helper.getEvmTokenTransaction(sender, receiver, amount, contractAddress);
+                    transaction = await Helper.getEvmTokenTransaction(sender, receiver, BigNumber(amount), contractAddress);
                 } else {
                     const receiver = '0x39b2DeB155Ee6a5a23E172bE11744329e95Af6df';
                     const amount = '1000000000000000';
                     const contractAddress = '0x326C977E6efc84E512bB9C30f76E30c160eD06FB';
-                    transaction = await Helper.getEvmTokenTransactionLegacy(sender, receiver, amount, contractAddress);
+                    transaction = await Helper.getEvmTokenTransactionLegacy(sender, receiver, BigNumber(amount), contractAddress);
                 }
             }
             toastAndLog(transaction);
@@ -439,13 +441,13 @@ export class AuthDemo extends Component {
     }
 
     async setChaininfo() {
-        const chainInfo = PolygonMumbai;
+        const chainInfo = ChainManager.currentChainInfo;
         const result = await particleAuth.setChainInfo(chainInfo);
         toastAndLog(result);
     }
 
     async setChainInfoAsync() {
-        const chainInfo = PolygonMumbai;
+        const chainInfo = ChainManager.currentChainInfo;
         const result = await particleAuth.setChainInfoAsync(chainInfo);
         toastAndLog(result);
     }
@@ -534,17 +536,19 @@ export class AuthDemo extends Component {
 }
 
 function toastAndLog(message?: any, ...optionalParams: any[]) {
-    console.log(message, ...optionalParams);
+
 
     let total: string = "";
     if (isObject(message)) {
-        total +=  JSON.stringify(message);
+        total += JSON.stringify(message);
     } else {
         total += message;
     }
     if (optionalParams.length != 0) {
         total += JSON.stringify(optionalParams);
     }
+
+    console.log(total);
 
     find("Canvas")?.getComponent(ToastManager)?.showToast(total);
 }

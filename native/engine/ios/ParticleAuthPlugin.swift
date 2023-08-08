@@ -258,7 +258,7 @@ public class ParticleAuthPlugin: NSObject {
         case .solana:
             serializedMessage = Base58.encode(message.data(using: .utf8)!)
         default:
-            serializedMessage = "0x" + message.data(using: .utf8)!.map { String(format: "%02x", $0) }.joined()
+            serializedMessage = message
         }
         
         ParticleAuthService.signMessage(serializedMessage).subscribe { [weak self] result in
@@ -346,9 +346,7 @@ public class ParticleAuthPlugin: NSObject {
         let message = data["message"].stringValue
         let version = data["version"].stringValue.lowercased()
         
-        let hexString = "0x" + message.data(using: .utf8)!.map { String(format: "%02x", $0) }.joined()
-       
-        ParticleAuthService.signTypedData(hexString, version: EVMSignTypedDataVersion(rawValue: version) ?? .v1).subscribe { [weak self] result in
+        ParticleAuthService.signTypedData(message, version: EVMSignTypedDataVersion(rawValue: version) ?? .v1).subscribe { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .failure(let error):

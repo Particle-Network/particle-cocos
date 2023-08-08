@@ -6,4 +6,11 @@ export class HexConverter {
       const hexArray = Array.from(uint8Array, (byte) => byte.toString(16).padStart(2, '0'));
       return hexArray.join('');
     }
+
+    static stringToHexString(message: string): string {
+      const encoder = new TextEncoder();
+      const uint8Array = encoder.encode(message);
+      const hexArray = Array.from(uint8Array, (byte) => byte.toString(16).padStart(2, '0'));
+      return hexArray.join('');
+    }
 }

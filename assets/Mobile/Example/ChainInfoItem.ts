@@ -1,8 +1,8 @@
 import { _decorator, Component, find, Label } from 'cc';
 import { ChainInfo } from '../Core/Models/ChainInfo';
-import { EvmService } from '../Core/NetService/EvmService';
 import { MainUIDemo } from './MainUIDemo';
 import { ToastManager } from './Toast/ToastManager';
+import { ChainManager } from './ChainManager';
 
 const { ccclass, property } = _decorator;
 
@@ -21,13 +21,14 @@ export class ChainInfoItem extends Component {
     }
     setChainInfo(chainInfo: ChainInfo) {
         this.chainInfo = chainInfo;
-        this.label!.string = this.chainInfo!.chain_name + " " + this.chainInfo!.chain_id_name;
+        this.label!.string = this.chainInfo!.name + " " + this.chainInfo!.network + " " + this.chainInfo!.id;
     }
 
     onChainInfoItemClick() {
-        console.log("onChainInfoItemClick", this.chainInfo);
-        find("Canvas")?.getComponent(ToastManager)?.showToast(JSON.stringify(this.chainInfo));
-        EvmService.currentChainInfo = this.chainInfo!;
+        const message = "onChainInfoItemClick" + this.chainInfo!.name + " " + this.chainInfo!.network + " " + this.chainInfo!.id;
+        console.log(message);
+        find("Canvas")?.getComponent(ToastManager)?.showToast(message);
+        ChainManager.currentChainInfo = this.chainInfo!;
         MainUIDemo.getInstance().hiddenSelectChain();
     }
 }
